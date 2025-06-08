@@ -1050,8 +1050,8 @@ export function calculateAnnualProjections(state: CalculatorState): AnnualData[]
       const monthOffset = monthsElapsed + month;
       const mortgagePayment = getMortgagePaymentByMonth(monthOffset, state);
       if (mortgagePayment && workingMortgageBalance > 0) {
-        // Calculate monthly payment on the adjusted balance
-        const monthlyInterest = workingMortgageBalance * (state.housing.interestRate / 100 / 12);
+        // Calculate monthly payment on the adjusted balance using 4.58% rate
+        const monthlyInterest = workingMortgageBalance * (0.0458 / 12);
         const monthlyPrincipal = Math.min(state.housing.monthlyPayment - monthlyInterest, workingMortgageBalance);
         
         mortgageAnnual += monthlyInterest + monthlyPrincipal;
