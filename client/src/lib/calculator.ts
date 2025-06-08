@@ -29,14 +29,14 @@ export interface SSBenefitOption {
 
 export const ssBenefitOptions: SSBenefitOption[] = [
   { age: 62, amount: 2211, description: "69% of full benefit - Early Retirement" },
-  { age: 63, amount: 2336, description: "73% of full benefit" },
-  { age: 64, amount: 2528, description: "79% of full benefit" },
-  { age: 65, amount: 2748, description: "86% of full benefit" },
-  { age: 66, amount: 2968, description: "93% of full benefit" },
-  { age: 67, amount: 3188, description: "100% of full benefit - Full Retirement Age" },
-  { age: 68, amount: 3324, description: "104% of full benefit - Delayed 1 year" },
-  { age: 69, amount: 3589, description: "113% of full benefit" },
-  { age: 70, amount: 3984, description: "125% of full benefit - Maximum Delayed" }
+  { age: 63, amount: 2406, description: "73% of full benefit + 1 year COLA (3%)" },
+  { age: 64, amount: 2686, description: "79% of full benefit + 2 years COLA (3%)" },
+  { age: 65, amount: 3005, description: "86% of full benefit + 3 years COLA (3%)" },
+  { age: 66, amount: 3341, description: "93% of full benefit + 4 years COLA (3%)" },
+  { age: 67, amount: 3697, description: "100% of full benefit + 5 years COLA (3%) - Full Retirement Age" },
+  { age: 68, amount: 4199, description: "104% of full benefit + 6 years COLA (3%) - Delayed 1 year" },
+  { age: 69, amount: 4537, description: "113% of full benefit + 7 years COLA (3%)" },
+  { age: 70, amount: 5034, description: "125% of full benefit + 8 years COLA (3%) - Maximum Delayed" }
 ];
 
 export interface OtherIncome {
@@ -287,8 +287,8 @@ export function getDefaultState(): CalculatorState {
       projectionYears: 20
     },
     socialSecurity: {
-      paulAmount: 3984, // Age 70 benefit
-      jessicaAmount: 1992, // Always 50% of Paul's amount (3984 * 0.5)
+      paulAmount: 5034, // Age 70 benefit with COLA adjustments
+      jessicaAmount: 2517, // Always 50% of Paul's amount (5034 * 0.5)
       cola: 3.0,
       paulTaxable: true,
       jessicaTaxable: true,
