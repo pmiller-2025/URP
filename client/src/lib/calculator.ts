@@ -188,6 +188,9 @@ export interface SummaryMetrics {
   totalTaxesPaid: number;
   avgMonthlyCashFlow: number;
   savingsGrowthPercent: number;
+  totalInterestPaid: number;
+  interestSaved: number;
+  mortgagePayoffDate: string;
 }
 
 export function calculateAge(birthMonth: number, birthYear: number, currentMonth: number = 6, currentYear: number = 2025): number {
@@ -491,6 +494,41 @@ export function calculateLifeInsuranceDuration(expenses: Expenses): number {
 
 export function calculateLifeInsuranceTotalCost(expenses: Expenses): number {
   return expenses.lifeInsurance * calculateLifeInsuranceDuration(expenses);
+}
+
+export function calculateTotalInterestFromSchedule(): number {
+  let totalInterest = 0;
+  for (let i = 0; i < mortgageAmortizationSchedule.length; i++) {
+    totalInterest += mortgageAmortizationSchedule[i].interestPayment;
+  }
+  return totalInterest;
+}
+
+export function calculateInterestSaved(targetPayoffMonths: number): number {
+  const standardPayoffMonths = 87; // Full amortization schedule length
+  if (targetPayoffMonths >= standardPayoffMonths) {
+    return 0; // No savings if not paying off early
+  }
+  
+  let standardInterest = 0;
+  let earlyPayoffInterest = 0;
+  
+  // Calculate interest for standard payoff
+  for (let i = 0; i < standardPayoffMonths && i < mortgageAmortizationSchedule.length; i++) {
+    standardInterest += mortgageAmortizationSchedule[i].interestPayment;
+  }
+  
+  // Calculate interest for early payoff
+  for (let i = 0; i < targetPayoffMonths && i < mortgageAmortizationSchedule.length; i++) {
+    earlyPayoffInterest += mortgageAmortizationSchedule[i].interestPayment;
+  }
+  
+  return Math.max(0, standardInterest - earlyPayoffInterest);
+}
+
+export function getMortgagePayoffDate(): string {
+  const lastPayment = mortgageAmortizationSchedule[mortgageAmortizationSchedule.length - 1];
+  return lastPayment ? lastPayment.paymentDate : "Sep 2032";
 }
 
 export function calculateMonthlyProjections(state: CalculatorState, year: number): MonthlyData[] {
@@ -948,10 +986,19 @@ export function calculateSummaryMetrics(annualData: AnnualData[], state: Calcula
   const initialNetWorth = state.housing.homeValue + state.savings.initialAmount - state.housing.mortgageBalance;
   const savingsGrowthPercent = ((finalYear.netWorth - initialNetWorth) / initialNetWorth) * 100;
   
+  // Calculate mortgage interest metrics
+  const totalInterestPaid = calculateTotalInterestFromSchedule();
+  const interestSaved = state.housing.acceleratePayoff ? 
+    calculateInterestSaved(state.housing.targetPayoffMonths) : 0;
+  const mortgagePayoffDate = getMortgagePayoffDate();
+
   return {
     finalNetWorth: finalYear.netWorth,
     totalTaxesPaid,
     avgMonthlyCashFlow,
-    savingsGrowthPercent
+    savingsGrowthPercent,
+    totalInterestPaid,
+    interestSaved,
+    mortgagePayoffDate
   };
 }
