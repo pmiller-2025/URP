@@ -226,9 +226,9 @@ export function getDefaultState(): CalculatorState {
       paulBirthYear: 1962,
       jessicaBirthMonth: 12,
       jessicaBirthYear: 1968,
-      lukeAge: 15,
-      lukeBirthMonth: 9,
-      lukeBirthYear: 2009,
+      lukeAge: 20,
+      lukeBirthMonth: 11,
+      lukeBirthYear: 2004,
       projectionYears: 20
     },
     socialSecurity: {
