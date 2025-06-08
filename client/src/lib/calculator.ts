@@ -148,6 +148,9 @@ export interface MonthlyData {
   netIncome: number;
   livingExp: number;
   insurance: number;
+  expense1: number;
+  expense2: number;
+  expense3: number;
   mortgage: number;
   netCashFlow: number;
   savingsBalance: number;
@@ -168,6 +171,9 @@ export interface AnnualData {
   afterTaxIncome: number;
   livingExp: number;
   insurance: number;
+  expense1: number;
+  expense2: number;
+  expense3: number;
   mortgage: number;
   netCashFlow: number;
   investmentReturn: number;
@@ -449,6 +455,25 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
   const insuranceMonthly = (totalMonthsElapsed >= lifeInsuranceStartMonthOffset && totalMonthsElapsed <= lifeInsuranceEndMonthOffset) 
     ? state.expenses.lifeInsurance 
     : 0;
+
+  // Calculate optional expenses
+  const expense1StartMonthOffset = (state.expenses.expense1StartYear - 1) * 12 + (state.expenses.expense1StartMonth - 1);
+  const expense1MonthsElapsed = totalMonthsElapsed - expense1StartMonthOffset;
+  const expense1Monthly = (state.expenses.expense1 > 0 && expense1MonthsElapsed >= 0 && expense1MonthsElapsed < state.expenses.expense1Duration) 
+    ? state.expenses.expense1 
+    : 0;
+
+  const expense2StartMonthOffset = (state.expenses.expense2StartYear - 1) * 12 + (state.expenses.expense2StartMonth - 1);
+  const expense2MonthsElapsed = totalMonthsElapsed - expense2StartMonthOffset;
+  const expense2Monthly = (state.expenses.expense2 > 0 && expense2MonthsElapsed >= 0 && expense2MonthsElapsed < state.expenses.expense2Duration) 
+    ? state.expenses.expense2 
+    : 0;
+
+  const expense3StartMonthOffset = (state.expenses.expense3StartYear - 1) * 12 + (state.expenses.expense3StartMonth - 1);
+  const expense3MonthsElapsed = totalMonthsElapsed - expense3StartMonthOffset;
+  const expense3Monthly = (state.expenses.expense3 > 0 && expense3MonthsElapsed >= 0 && expense3MonthsElapsed < state.expenses.expense3Duration) 
+    ? state.expenses.expense3 
+    : 0;
   
   // Get current mortgage balance from annual projections (accounts for lump sum)
   const annualData = calculateAnnualProjections(state);
@@ -523,7 +548,7 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
       calculateTaxes(jessicaWorkMonthly, state.taxRates.jessica, true);
     
     const netIncome = grossIncome - taxes;
-    const netCashFlow = netIncome - livingExpMonthly - insuranceMonthly - currentMortgageMonthly - lumpSumPayment;
+    const netCashFlow = netIncome - livingExpMonthly - insuranceMonthly - expense1Monthly - expense2Monthly - expense3Monthly - currentMortgageMonthly - lumpSumPayment;
     
     // All positive cash flow goes to savings, negative cash flow comes from savings
     runningBalance += netCashFlow;
@@ -541,6 +566,9 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
       netIncome,
       livingExp: livingExpMonthly,
       insurance: insuranceMonthly,
+      expense1: expense1Monthly,
+      expense2: expense2Monthly,
+      expense3: expense3Monthly,
       mortgage: currentMortgageMonthly,
       netCashFlow,
       savingsBalance: runningBalance

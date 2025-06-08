@@ -1411,7 +1411,23 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
               {/* Additional Expense 3 */}
               {state.expenses.expense3 > 0 && (
                 <div>
-                  <Label className="block text-sm font-medium text-gray-700 mb-1">Additional Expense 3</Label>
+                  <div className="flex items-center justify-between mb-1">
+                    <Label className="text-sm font-medium text-gray-700">Additional Expense 3</Label>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => onUpdate('expenses', { 
+                        expense3: 0, 
+                        expense3Duration: 12, 
+                        expense3StartMonth: 1, 
+                        expense3StartYear: 1 
+                      })}
+                      className="h-6 w-6 p-0 text-gray-400 hover:text-red-500"
+                    >
+                      <Trash2 className="h-3 w-3" />
+                    </Button>
+                  </div>
                   <div className="relative">
                     <span className="absolute left-3 top-2 text-gray-500">$</span>
                     <Input 
