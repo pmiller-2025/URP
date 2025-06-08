@@ -156,6 +156,7 @@ export interface MonthlyData {
   expense2: number;
   expense3: number;
   mortgage: number;
+  mortgageBalance: number;
   netCashFlow: number;
   savingsBalance: number;
 }
@@ -738,35 +739,42 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
     ? state.expenses.expense3 
     : 0;
   
-  // Get current mortgage balance from annual projections (accounts for lump sum)
-  const annualData = calculateAnnualProjections(state);
-  let currentMortgageBalance = yearIndex > 0 ? annualData[yearIndex - 1].mortgageBalance : state.housing.mortgageBalance;
+  // Initialize mortgage balance tracking
+  let yearStartMortgageBalance = state.housing.mortgageBalance;
   
-  // Check if lump sum payment applies this year
-  // Adjust for June 2025 start (month 6 = offset 0)
+  // Get lump sum payment offset (June 2025 start = month 6 = offset 0)
   const lumpSumMonthOffset = (state.housing.lumpSumYear - 1) * 12 + (state.housing.lumpSumMonth - 6);
   const yearStartMonthOffset = yearIndex * 12;
-  const yearEndMonthOffset = (yearIndex + 1) * 12;
   
-  console.log(`Year ${yearIndex + 1}: Lump sum offset = ${lumpSumMonthOffset}, Year start = ${yearStartMonthOffset}, Year end = ${yearEndMonthOffset}`);
-  
-  if (state.housing.lumpSumAmount > 0 && lumpSumMonthOffset >= yearStartMonthOffset && lumpSumMonthOffset < yearEndMonthOffset) {
-    const lumpSumMonthInYear = lumpSumMonthOffset - yearStartMonthOffset;
-    // Apply lump sum at the beginning of the month it occurs
-    if (lumpSumMonthInYear === 0) {
-      currentMortgageBalance = Math.max(0, currentMortgageBalance - state.housing.lumpSumAmount);
+  // If lump sum was applied in previous years, account for it
+  if (state.housing.lumpSumAmount > 0 && lumpSumMonthOffset < yearStartMonthOffset) {
+    yearStartMortgageBalance = Math.max(0, yearStartMortgageBalance - state.housing.lumpSumAmount);
+    
+    // Also account for mortgage payments made in previous years
+    for (let prevMonthOffset = 0; prevMonthOffset < yearStartMonthOffset; prevMonthOffset++) {
+      if (yearStartMortgageBalance > 0) {
+        const remainingMonths = state.housing.targetPayoffMonths - prevMonthOffset;
+        if (remainingMonths > 0) {
+          const monthlyRate = 0.0458 / 12;
+          const monthlyInterest = yearStartMortgageBalance * monthlyRate;
+          const monthlyPrincipal = Math.min(
+            calculateMortgagePayment(yearStartMortgageBalance, 4.58, remainingMonths) - monthlyInterest,
+            yearStartMortgageBalance
+          );
+          yearStartMortgageBalance = Math.max(0, yearStartMortgageBalance - monthlyPrincipal);
+        } else {
+          yearStartMortgageBalance = 0;
+          break;
+        }
+      }
     }
   }
   
-  // Get mortgage payment from amortization schedule with early payoff consideration
-  const mortgagePayment = getMortgagePaymentByMonth(totalMonthsElapsed, state);
-  const mortgageMonthly = mortgagePayment ? (mortgagePayment.principalPayment + mortgagePayment.interestPayment) : 0;
-  currentMortgageBalance = mortgagePayment ? mortgagePayment.endingBalance : 0;
-  
   let runningBalance = state.savings.initialAmount;
-  if (yearIndex > 0) {
-    runningBalance = annualData[yearIndex - 1].savingsBalance;
-  }
+  // Note: We can't use annualData here as it would cause infinite recursion
+  // Instead, we'll calculate savings progression month by month
+  
+  let currentMortgageBalance = yearStartMortgageBalance;
   
   for (let month = 0; month < 12; month++) {
     const currentMonthOffset = yearIndex * 12 + month;
@@ -779,6 +787,7 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
     let lumpSumPayment = 0;
     if (state.housing.lumpSumAmount > 0 && currentMonthOffset === lumpSumMonthOffset) {
       lumpSumPayment = state.housing.lumpSumAmount;
+      currentMortgageBalance = Math.max(0, currentMortgageBalance - lumpSumPayment);
       console.log(`Applying lump sum payment of ${lumpSumPayment} in month ${currentMonthOffset} (${monthName})`);
     }
     
@@ -817,7 +826,7 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
     // All positive cash flow goes to savings, negative cash flow comes from savings
     runningBalance += netCashFlow;
     
-    // Apply lump sum payment from savings if it occurs this month
+    // Deduct lump sum payment from savings when applied
     if (lumpSumPayment > 0) {
       runningBalance -= lumpSumPayment;
     }
@@ -839,6 +848,7 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
       expense2: expense2Monthly,
       expense3: expense3Monthly,
       mortgage: currentMortgageMonthly,
+      mortgageBalance: currentMortgageBalance,
       netCashFlow,
       savingsBalance: runningBalance
     });
