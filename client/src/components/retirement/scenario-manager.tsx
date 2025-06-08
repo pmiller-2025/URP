@@ -11,6 +11,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { CalculatorState } from "@/lib/calculator";
+import { ScenarioComparison } from "./scenario-comparison";
 import type { RetirementScenario } from "@shared/schema";
 
 interface ScenarioManagerProps {
@@ -134,6 +135,9 @@ export function ScenarioManager({ currentState, onLoadScenario }: ScenarioManage
 
   return (
     <div className="flex items-center space-x-3">
+      {/* AI Comparison */}
+      <ScenarioComparison />
+      
       {/* Save Scenario Dialog */}
       <Dialog open={saveDialogOpen} onOpenChange={setSaveDialogOpen}>
         <DialogTrigger asChild>

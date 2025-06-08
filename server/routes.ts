@@ -2,6 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertScenarioSchema } from "@shared/schema";
+import { compareScenarios } from "./openai";
 import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -95,6 +96,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error deleting scenario:", error);
       res.status(500).json({ error: "Failed to delete scenario" });
+    }
+  });
+
+  // Compare scenarios with AI
+  app.post("/api/scenarios/compare", async (req, res) => {
+    try {
+      const { scenario1Id, scenario2Id } = req.body;
+      
+      if (!scenario1Id || !scenario2Id) {
+        return res.status(400).json({ error: "Both scenario IDs are required" });
+      }
+
+      const scenario1 = await storage.getScenario(parseInt(scenario1Id));
+      const scenario2 = await storage.getScenario(parseInt(scenario2Id));
+
+      if (!scenario1 || !scenario2) {
+        return res.status(404).json({ error: "One or both scenarios not found" });
+      }
+
+      const comparison = await compareScenarios(
+        scenario1,
+        scenario2,
+        scenario1.scenarioData,
+        scenario2.scenarioData
+      );
+
+      res.json(comparison);
+    } catch (error) {
+      console.error("Error comparing scenarios:", error);
+      res.status(500).json({ error: "Failed to compare scenarios" });
     }
   });
 
