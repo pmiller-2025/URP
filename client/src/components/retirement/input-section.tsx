@@ -58,15 +58,29 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
           </CardContent>
         </Card>
 
-        {/* Social Security Card */}
+        {/* Benefits Card */}
         <Card className="bg-white rounded-xl shadow-sm border border-gray-200">
           <CardContent className="p-6">
             <div className="flex items-center mb-4">
               <i className="fas fa-shield-alt text-finance-blue mr-3"></i>
-              <h2 className="text-lg font-semibold text-gray-900">Social Security</h2>
+              <h2 className="text-lg font-semibold text-gray-900">Benefits</h2>
             </div>
             
             <div className="space-y-4">
+              <div>
+                <Label className="block text-sm font-medium text-gray-700 mb-1">VA Disability (Monthly)</Label>
+                <div className="relative">
+                  <span className="absolute left-3 top-2 text-gray-500">$</span>
+                  <Input 
+                    type="number" 
+                    value={state.otherIncome.vaDisability}
+                    onChange={(e) => onUpdate('otherIncome', { vaDisability: parseFloat(e.target.value) || 0 })}
+                    className="pl-8 focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                  />
+                </div>
+                <p className="text-xs text-gray-500 mt-1">Non-taxable, 3% annual increase</p>
+              </div>
+              
               <div>
                 <Label className="block text-sm font-medium text-gray-700 mb-1">Paul's SS Claiming Age</Label>
                 <Select 
@@ -175,19 +189,6 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
             </div>
             
             <div className="space-y-4">
-              <div>
-                <Label className="block text-sm font-medium text-gray-700 mb-1">VA Disability (Monthly)</Label>
-                <div className="relative">
-                  <span className="absolute left-3 top-2 text-gray-500">$</span>
-                  <Input 
-                    type="number" 
-                    value={state.otherIncome.vaDisability}
-                    onChange={(e) => onUpdate('otherIncome', { vaDisability: parseFloat(e.target.value) || 0 })}
-                    className="pl-8 focus:ring-2 focus:ring-finance-blue focus:border-transparent"
-                  />
-                </div>
-                <p className="text-xs text-gray-500 mt-1">Non-taxable, 3% annual increase</p>
-              </div>
               <div>
                 <Label className="block text-sm font-medium text-gray-700 mb-1">Business Income</Label>
                 <div className="relative">
