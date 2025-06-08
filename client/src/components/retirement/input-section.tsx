@@ -176,6 +176,54 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                   <span className="absolute right-3 top-2 text-gray-500">%</span>
                 </div>
               </div>
+              
+              <div>
+                <Label className="block text-sm font-medium text-gray-700 mb-1">Chapter 35 Income</Label>
+                <div className="relative">
+                  <span className="absolute left-3 top-2 text-gray-500">$</span>
+                  <Input 
+                    type="number" 
+                    value={state.otherIncome.chapter35}
+                    onChange={(e) => onUpdate('otherIncome', { chapter35: parseFloat(e.target.value) || 0 })}
+                    className="pl-8 focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                  />
+                </div>
+                <div className="grid grid-cols-3 gap-2 mt-2">
+                  <div>
+                    <Label className="block text-xs text-gray-600 mb-1">Start Month</Label>
+                    <Input 
+                      type="number" 
+                      min="1"
+                      max="12"
+                      value={state.otherIncome.chapter35StartMonth}
+                      onChange={(e) => onUpdate('otherIncome', { chapter35StartMonth: parseInt(e.target.value) || 1 })}
+                      className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                    />
+                  </div>
+                  <div>
+                    <Label className="block text-xs text-gray-600 mb-1">Start Year</Label>
+                    <Input 
+                      type="number" 
+                      min="1"
+                      max="20"
+                      value={state.otherIncome.chapter35StartYear}
+                      onChange={(e) => onUpdate('otherIncome', { chapter35StartYear: parseInt(e.target.value) || 1 })}
+                      className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                    />
+                  </div>
+                  <div>
+                    <Label className="block text-xs text-gray-600 mb-1">Duration (months)</Label>
+                    <Input 
+                      type="number" 
+                      min="1"
+                      value={state.otherIncome.chapter35Duration}
+                      onChange={(e) => onUpdate('otherIncome', { chapter35Duration: parseInt(e.target.value) || 24 })}
+                      className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                    />
+                  </div>
+                </div>
+                <p className="text-xs text-gray-500 mt-1">Non-taxable education benefit</p>
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -298,54 +346,6 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                   />
                   <Label htmlFor="jessica-tax" className="ml-2 text-sm text-gray-600">Taxable at {state.taxRates.jessica}%</Label>
                 </div>
-              </div>
-              
-              <div>
-                <Label className="block text-sm font-medium text-gray-700 mb-1">Chapter 35 Income</Label>
-                <div className="relative">
-                  <span className="absolute left-3 top-2 text-gray-500">$</span>
-                  <Input 
-                    type="number" 
-                    value={state.otherIncome.chapter35}
-                    onChange={(e) => onUpdate('otherIncome', { chapter35: parseFloat(e.target.value) || 0 })}
-                    className="pl-8 focus:ring-2 focus:ring-finance-blue focus:border-transparent"
-                  />
-                </div>
-                <div className="grid grid-cols-3 gap-2 mt-2">
-                  <div>
-                    <Label className="block text-xs text-gray-600 mb-1">Start Month</Label>
-                    <Input 
-                      type="number" 
-                      min="1"
-                      max="12"
-                      value={state.otherIncome.chapter35StartMonth}
-                      onChange={(e) => onUpdate('otherIncome', { chapter35StartMonth: parseInt(e.target.value) || 1 })}
-                      className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
-                    />
-                  </div>
-                  <div>
-                    <Label className="block text-xs text-gray-600 mb-1">Start Year</Label>
-                    <Input 
-                      type="number" 
-                      min="1"
-                      max="20"
-                      value={state.otherIncome.chapter35StartYear}
-                      onChange={(e) => onUpdate('otherIncome', { chapter35StartYear: parseInt(e.target.value) || 1 })}
-                      className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
-                    />
-                  </div>
-                  <div>
-                    <Label className="block text-xs text-gray-600 mb-1">Duration (months)</Label>
-                    <Input 
-                      type="number" 
-                      min="1"
-                      value={state.otherIncome.chapter35Duration}
-                      onChange={(e) => onUpdate('otherIncome', { chapter35Duration: parseInt(e.target.value) || 24 })}
-                      className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
-                    />
-                  </div>
-                </div>
-                <p className="text-xs text-gray-500 mt-1">Non-taxable education benefit</p>
               </div>
             </div>
           </CardContent>
