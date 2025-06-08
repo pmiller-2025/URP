@@ -275,9 +275,9 @@ export function getDefaultState(): CalculatorState {
       detailedBudget: [...defaultBudgetCategories],
       lifeInsurance: 500,
       lifeInsuranceStartMonth: 1,
-      lifeInsuranceStartYear: 4,
+      lifeInsuranceStartYear: 1,
       lifeInsuranceEndMonth: 12,
-      lifeInsuranceEndYear: 11,
+      lifeInsuranceEndYear: 8,
       inflationRate: 3.0
     },
     taxRates: {
