@@ -228,7 +228,8 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                     if (benefit) {
                       onUpdate('socialSecurity', { 
                         paulStartAge: age,
-                        paulAmount: benefit.amount 
+                        paulAmount: benefit.amount,
+                        jessicaAmount: Math.round(benefit.amount * 0.5) // Jessica gets 50% of Paul's amount
                       });
                     }
                   }}

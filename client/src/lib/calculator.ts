@@ -288,7 +288,7 @@ export function getDefaultState(): CalculatorState {
     },
     socialSecurity: {
       paulAmount: 3324,
-      jessicaAmount: 1662,
+      jessicaAmount: 1662, // Always 50% of Paul's amount
       cola: 3.0,
       paulTaxable: true,
       jessicaTaxable: true,
