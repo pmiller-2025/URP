@@ -1027,17 +1027,34 @@ export function calculateAnnualProjections(state: CalculatorState): AnnualData[]
       expense3Annual = state.expenses.expense3 * expense3MonthsThisYear;
     }
     
-    // Calculate annual mortgage payments from amortization schedule with early payoff consideration
+    // Calculate annual mortgage payments and balance with lump sum consideration
     let mortgageAnnual = 0;
+    let lumpSumAnnual = 0;
+    let workingMortgageBalance = currentMortgageBalance;
+    
     for (let month = 0; month < 12; month++) {
       const monthOffset = monthsElapsed + month;
       const mortgagePayment = getMortgagePaymentByMonth(monthOffset, state);
       if (mortgagePayment) {
         mortgageAnnual += mortgagePayment.principalPayment + mortgagePayment.interestPayment;
+        workingMortgageBalance = mortgagePayment.endingBalance;
+        
+        // Check if lump sum payment occurs this month
+        if (state.housing.lumpSumAmount > 0) {
+          const lumpSumMonthOffset = (state.housing.lumpSumYear - 1) * 12 + (state.housing.lumpSumMonth - 1);
+          if (monthOffset === lumpSumMonthOffset) {
+            const lumpSumPayment = Math.min(state.housing.lumpSumAmount, workingMortgageBalance);
+            lumpSumAnnual += lumpSumPayment;
+            workingMortgageBalance = Math.max(0, workingMortgageBalance - lumpSumPayment);
+          }
+        }
       }
     }
     
-    const netCashFlow = afterTaxIncome - livingExpAnnual - insuranceAnnual - mortgageAnnual - expense1Annual - expense2Annual - expense3Annual;
+    // Update the current mortgage balance to reflect lump sum payments
+    currentMortgageBalance = workingMortgageBalance;
+    
+    const netCashFlow = afterTaxIncome - livingExpAnnual - insuranceAnnual - mortgageAnnual - lumpSumAnnual - expense1Annual - expense2Annual - expense3Annual;
     
     // Calculate investment returns
     const beginningBalance = currentSavingsBalance;
@@ -1047,10 +1064,6 @@ export function calculateAnnualProjections(state: CalculatorState): AnnualData[]
     
     // All positive cash flow automatically increases savings, negative cash flow comes from savings
     currentSavingsBalance += netCashFlow + netInvestmentReturn + state.savings.additionalAnnual;
-    
-    // Calculate mortgage balance from amortization schedule with early payoff consideration
-    const endOfYearMortgagePayment = getMortgagePaymentByMonth(monthsElapsed + 11, state); // Last month of the year
-    currentMortgageBalance = endOfYearMortgagePayment ? endOfYearMortgagePayment.endingBalance : 0;
     
     // Calculate home value with appreciation
     const homeValue = calculateInflationAdjusted(state.housing.homeValue, state.housing.homeAppreciation, yearIndex);
@@ -1076,7 +1089,7 @@ export function calculateAnnualProjections(state: CalculatorState): AnnualData[]
       expense1: expense1Annual,
       expense2: expense2Annual,
       expense3: expense3Annual,
-      mortgage: mortgageAnnual,
+      mortgage: mortgageAnnual + lumpSumAnnual,
       netCashFlow,
       investmentReturn: netInvestmentReturn,
       savingsBalance: currentSavingsBalance,
