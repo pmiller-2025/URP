@@ -6,6 +6,7 @@ interface SummaryCardsProps {
 }
 
 export function SummaryCards({ metrics }: SummaryCardsProps) {
+  // Enhanced mortgage summary with comprehensive interest calculations
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
