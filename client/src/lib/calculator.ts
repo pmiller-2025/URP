@@ -40,6 +40,7 @@ export interface OtherIncome {
   businessDuration: number;
   jessicaDuration: number;
   chapter35Duration: number;
+  chapter35StartYear: number;
 }
 
 export interface Housing {
@@ -156,7 +157,8 @@ export function getDefaultState(): CalculatorState {
       chapter35: 1000,
       businessDuration: 60,
       jessicaDuration: 24,
-      chapter35Duration: 24
+      chapter35Duration: 24,
+      chapter35StartYear: 1
     },
     housing: {
       homeValue: 1000000,
@@ -262,9 +264,12 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
   const jessicaActive = totalMonthsElapsed < state.otherIncome.jessicaDuration;
   const jessicaWorkMonthly = jessicaActive ? state.otherIncome.jessicaIncome : 0;
   
-  // Calculate Chapter 35 duration
-  const chapter35Active = totalMonthsElapsed < state.otherIncome.chapter35Duration;
-  const chapter35Monthly = chapter35Active ? state.otherIncome.chapter35 : 0;
+  // Calculate Chapter 35 with start year and duration
+  const chapter35StartMonthOffset = (state.otherIncome.chapter35StartYear - 1) * 12;
+  const chapter35MonthsElapsed = totalMonthsElapsed - chapter35StartMonthOffset;
+  const chapter35Monthly = (chapter35MonthsElapsed >= 0 && chapter35MonthsElapsed < state.otherIncome.chapter35Duration) 
+    ? state.otherIncome.chapter35 
+    : 0;
   
   // Calculate living expenses with inflation
   const livingExpMonthly = calculateInflationAdjusted(state.expenses.basicLiving, state.expenses.inflationRate, yearIndex);
@@ -369,9 +374,22 @@ export function calculateAnnualProjections(state: CalculatorState): AnnualData[]
     const jessicaMonthsThisYear = Math.min(12, jessicaMonthsRemaining);
     const jessicaAnnual = state.otherIncome.jessicaIncome * jessicaMonthsThisYear;
     
-    // Calculate Chapter 35 (limited duration)
-    const chapter35MonthsRemaining = Math.max(0, state.otherIncome.chapter35Duration - monthsElapsed);
-    const chapter35MonthsThisYear = Math.min(12, chapter35MonthsRemaining);
+    // Calculate Chapter 35 (limited duration with start year)
+    const chapter35StartMonthOffset = (state.otherIncome.chapter35StartYear - 1) * 12;
+    const chapter35MonthsElapsed = monthsElapsed - chapter35StartMonthOffset;
+    
+    let chapter35MonthsThisYear = 0;
+    if (chapter35MonthsElapsed >= 0 && chapter35MonthsElapsed < state.otherIncome.chapter35Duration) {
+      const chapter35MonthsRemaining = state.otherIncome.chapter35Duration - chapter35MonthsElapsed;
+      chapter35MonthsThisYear = Math.min(12, chapter35MonthsRemaining);
+    } else if (chapter35MonthsElapsed < 0) {
+      // Chapter 35 starts later in the projection period
+      const monthsUntilStart = -chapter35MonthsElapsed;
+      if (monthsUntilStart < 12) {
+        chapter35MonthsThisYear = Math.min(12 - monthsUntilStart, state.otherIncome.chapter35Duration);
+      }
+    }
+    
     const chapter35Annual = state.otherIncome.chapter35 * chapter35MonthsThisYear;
     
     const totalIncome = paulSSAnnual + jessicaSSAnnual + vaDisabilityAnnual + businessAnnual + jessicaAnnual + chapter35Annual;
