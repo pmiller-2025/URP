@@ -16,47 +16,89 @@ interface ResultsTableProps {
   projectionYears: number;
 }
 
-const annualColumns = [
-  { key: 'year', label: 'Year', visible: true, fixed: true },
-  { key: 'paulAge', label: 'Paul Age', visible: true },
-  { key: 'jessicaAge', label: 'Jessica Age', visible: true },
-  { key: 'paulSS', label: 'Paul SS', visible: true },
-  { key: 'jessicaSS', label: 'Jessica SS', visible: true },
-  { key: 'vaDisability', label: 'VA Disability', visible: true },
-  { key: 'business', label: 'Business', visible: true },
-  { key: 'jessicaWork', label: 'Jessica Work', visible: true },
-  { key: 'chapter35', label: 'Chapter 35', visible: true },
-  { key: 'totalIncome', label: 'Total Income', visible: true },
-  { key: 'totalTaxes', label: 'Total Taxes', visible: true },
-  { key: 'afterTaxIncome', label: 'After-Tax', visible: true },
-  { key: 'livingExp', label: 'Living Exp', visible: true },
-  { key: 'insurance', label: 'Insurance', visible: true },
-  { key: 'mortgage', label: 'Mortgage Payments', visible: true },
-  { key: 'mortgageBalance', label: 'Mortgage Balance', visible: true },
-  { key: 'netCashFlow', label: 'Net Cash Flow', visible: true },
-  { key: 'investmentReturn', label: 'Investment Return', visible: true },
-  { key: 'savingsBalance', label: 'Savings Balance', visible: true },
-  { key: 'homeValue', label: 'Home Value', visible: true },
-  { key: 'netWorth', label: 'Net Worth', visible: true }
-];
+const getAnnualColumns = (data: AnnualData[]) => {
+  const hasExpense1 = data.some(row => row.expense1 > 0);
+  const hasExpense2 = data.some(row => row.expense2 > 0);
+  const hasExpense3 = data.some(row => row.expense3 > 0);
+  
+  const columns = [
+    { key: 'year', label: 'Year', visible: true, fixed: true },
+    { key: 'paulAge', label: 'Paul Age', visible: true },
+    { key: 'jessicaAge', label: 'Jessica Age', visible: true },
+    { key: 'paulSS', label: 'Paul SS', visible: true },
+    { key: 'jessicaSS', label: 'Jessica SS', visible: true },
+    { key: 'vaDisability', label: 'VA Disability', visible: true },
+    { key: 'business', label: 'Business', visible: true },
+    { key: 'jessicaWork', label: 'Jessica Work', visible: true },
+    { key: 'chapter35', label: 'Chapter 35', visible: true },
+    { key: 'totalIncome', label: 'Total Income', visible: true },
+    { key: 'totalTaxes', label: 'Total Taxes', visible: true },
+    { key: 'afterTaxIncome', label: 'After-Tax', visible: true },
+    { key: 'livingExp', label: 'Living Exp', visible: true },
+    { key: 'insurance', label: 'Insurance', visible: true }
+  ];
+  
+  if (hasExpense1) {
+    columns.push({ key: 'expense1', label: 'Expense 1', visible: true });
+  }
+  if (hasExpense2) {
+    columns.push({ key: 'expense2', label: 'Expense 2', visible: true });
+  }
+  if (hasExpense3) {
+    columns.push({ key: 'expense3', label: 'Expense 3', visible: true });
+  }
+  
+  columns.push(
+    { key: 'mortgage', label: 'Mortgage Payments', visible: true },
+    { key: 'mortgageBalance', label: 'Mortgage Balance', visible: true },
+    { key: 'netCashFlow', label: 'Net Cash Flow', visible: true },
+    { key: 'investmentReturn', label: 'Investment Return', visible: true },
+    { key: 'savingsBalance', label: 'Savings Balance', visible: true },
+    { key: 'homeValue', label: 'Home Value', visible: true },
+    { key: 'netWorth', label: 'Net Worth', visible: true }
+  );
+  
+  return columns;
+};
 
-const monthlyColumns = [
-  { key: 'month', label: 'Month', visible: true, fixed: true },
-  { key: 'paulSS', label: 'Paul SS', visible: true },
-  { key: 'jessicaSS', label: 'Jessica SS', visible: true },
-  { key: 'vaDisability', label: 'VA Disability', visible: true },
-  { key: 'business', label: 'Business', visible: true },
-  { key: 'jessicaWork', label: 'Jessica Work', visible: true },
-  { key: 'chapter35', label: 'Chapter 35', visible: true },
-  { key: 'grossIncome', label: 'Gross Income', visible: true },
-  { key: 'taxes', label: 'Taxes', visible: true },
-  { key: 'netIncome', label: 'Net Income', visible: true },
-  { key: 'livingExp', label: 'Living Exp', visible: true },
-  { key: 'insurance', label: 'Insurance', visible: true },
-  { key: 'mortgage', label: 'Mortgage', visible: true },
-  { key: 'netCashFlow', label: 'Net Cash Flow', visible: true },
-  { key: 'savingsBalance', label: 'Savings Balance', visible: true }
-];
+const getMonthlyColumns = (data: MonthlyData[]) => {
+  const hasExpense1 = data.some(row => row.expense1 > 0);
+  const hasExpense2 = data.some(row => row.expense2 > 0);
+  const hasExpense3 = data.some(row => row.expense3 > 0);
+  
+  const columns = [
+    { key: 'month', label: 'Month', visible: true, fixed: true },
+    { key: 'paulSS', label: 'Paul SS', visible: true },
+    { key: 'jessicaSS', label: 'Jessica SS', visible: true },
+    { key: 'vaDisability', label: 'VA Disability', visible: true },
+    { key: 'business', label: 'Business', visible: true },
+    { key: 'jessicaWork', label: 'Jessica Work', visible: true },
+    { key: 'chapter35', label: 'Chapter 35', visible: true },
+    { key: 'grossIncome', label: 'Gross Income', visible: true },
+    { key: 'taxes', label: 'Taxes', visible: true },
+    { key: 'netIncome', label: 'Net Income', visible: true },
+    { key: 'livingExp', label: 'Living Exp', visible: true },
+    { key: 'insurance', label: 'Insurance', visible: true }
+  ];
+  
+  if (hasExpense1) {
+    columns.push({ key: 'expense1', label: 'Expense 1', visible: true });
+  }
+  if (hasExpense2) {
+    columns.push({ key: 'expense2', label: 'Expense 2', visible: true });
+  }
+  if (hasExpense3) {
+    columns.push({ key: 'expense3', label: 'Expense 3', visible: true });
+  }
+  
+  columns.push(
+    { key: 'mortgage', label: 'Mortgage', visible: true },
+    { key: 'netCashFlow', label: 'Net Cash Flow', visible: true },
+    { key: 'savingsBalance', label: 'Savings Balance', visible: true }
+  );
+  
+  return columns;
+};
 
 export function ResultsTable({ 
   viewMode, 
@@ -66,12 +108,15 @@ export function ResultsTable({
   onYearChange,
   projectionYears 
 }: ResultsTableProps) {
+  const annualColumns = getAnnualColumns(annualData);
+  const monthlyColumns = getMonthlyColumns(monthlyData);
+  
   const [visibleAnnualColumns, setVisibleAnnualColumns] = useState<Record<string, boolean>>(
-    annualColumns.reduce((acc, col) => ({ ...acc, [col.key]: col.visible }), {} as Record<string, boolean>)
+    annualColumns.reduce((acc: Record<string, boolean>, col: any) => ({ ...acc, [col.key]: col.visible }), {} as Record<string, boolean>)
   );
   
   const [visibleMonthlyColumns, setVisibleMonthlyColumns] = useState<Record<string, boolean>>(
-    monthlyColumns.reduce((acc, col) => ({ ...acc, [col.key]: col.visible }), {} as Record<string, boolean>)
+    monthlyColumns.reduce((acc: Record<string, boolean>, col: any) => ({ ...acc, [col.key]: col.visible }), {} as Record<string, boolean>)
   );
 
   const formatCurrency = (amount: number) => {
@@ -102,7 +147,7 @@ export function ResultsTable({
 
   const currentColumns = viewMode === 'annual' ? annualColumns : monthlyColumns;
   const visibleColumns = viewMode === 'annual' ? visibleAnnualColumns : visibleMonthlyColumns;
-  const filteredColumns = currentColumns.filter(col => visibleColumns[col.key]);
+  const filteredColumns = currentColumns.filter((col: any) => visibleColumns[col.key]);
 
   const renderCellValue = (columnKey: string, data: any) => {
     switch (columnKey) {
@@ -133,6 +178,10 @@ export function ResultsTable({
         return formatCurrency(data[columnKey]);
       case 'insurance':
         return data[columnKey] > 0 ? formatCurrency(data[columnKey]) : '$0';
+      case 'expense1':
+      case 'expense2':
+      case 'expense3':
+        return data[columnKey] > 0 ? formatCurrency(data[columnKey]) : '$0';
       case 'mortgage':
         return data[columnKey] > 0 ? formatCurrency(data[columnKey]) : '$0';
       case 'netCashFlow':
@@ -151,7 +200,7 @@ export function ResultsTable({
       return `${baseClass} font-medium text-gray-900 sticky left-0 bg-white border-r border-gray-200`;
     }
     
-    if (['totalTaxes', 'taxes', 'livingExp', 'insurance', 'mortgage'].includes(columnKey)) {
+    if (['totalTaxes', 'taxes', 'livingExp', 'insurance', 'expense1', 'expense2', 'expense3', 'mortgage'].includes(columnKey)) {
       return `${baseClass} text-finance-red`;
     }
     
