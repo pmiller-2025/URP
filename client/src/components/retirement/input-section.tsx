@@ -58,6 +58,13 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
     }
   };
 
+  const handleInvestmentStrategySelect = (strategy: string, expectedReturn: number) => {
+    onUpdate('savings', { 
+      allocationStrategy: strategy,
+      annualReturn: expectedReturn
+    });
+  };
+
   return (
     <>
       {/* First Row */}
@@ -1014,6 +1021,14 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                     className="pl-8 focus:ring-2 focus:ring-finance-blue focus:border-transparent"
                   />
                 </div>
+              </div>
+              
+              <div className="border-t pt-4 mt-6">
+                <InvestmentAllocator
+                  selectedStrategy={state.savings.allocationStrategy}
+                  currentReturn={state.savings.annualReturn}
+                  onStrategySelect={handleInvestmentStrategySelect}
+                />
               </div>
             </div>
           </CardContent>
