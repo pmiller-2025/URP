@@ -426,9 +426,26 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
     ? state.expenses.lifeInsurance 
     : 0;
   
-  // Calculate mortgage payment
+  // Get current mortgage balance from annual projections (accounts for lump sum)
+  const annualData = calculateAnnualProjections(state);
+  let currentMortgageBalance = yearIndex > 0 ? annualData[yearIndex - 1].mortgageBalance : state.housing.mortgageBalance;
+  
+  // Check if lump sum payment applies this year
+  const lumpSumMonthOffset = (state.housing.lumpSumYear - 1) * 12 + (state.housing.lumpSumMonth - 1);
+  const yearStartMonthOffset = yearIndex * 12;
+  const yearEndMonthOffset = (yearIndex + 1) * 12;
+  
+  if (state.housing.lumpSumAmount > 0 && lumpSumMonthOffset >= yearStartMonthOffset && lumpSumMonthOffset < yearEndMonthOffset) {
+    const lumpSumMonthInYear = lumpSumMonthOffset - yearStartMonthOffset;
+    // Apply lump sum at the beginning of the month it occurs
+    if (lumpSumMonthInYear === 0) {
+      currentMortgageBalance = Math.max(0, currentMortgageBalance - state.housing.lumpSumAmount);
+    }
+  }
+  
+  // Calculate mortgage payment based on remaining balance
   const extraPayment = state.housing.acceleratePayoff ? calculateExtraPayment(
-    state.housing.mortgageBalance, 
+    currentMortgageBalance, 
     state.housing.interestRate, 
     state.housing.monthlyPayment, 
     state.housing.targetPayoffMonths
@@ -436,22 +453,42 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
   const totalMortgagePayment = state.housing.monthlyPayment + extraPayment;
   
   // Determine if mortgage is still active
-  const mortgageMonthsElapsed = totalMonthsElapsed;
-  const payoffMonths = state.housing.acceleratePayoff ? 
-    state.housing.targetPayoffMonths : 
-    calculateStandardPayoffMonths(state.housing.mortgageBalance, state.housing.interestRate, state.housing.monthlyPayment);
-  const mortgageActive = mortgageMonthsElapsed < payoffMonths;
+  const mortgageActive = currentMortgageBalance > 0;
   const mortgageMonthly = mortgageActive ? totalMortgagePayment : 0;
   
   let runningBalance = state.savings.initialAmount;
   if (yearIndex > 0) {
-    // Calculate balance from previous years
-    const annualData = calculateAnnualProjections(state);
     runningBalance = annualData[yearIndex - 1].savingsBalance;
   }
   
   for (let month = 0; month < 12; month++) {
+    const currentMonthOffset = yearIndex * 12 + month;
     const monthName = new Date(2024 + yearIndex, month).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+    
+    // Apply lump sum payment if it occurs this month
+    let lumpSumPayment = 0;
+    if (state.housing.lumpSumAmount > 0 && currentMonthOffset === lumpSumMonthOffset) {
+      lumpSumPayment = Math.min(state.housing.lumpSumAmount, currentMortgageBalance);
+      currentMortgageBalance = Math.max(0, currentMortgageBalance - lumpSumPayment);
+    }
+    
+    // Recalculate mortgage payment for current balance
+    const currentExtraPayment = state.housing.acceleratePayoff ? calculateExtraPayment(
+      currentMortgageBalance, 
+      state.housing.interestRate, 
+      state.housing.monthlyPayment, 
+      state.housing.targetPayoffMonths
+    ) : 0;
+    const currentTotalMortgagePayment = state.housing.monthlyPayment + currentExtraPayment;
+    const currentMortgageActive = currentMortgageBalance > 0;
+    const currentMortgageMonthly = currentMortgageActive ? currentTotalMortgagePayment : 0;
+    
+    // Update mortgage balance for next month
+    if (currentMortgageActive && currentMortgageMonthly > 0) {
+      const monthlyInterest = currentMortgageBalance * (state.housing.interestRate / 100 / 12);
+      const monthlyPrincipal = Math.min(currentMortgageMonthly - monthlyInterest, currentMortgageBalance);
+      currentMortgageBalance = Math.max(0, currentMortgageBalance - monthlyPrincipal);
+    }
     
     const grossIncome = paulSSMonthly + jessicaSSMonthly + vaDisabilityMonthly + businessMonthly + jessicaWorkMonthly + chapter35Monthly + income1Monthly + income2Monthly + income3Monthly;
     
@@ -462,7 +499,7 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
       calculateTaxes(jessicaWorkMonthly, state.taxRates.jessica, true);
     
     const netIncome = grossIncome - taxes;
-    const netCashFlow = netIncome - livingExpMonthly - insuranceMonthly - mortgageMonthly;
+    const netCashFlow = netIncome - livingExpMonthly - insuranceMonthly - currentMortgageMonthly - lumpSumPayment;
     
     // All positive cash flow goes to savings, negative cash flow comes from savings
     runningBalance += netCashFlow;
@@ -480,7 +517,7 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
       netIncome,
       livingExp: livingExpMonthly,
       insurance: insuranceMonthly,
-      mortgage: mortgageMonthly,
+      mortgage: currentMortgageMonthly,
       netCashFlow,
       savingsBalance: runningBalance
     });
