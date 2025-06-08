@@ -23,8 +23,7 @@ const getAnnualColumns = (data: AnnualData[]) => {
   
   const columns = [
     { key: 'year', label: 'Year', visible: true, fixed: true },
-    { key: 'paulAge', label: 'Paul Age', visible: true },
-    { key: 'jessicaAge', label: 'Jessica Age', visible: true },
+    { key: 'ages', label: 'Ages (P/J)', visible: true },
     { key: 'paulSS', label: 'Paul SS', visible: true },
     { key: 'jessicaSS', label: 'Jessica SS', visible: true },
     { key: 'vaDisability', label: 'VA Disability', visible: true },
@@ -154,6 +153,8 @@ export function ResultsTable({
       case 'year':
       case 'month':
         return data[columnKey];
+      case 'ages':
+        return `${data.paulAge}/${data.jessicaAge}`;
       case 'paulAge':
       case 'jessicaAge':
         return data[columnKey];
