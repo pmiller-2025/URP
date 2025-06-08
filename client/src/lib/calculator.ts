@@ -294,7 +294,7 @@ export function getDefaultState(): CalculatorState {
       jessicaStartAge: 68
     },
     otherIncome: {
-      vaDisability: 4000,
+      vaDisability: 4050,
       businessIncome: 4000,
       jessicaIncome: 1250,
       chapter35: 1000,
