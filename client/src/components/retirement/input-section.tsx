@@ -231,7 +231,7 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                   <SelectContent>
                     {ssBenefitOptions.map(option => (
                       <SelectItem key={option.age} value={option.age.toString()}>
-                        Age {option.age}: ${option.amount.toLocaleString()}/mo ({option.description.split(' - ')[0]})
+                        Age {option.age}: ${Math.round(option.amount).toLocaleString()}/mo ({option.description.split(' - ')[0]})
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -1144,7 +1144,7 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                   <div className="flex justify-between items-center">
                     <Label className="text-sm font-medium text-gray-700">Budget Categories</Label>
                     <div className="text-sm text-gray-600 bg-gray-50 px-3 py-1 rounded">
-                      Total: ${getTotalLivingExpenses(state.expenses).toLocaleString()}
+                      Total: ${Math.round(getTotalLivingExpenses(state.expenses)).toLocaleString()}
                     </div>
                   </div>
                   
@@ -1310,7 +1310,7 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Total Cost:</span>
-                    <span className="font-medium">${calculateLifeInsuranceTotalCost(state.expenses).toLocaleString()}</span>
+                    <span className="font-medium">${Math.round(calculateLifeInsuranceTotalCost(state.expenses)).toLocaleString()}</span>
                   </div>
                 </div>
               </div>

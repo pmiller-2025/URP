@@ -125,7 +125,7 @@ export function ResultsTable({
       currency: 'USD',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
-    }).format(Math.abs(amount));
+    }).format(Math.abs(Math.round(amount)));
     
     return isNegative ? `-${formattedAmount}` : formattedAmount;
   };
