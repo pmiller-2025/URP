@@ -199,10 +199,9 @@ export function calculateAge(birthMonth: number, birthYear: number, currentMonth
 }
 
 export function getCurrentDate(): { month: number; year: number } {
-  const now = new Date();
   return {
-    month: now.getMonth() + 1, // JavaScript months are 0-indexed
-    year: now.getFullYear()
+    month: 6, // June 2025 start
+    year: 2025
   };
 }
 
