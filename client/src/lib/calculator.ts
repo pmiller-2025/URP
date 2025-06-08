@@ -273,7 +273,7 @@ export function getDefaultState(): CalculatorState {
     housing: {
       homeValue: 1000000,
       mortgageBalance: 129960.76,
-      monthlyPayment: 2000,
+      monthlyPayment: 1816.92,
       interestRate: 5.5,
       targetPayoffMonths: 24,
       homeAppreciation: 2.5,
