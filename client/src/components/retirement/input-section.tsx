@@ -266,13 +266,11 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                   value={state.socialSecurity.jessicaStartAge.toString()} 
                   onValueChange={(value) => {
                     const age = parseInt(value);
-                    const benefit = ssBenefitOptions.find(opt => opt.age === age);
-                    if (benefit) {
-                      onUpdate('socialSecurity', { 
-                        jessicaStartAge: age,
-                        jessicaAmount: benefit.amount * 0.5 
-                      });
-                    }
+                    // Jessica always gets 50% of Paul's current amount
+                    onUpdate('socialSecurity', { 
+                      jessicaStartAge: age,
+                      jessicaAmount: Math.round(state.socialSecurity.paulAmount * 0.5)
+                    });
                   }}
                 >
                   <SelectTrigger className="focus:ring-2 focus:ring-finance-blue focus:border-transparent">
@@ -281,7 +279,7 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                   <SelectContent>
                     {ssBenefitOptions.map(option => (
                       <SelectItem key={option.age} value={option.age.toString()}>
-                        Age {option.age}: ${Math.round(option.amount * 0.5).toLocaleString()}/mo (50% of Paul's)
+                        Age {option.age}: ${Math.round(state.socialSecurity.paulAmount * 0.5).toLocaleString()}/mo (50% of Paul's)
                       </SelectItem>
                     ))}
                   </SelectContent>

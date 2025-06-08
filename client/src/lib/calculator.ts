@@ -287,13 +287,13 @@ export function getDefaultState(): CalculatorState {
       projectionYears: 20
     },
     socialSecurity: {
-      paulAmount: 3324,
-      jessicaAmount: 1662, // Always 50% of Paul's amount
+      paulAmount: 3984, // Age 70 benefit
+      jessicaAmount: 1992, // Always 50% of Paul's amount (3984 * 0.5)
       cola: 3.0,
       paulTaxable: true,
       jessicaTaxable: true,
-      paulStartAge: 68,
-      jessicaStartAge: 68
+      paulStartAge: 70,
+      jessicaStartAge: 67
     },
     otherIncome: {
       vaDisability: 4050,
