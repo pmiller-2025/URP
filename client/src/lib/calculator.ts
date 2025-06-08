@@ -106,14 +106,17 @@ export interface Expenses {
   lifeInsuranceEndMonth: number;
   lifeInsuranceEndYear: number;
   expense1: number;
+  expense1Name: string;
   expense1Duration: number;
   expense1StartMonth: number;
   expense1StartYear: number;
   expense2: number;
+  expense2Name: string;
   expense2Duration: number;
   expense2StartMonth: number;
   expense2StartYear: number;
   expense3: number;
+  expense3Name: string;
   expense3Duration: number;
   expense3StartMonth: number;
   expense3StartYear: number;
@@ -352,14 +355,17 @@ export function getDefaultState(): CalculatorState {
       lifeInsuranceEndMonth: 4,
       lifeInsuranceEndYear: 11,
       expense1: 0,
+      expense1Name: "Additional Expense 1",
       expense1Duration: 12,
       expense1StartMonth: 1,
       expense1StartYear: 1,
       expense2: 0,
+      expense2Name: "Additional Expense 2",
       expense2Duration: 12,
       expense2StartMonth: 1,
       expense2StartYear: 1,
       expense3: 0,
+      expense3Name: "Additional Expense 3",
       expense3Duration: 12,
       expense3StartMonth: 1,
       expense3StartYear: 1,

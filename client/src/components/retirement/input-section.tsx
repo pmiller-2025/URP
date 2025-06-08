@@ -1353,6 +1353,7 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                       size="sm"
                       onClick={() => onUpdate('expenses', { 
                         expense1: 0, 
+                        expense1Name: "Additional Expense 1",
                         expense1Duration: 12, 
                         expense1StartMonth: 1, 
                         expense1StartYear: 1 
@@ -1362,14 +1363,29 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                       <Trash2 className="h-3 w-3" />
                     </Button>
                   </div>
-                  <div className="relative">
-                    <span className="absolute left-3 top-2 text-gray-500">$</span>
-                    <Input 
-                      type="text" 
-                      value={formatCurrency(state.expenses.expense1)}
-                      onChange={(e) => onUpdate('expenses', { expense1: parseCurrency(e.target.value) })}
-                      className="pl-8 focus:ring-2 focus:ring-finance-blue focus:border-transparent"
-                    />
+                  <div className="space-y-2">
+                    <div>
+                      <Label className="block text-xs text-gray-600 mb-1">Name</Label>
+                      <Input 
+                        type="text" 
+                        value={state.expenses.expense1Name}
+                        onChange={(e) => onUpdate('expenses', { expense1Name: e.target.value })}
+                        className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                        placeholder="Enter expense name"
+                      />
+                    </div>
+                    <div>
+                      <Label className="block text-xs text-gray-600 mb-1">Monthly Amount</Label>
+                      <div className="relative">
+                        <span className="absolute left-3 top-2 text-gray-500">$</span>
+                        <Input 
+                          type="text" 
+                          value={formatCurrency(state.expenses.expense1)}
+                          onChange={(e) => onUpdate('expenses', { expense1: parseCurrency(e.target.value) })}
+                          className="pl-8 focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                        />
+                      </div>
+                    </div>
                   </div>
                   <div className="grid grid-cols-3 gap-2 mt-2">
                     <div>
@@ -1433,6 +1449,7 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                       size="sm"
                       onClick={() => onUpdate('expenses', { 
                         expense2: 0, 
+                        expense2Name: "Additional Expense 2",
                         expense2Duration: 12, 
                         expense2StartMonth: 1, 
                         expense2StartYear: 1 
@@ -1442,14 +1459,29 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                       <Trash2 className="h-3 w-3" />
                     </Button>
                   </div>
-                  <div className="relative">
-                    <span className="absolute left-3 top-2 text-gray-500">$</span>
-                    <Input 
-                      type="text" 
-                      value={formatCurrency(state.expenses.expense2)}
-                      onChange={(e) => onUpdate('expenses', { expense2: parseCurrency(e.target.value) })}
-                      className="pl-8 focus:ring-2 focus:ring-finance-blue focus:border-transparent"
-                    />
+                  <div className="space-y-2">
+                    <div>
+                      <Label className="block text-xs text-gray-600 mb-1">Name</Label>
+                      <Input 
+                        type="text" 
+                        value={state.expenses.expense2Name}
+                        onChange={(e) => onUpdate('expenses', { expense2Name: e.target.value })}
+                        className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                        placeholder="Enter expense name"
+                      />
+                    </div>
+                    <div>
+                      <Label className="block text-xs text-gray-600 mb-1">Monthly Amount</Label>
+                      <div className="relative">
+                        <span className="absolute left-3 top-2 text-gray-500">$</span>
+                        <Input 
+                          type="text" 
+                          value={formatCurrency(state.expenses.expense2)}
+                          onChange={(e) => onUpdate('expenses', { expense2: parseCurrency(e.target.value) })}
+                          className="pl-8 focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                        />
+                      </div>
+                    </div>
                   </div>
                   <div className="grid grid-cols-3 gap-2 mt-2">
                     <div>
@@ -1513,6 +1545,7 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                       size="sm"
                       onClick={() => onUpdate('expenses', { 
                         expense3: 0, 
+                        expense3Name: "Additional Expense 3",
                         expense3Duration: 12, 
                         expense3StartMonth: 1, 
                         expense3StartYear: 1 
@@ -1522,14 +1555,29 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                       <Trash2 className="h-3 w-3" />
                     </Button>
                   </div>
-                  <div className="relative">
-                    <span className="absolute left-3 top-2 text-gray-500">$</span>
-                    <Input 
-                      type="text" 
-                      value={formatCurrency(state.expenses.expense3)}
-                      onChange={(e) => onUpdate('expenses', { expense3: parseCurrency(e.target.value) })}
-                      className="pl-8 focus:ring-2 focus:ring-finance-blue focus:border-transparent"
-                    />
+                  <div className="space-y-2">
+                    <div>
+                      <Label className="block text-xs text-gray-600 mb-1">Name</Label>
+                      <Input 
+                        type="text" 
+                        value={state.expenses.expense3Name}
+                        onChange={(e) => onUpdate('expenses', { expense3Name: e.target.value })}
+                        className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                        placeholder="Enter expense name"
+                      />
+                    </div>
+                    <div>
+                      <Label className="block text-xs text-gray-600 mb-1">Monthly Amount</Label>
+                      <div className="relative">
+                        <span className="absolute left-3 top-2 text-gray-500">$</span>
+                        <Input 
+                          type="text" 
+                          value={formatCurrency(state.expenses.expense3)}
+                          onChange={(e) => onUpdate('expenses', { expense3: parseCurrency(e.target.value) })}
+                          className="pl-8 focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                        />
+                      </div>
+                    </div>
                   </div>
                   <div className="grid grid-cols-3 gap-2 mt-2">
                     <div>

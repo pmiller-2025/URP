@@ -91,14 +91,17 @@ interface Expenses {
   lifeInsuranceEndMonth: number;
   lifeInsuranceEndYear: number;
   expense1: number;
+  expense1Name: string;
   expense1Duration: number;
   expense1StartMonth: number;
   expense1StartYear: number;
   expense2: number;
+  expense2Name: string;
   expense2Duration: number;
   expense2StartMonth: number;
   expense2StartYear: number;
   expense3: number;
+  expense3Name: string;
   expense3Duration: number;
   expense3StartMonth: number;
   expense3StartYear: number;
