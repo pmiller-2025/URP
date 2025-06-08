@@ -143,9 +143,87 @@ export function InvestmentAllocator({ selectedStrategy, currentReturn, onStrateg
         ))}
       </div>
       
-      <div className="text-xs text-gray-600 bg-blue-50 p-2 rounded">
-        Current: {selectedStrategy.charAt(0).toUpperCase() + selectedStrategy.slice(1)} 
-        strategy ({currentReturn}% expected return)
+      <div className="mt-4 p-3 bg-gray-50 rounded-lg border">
+        {(() => {
+          const selected = investmentStrategies.find(s => s.strategy === selectedStrategy);
+          if (!selected) {
+            return (
+              <div className="text-sm text-gray-600">
+                Custom strategy with {currentReturn}% expected return
+              </div>
+            );
+          }
+          
+          return (
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                {getStrategyIcon(selected.strategy)}
+                <h4 className="text-sm font-semibold capitalize">
+                  {selected.strategy} Strategy Details
+                </h4>
+              </div>
+              
+              <p className="text-xs text-gray-600">{selected.description}</p>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <h5 className="text-xs font-medium text-gray-800 mb-1">Asset Allocation</h5>
+                  <div className="space-y-0.5 text-xs text-gray-600">
+                    <div className="flex justify-between">
+                      <span>Stocks:</span>
+                      <span className="font-medium">{selected.allocation.stocks}%</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Bonds:</span>
+                      <span className="font-medium">{selected.allocation.bonds}%</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Cash:</span>
+                      <span className="font-medium">{selected.allocation.cash}%</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>International:</span>
+                      <span className="font-medium">{selected.allocation.international}%</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <div>
+                  <h5 className="text-xs font-medium text-gray-800 mb-1">Risk Profile</h5>
+                  <div className="space-y-0.5 text-xs text-gray-600">
+                    <div className="flex justify-between">
+                      <span>Expected Return:</span>
+                      <span className="font-medium">{selected.expectedReturn}%</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Risk Level:</span>
+                      <span className="font-medium">{selected.riskLevel}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Volatility:</span>
+                      <span className="font-medium">{selected.volatility}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Time Horizon:</span>
+                      <span className="font-medium">{selected.timeHorizon}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div>
+                <h5 className="text-xs font-medium text-gray-800 mb-1">Best Suited For</h5>
+                <div className="flex flex-wrap gap-1">
+                  {selected.suitableFor.map((item, index) => (
+                    <span key={index} className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">
+                      {item}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          );
+        })()}
       </div>
     </div>
   );
