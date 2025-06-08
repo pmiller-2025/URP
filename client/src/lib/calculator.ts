@@ -274,10 +274,10 @@ export function getDefaultState(): CalculatorState {
       basicLiving: 5000,
       detailedBudget: [...defaultBudgetCategories],
       lifeInsurance: 500,
-      lifeInsuranceStartMonth: 1,
-      lifeInsuranceStartYear: 1,
-      lifeInsuranceEndMonth: 12,
-      lifeInsuranceEndYear: 8,
+      lifeInsuranceStartMonth: 10,
+      lifeInsuranceStartYear: 3,
+      lifeInsuranceEndMonth: 4,
+      lifeInsuranceEndYear: 11,
       inflationRate: 3.0
     },
     taxRates: {
