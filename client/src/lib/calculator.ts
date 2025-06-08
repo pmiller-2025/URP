@@ -190,8 +190,10 @@ export interface SummaryMetrics {
   avgMonthlyCashFlow: number;
   savingsGrowthPercent: number;
   totalInterestPaid: number;
+  standardInterestTotal: number;
   interestSaved: number;
   mortgagePayoffDate: string;
+  standardPayoffDate: string;
 }
 
 export function calculateAge(birthMonth: number, birthYear: number, currentMonth: number = 6, currentYear: number = 2025): number {
@@ -1046,10 +1048,12 @@ export function calculateSummaryMetrics(annualData: AnnualData[], state: Calcula
   // Calculate mortgage interest metrics
   const actualPayoffMonths = state.housing.acceleratePayoff ? state.housing.targetPayoffMonths : 87;
   const totalInterestPaid = calculateTotalInterestFromSchedule(actualPayoffMonths);
+  const standardInterestTotal = calculateTotalInterestFromSchedule(87); // Always calculate standard 87-month total
   const interestSaved = state.housing.acceleratePayoff ? 
     calculateInterestSaved(state.housing.targetPayoffMonths) : 0;
   const mortgagePayoffDate = state.housing.acceleratePayoff ? 
     getMortgagePayoffDate(state.housing.targetPayoffMonths) : getMortgagePayoffDate();
+  const standardPayoffDate = getMortgagePayoffDate(); // Standard 87-month payoff date
 
   return {
     finalNetWorth: finalYear.netWorth,
@@ -1057,7 +1061,9 @@ export function calculateSummaryMetrics(annualData: AnnualData[], state: Calcula
     avgMonthlyCashFlow,
     savingsGrowthPercent,
     totalInterestPaid,
+    standardInterestTotal,
     interestSaved,
-    mortgagePayoffDate
+    mortgagePayoffDate,
+    standardPayoffDate
   };
 }
