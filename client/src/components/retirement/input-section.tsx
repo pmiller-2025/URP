@@ -27,7 +27,7 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
   
   // Format currency for display
   const formatCurrency = (value: number): string => {
-    return value.toLocaleString();
+    return Math.round(value).toLocaleString();
   };
   
   // Parse formatted currency back to number
