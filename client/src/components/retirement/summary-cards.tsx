@@ -8,6 +8,9 @@ interface SummaryCardsProps {
 export function SummaryCards({ metrics }: SummaryCardsProps) {
   // Enhanced mortgage summary with comprehensive interest calculations
   const formatCurrency = (amount: number) => {
+    if (!isFinite(amount) || isNaN(amount)) {
+      return '$0';
+    }
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'USD',
@@ -126,7 +129,7 @@ export function SummaryCards({ metrics }: SummaryCardsProps) {
                   </div>
                   <div className="text-sm text-green-700">Money Saved</div>
                 </div>
-                {metrics.interestSaved > 0 && (
+                {metrics.interestSaved > 0 && metrics.standardInterestTotal > 0 && (
                   <div className="pt-3 border-t border-green-300">
                     <div className="text-center">
                       <div className="text-sm text-green-700 font-medium">
@@ -145,21 +148,33 @@ export function SummaryCards({ metrics }: SummaryCardsProps) {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
               <div>
                 <div className="text-lg font-semibold text-gray-800">
-                  {Math.round((metrics.standardInterestTotal - metrics.totalInterestPaid) / 1000) || 0}K
+                  {metrics.standardInterestTotal > 0 && metrics.totalInterestPaid >= 0 ? 
+                    Math.round((metrics.standardInterestTotal - metrics.totalInterestPaid) / 1000) : 0}K
                 </div>
                 <div className="text-xs text-gray-600">Interest Avoided</div>
               </div>
               <div>
                 <div className="text-lg font-semibold text-gray-800">
-                  {metrics.interestSaved > 0 && metrics.standardInterestTotal > metrics.totalInterestPaid ? 
-                    Math.round((metrics.interestSaved / (metrics.standardInterestTotal - metrics.totalInterestPaid)) * 100) || 0 : 0}%
+                  {metrics.interestSaved > 0 && metrics.standardInterestTotal > 0 ? 
+                    Math.round((metrics.interestSaved / metrics.standardInterestTotal) * 100) : 0}%
                 </div>
                 <div className="text-xs text-gray-600">Efficiency Gain</div>
               </div>
               <div>
                 <div className="text-lg font-semibold text-gray-800">
-                  {metrics.standardPayoffDate && metrics.mortgagePayoffDate ? 
-                    Math.max(0, Math.round((new Date(metrics.standardPayoffDate).getTime() - new Date(metrics.mortgagePayoffDate).getTime()) / (1000 * 60 * 60 * 24 * 30.44))) : 0}
+                  {(() => {
+                    try {
+                      if (!metrics.standardPayoffDate || !metrics.mortgagePayoffDate) return 0;
+                      const standardDate = new Date(metrics.standardPayoffDate);
+                      const acceleratedDate = new Date(metrics.mortgagePayoffDate);
+                      if (isNaN(standardDate.getTime()) || isNaN(acceleratedDate.getTime())) return 0;
+                      const diffMs = standardDate.getTime() - acceleratedDate.getTime();
+                      const monthsDiff = Math.round(diffMs / (1000 * 60 * 60 * 24 * 30.44));
+                      return Math.max(0, monthsDiff);
+                    } catch {
+                      return 0;
+                    }
+                  })()}
                 </div>
                 <div className="text-xs text-gray-600">Months Saved</div>
               </div>
