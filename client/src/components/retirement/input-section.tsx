@@ -782,7 +782,7 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                           <SelectContent>
                             {Array.from({ length: 20 }, (_, i) => (
                               <SelectItem key={i + 1} value={(i + 1).toString()}>
-                                Year {i + 1}
+                                {2024 + i + 1}
                               </SelectItem>
                             ))}
                           </SelectContent>
@@ -855,7 +855,7 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                     <div className="flex justify-between text-xs">
                       <span className="text-gray-600">Lump Sum Date:</span>
                       <span className="font-medium text-orange-600">
-                        {new Date(2024, state.housing.lumpSumMonth - 1).toLocaleDateString('en-US', { month: 'short' })} {2024 + state.housing.lumpSumYear - 1}
+                        {new Date(2024, state.housing.lumpSumMonth - 1).toLocaleDateString('en-US', { month: 'short' })} {2024 + state.housing.lumpSumYear}
                       </span>
                     </div>
                   )}
@@ -1054,9 +1054,9 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                 <div className="relative">
                   <span className="absolute left-3 top-2 text-gray-500">$</span>
                   <Input 
-                    type="number" 
-                    value={state.expenses.lifeInsurance}
-                    onChange={(e) => onUpdate('expenses', { lifeInsurance: parseFloat(e.target.value) || 0 })}
+                    type="text" 
+                    value={formatCurrency(state.expenses.lifeInsurance)}
+                    onChange={(e) => onUpdate('expenses', { lifeInsurance: parseCurrency(e.target.value) })}
                     className="pl-8 focus:ring-2 focus:ring-finance-blue focus:border-transparent"
                   />
                 </div>
