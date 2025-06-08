@@ -661,41 +661,42 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
   const vaDisabilityMonthly = calculateInflationAdjusted(state.otherIncome.vaDisability, state.expenses.inflationRate, yearIndex);
   
   // Calculate business income with start month/year and duration
+  // Since projections start from June 2025 (month 6), adjust the offset calculation
   const totalMonthsElapsed = yearIndex * 12;
-  const businessStartMonthOffset = (state.otherIncome.businessStartYear - 1) * 12 + (state.otherIncome.businessStartMonth - 1);
+  const businessStartMonthOffset = (state.otherIncome.businessStartYear - 1) * 12 + (state.otherIncome.businessStartMonth - 6); // Adjust for June start
   const businessMonthsElapsed = totalMonthsElapsed - businessStartMonthOffset;
   const businessMonthly = (businessMonthsElapsed >= 0 && businessMonthsElapsed < state.otherIncome.businessDuration) 
     ? state.otherIncome.businessIncome 
     : 0;
   
   // Calculate Jessica's income with start month/year and duration
-  const jessicaStartMonthOffset = (state.otherIncome.jessicaStartYear - 1) * 12 + (state.otherIncome.jessicaStartMonth - 1);
+  const jessicaStartMonthOffset = (state.otherIncome.jessicaStartYear - 1) * 12 + (state.otherIncome.jessicaStartMonth - 6); // Adjust for June start
   const jessicaMonthsElapsed = totalMonthsElapsed - jessicaStartMonthOffset;
   const jessicaWorkMonthly = (jessicaMonthsElapsed >= 0 && jessicaMonthsElapsed < state.otherIncome.jessicaDuration) 
     ? state.otherIncome.jessicaIncome 
     : 0;
   
   // Calculate Chapter 35 with start month/year and duration
-  const chapter35StartMonthOffset = (state.otherIncome.chapter35StartYear - 1) * 12 + (state.otherIncome.chapter35StartMonth - 1);
+  const chapter35StartMonthOffset = (state.otherIncome.chapter35StartYear - 1) * 12 + (state.otherIncome.chapter35StartMonth - 6); // Adjust for June start
   const chapter35MonthsElapsed = totalMonthsElapsed - chapter35StartMonthOffset;
   const chapter35Monthly = (chapter35MonthsElapsed >= 0 && chapter35MonthsElapsed < state.otherIncome.chapter35Duration) 
     ? state.otherIncome.chapter35 
     : 0;
 
   // Calculate Additional Income streams (only if amount > 0)
-  const income1StartMonthOffset = (state.otherIncome.income1StartYear - 1) * 12 + (state.otherIncome.income1StartMonth - 1);
+  const income1StartMonthOffset = (state.otherIncome.income1StartYear - 1) * 12 + (state.otherIncome.income1StartMonth - 6); // Adjust for June start
   const income1MonthsElapsed = totalMonthsElapsed - income1StartMonthOffset;
   const income1Monthly = (state.otherIncome.income1 > 0 && income1MonthsElapsed >= 0 && income1MonthsElapsed < state.otherIncome.income1Duration) 
     ? state.otherIncome.income1 
     : 0;
 
-  const income2StartMonthOffset = (state.otherIncome.income2StartYear - 1) * 12 + (state.otherIncome.income2StartMonth - 1);
+  const income2StartMonthOffset = (state.otherIncome.income2StartYear - 1) * 12 + (state.otherIncome.income2StartMonth - 6); // Adjust for June start
   const income2MonthsElapsed = totalMonthsElapsed - income2StartMonthOffset;
   const income2Monthly = (state.otherIncome.income2 > 0 && income2MonthsElapsed >= 0 && income2MonthsElapsed < state.otherIncome.income2Duration) 
     ? state.otherIncome.income2 
     : 0;
 
-  const income3StartMonthOffset = (state.otherIncome.income3StartYear - 1) * 12 + (state.otherIncome.income3StartMonth - 1);
+  const income3StartMonthOffset = (state.otherIncome.income3StartYear - 1) * 12 + (state.otherIncome.income3StartMonth - 6); // Adjust for June start
   const income3MonthsElapsed = totalMonthsElapsed - income3StartMonthOffset;
   const income3Monthly = (state.otherIncome.income3 > 0 && income3MonthsElapsed >= 0 && income3MonthsElapsed < state.otherIncome.income3Duration) 
     ? state.otherIncome.income3 
