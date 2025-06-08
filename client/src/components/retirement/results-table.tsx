@@ -91,7 +91,8 @@ const getMonthlyColumns = (data: MonthlyData[]) => {
   }
   
   columns.push(
-    { key: 'mortgage', label: 'Mortgage', visible: true },
+    { key: 'mortgage', label: 'Mortgage Payment', visible: true },
+    { key: 'mortgageBalance', label: 'Mortgage Balance', visible: true },
     { key: 'netCashFlow', label: 'Net Cash Flow', visible: true },
     { key: 'savingsBalance', label: 'Savings Balance', visible: true }
   );
