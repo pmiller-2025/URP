@@ -18,21 +18,24 @@ export interface IStorage {
 
 export class DatabaseStorage implements IStorage {
   async getUser(id: number): Promise<User | undefined> {
-    const { db } = await import("./db");
+    const { getDb } = await import("./db");
     const { eq } = await import("drizzle-orm");
+    const db = getDb();
     const [user] = await db.select().from(users).where(eq(users.id, id));
     return user || undefined;
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
-    const { db } = await import("./db");
+    const { getDb } = await import("./db");
     const { eq } = await import("drizzle-orm");
+    const db = getDb();
     const [user] = await db.select().from(users).where(eq(users.username, username));
     return user || undefined;
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
-    const { db } = await import("./db");
+    const { getDb } = await import("./db");
+    const db = getDb();
     const [user] = await db
       .insert(users)
       .values(insertUser)
@@ -41,20 +44,23 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getAllScenarios(): Promise<RetirementScenario[]> {
-    const { db } = await import("./db");
+    const { getDb } = await import("./db");
     const { desc } = await import("drizzle-orm");
+    const db = getDb();
     return await db.select().from(retirementScenarios).orderBy(desc(retirementScenarios.updatedAt));
   }
 
   async getScenario(id: number): Promise<RetirementScenario | undefined> {
-    const { db } = await import("./db");
+    const { getDb } = await import("./db");
+    const db = getDb();
     const { eq } = await import("drizzle-orm");
     const [scenario] = await db.select().from(retirementScenarios).where(eq(retirementScenarios.id, id));
     return scenario || undefined;
   }
 
   async createScenario(scenario: InsertScenario): Promise<RetirementScenario> {
-    const { db } = await import("./db");
+    const { getDb } = await import("./db");
+    const db = getDb();
     const [created] = await db
       .insert(retirementScenarios)
       .values(scenario)
@@ -63,8 +69,9 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateScenario(id: number, updates: Partial<InsertScenario>): Promise<RetirementScenario | undefined> {
-    const { db } = await import("./db");
+    const { getDb } = await import("./db");
     const { eq } = await import("drizzle-orm");
+    const db = getDb();
     const [updated] = await db
       .update(retirementScenarios)
       .set({ ...updates, updatedAt: new Date() })
@@ -74,8 +81,9 @@ export class DatabaseStorage implements IStorage {
   }
 
   async deleteScenario(id: number): Promise<boolean> {
-    const { db } = await import("./db");
+    const { getDb } = await import("./db");
     const { eq } = await import("drizzle-orm");
+    const db = getDb();
     const result = await db
       .delete(retirementScenarios)
       .where(eq(retirementScenarios.id, id));
