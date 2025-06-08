@@ -269,7 +269,7 @@ export function getDefaultState(): CalculatorState {
     },
     housing: {
       homeValue: 1000000,
-      mortgageBalance: 130000,
+      mortgageBalance: 129960.76,
       monthlyPayment: 2000,
       interestRate: 5.5,
       targetPayoffMonths: 24,
@@ -315,6 +315,116 @@ export function getDefaultState(): CalculatorState {
       jessica: 12
     }
   };
+}
+
+// Mortgage amortization schedule data from provided document
+interface MortgagePayment {
+  paymentNumber: number;
+  paymentDate: string;
+  startingBalance: number;
+  principalPayment: number;
+  interestPayment: number;
+  endingBalance: number;
+}
+
+const mortgageAmortizationSchedule: MortgagePayment[] = [
+  { paymentNumber: 1, paymentDate: "07/01/2025", startingBalance: 129960.76, principalPayment: 1221.27, interestPayment: 595.65, endingBalance: 128739.49 },
+  { paymentNumber: 2, paymentDate: "08/01/2025", startingBalance: 128739.49, principalPayment: 1226.86, interestPayment: 590.06, endingBalance: 127512.63 },
+  { paymentNumber: 3, paymentDate: "09/01/2025", startingBalance: 127512.63, principalPayment: 1232.49, interestPayment: 584.43, endingBalance: 126280.14 },
+  { paymentNumber: 4, paymentDate: "10/01/2025", startingBalance: 126280.14, principalPayment: 1238.14, interestPayment: 578.78, endingBalance: 125042.01 },
+  { paymentNumber: 5, paymentDate: "11/01/2025", startingBalance: 125042.01, principalPayment: 1243.81, interestPayment: 573.11, endingBalance: 123798.20 },
+  { paymentNumber: 6, paymentDate: "12/01/2025", startingBalance: 123798.20, principalPayment: 1249.51, interestPayment: 567.41, endingBalance: 122548.68 },
+  { paymentNumber: 7, paymentDate: "01/01/2026", startingBalance: 122548.68, principalPayment: 1255.24, interestPayment: 561.68, endingBalance: 121293.45 },
+  { paymentNumber: 8, paymentDate: "02/01/2026", startingBalance: 121293.45, principalPayment: 1260.99, interestPayment: 555.93, endingBalance: 120032.45 },
+  { paymentNumber: 9, paymentDate: "03/01/2026", startingBalance: 120032.45, principalPayment: 1266.77, interestPayment: 550.15, endingBalance: 118765.68 },
+  { paymentNumber: 10, paymentDate: "04/01/2026", startingBalance: 118765.68, principalPayment: 1272.58, interestPayment: 544.34, endingBalance: 117493.11 },
+  { paymentNumber: 11, paymentDate: "05/01/2026", startingBalance: 117493.11, principalPayment: 1278.41, interestPayment: 538.51, endingBalance: 116214.70 },
+  { paymentNumber: 12, paymentDate: "06/01/2026", startingBalance: 116214.70, principalPayment: 1284.27, interestPayment: 532.65, endingBalance: 114930.43 },
+  { paymentNumber: 13, paymentDate: "07/01/2026", startingBalance: 114930.43, principalPayment: 1290.16, interestPayment: 526.76, endingBalance: 113640.27 },
+  { paymentNumber: 14, paymentDate: "08/01/2026", startingBalance: 113640.27, principalPayment: 1296.07, interestPayment: 520.85, endingBalance: 112344.20 },
+  { paymentNumber: 15, paymentDate: "09/01/2026", startingBalance: 112344.20, principalPayment: 1302.01, interestPayment: 514.91, endingBalance: 111042.19 },
+  { paymentNumber: 16, paymentDate: "10/01/2026", startingBalance: 111042.19, principalPayment: 1307.98, interestPayment: 508.94, endingBalance: 109734.22 },
+  { paymentNumber: 17, paymentDate: "11/01/2026", startingBalance: 109734.22, principalPayment: 1313.97, interestPayment: 502.95, endingBalance: 108420.24 },
+  { paymentNumber: 18, paymentDate: "12/01/2026", startingBalance: 108420.24, principalPayment: 1319.99, interestPayment: 496.93, endingBalance: 107100.25 },
+  { paymentNumber: 19, paymentDate: "01/01/2027", startingBalance: 107100.25, principalPayment: 1326.04, interestPayment: 490.88, endingBalance: 105774.21 },
+  { paymentNumber: 20, paymentDate: "02/01/2027", startingBalance: 105774.21, principalPayment: 1332.12, interestPayment: 484.80, endingBalance: 104442.09 },
+  { paymentNumber: 21, paymentDate: "03/01/2027", startingBalance: 104442.09, principalPayment: 1338.23, interestPayment: 478.69, endingBalance: 103103.86 },
+  { paymentNumber: 22, paymentDate: "04/01/2027", startingBalance: 103103.86, principalPayment: 1344.36, interestPayment: 472.56, endingBalance: 101759.50 },
+  { paymentNumber: 23, paymentDate: "05/01/2027", startingBalance: 101759.50, principalPayment: 1350.52, interestPayment: 466.40, endingBalance: 100408.98 },
+  { paymentNumber: 24, paymentDate: "06/01/2027", startingBalance: 100408.98, principalPayment: 1356.71, interestPayment: 460.21, endingBalance: 99052.26 },
+  { paymentNumber: 25, paymentDate: "07/01/2027", startingBalance: 99052.26, principalPayment: 1362.93, interestPayment: 453.99, endingBalance: 97689.33 },
+  { paymentNumber: 26, paymentDate: "08/01/2027", startingBalance: 97689.33, principalPayment: 1369.18, interestPayment: 447.74, endingBalance: 96320.16 },
+  { paymentNumber: 27, paymentDate: "09/01/2027", startingBalance: 96320.16, principalPayment: 1375.45, interestPayment: 441.47, endingBalance: 94944.70 },
+  { paymentNumber: 28, paymentDate: "10/01/2027", startingBalance: 94944.70, principalPayment: 1381.76, interestPayment: 435.16, endingBalance: 93562.95 },
+  { paymentNumber: 29, paymentDate: "11/01/2027", startingBalance: 93562.95, principalPayment: 1388.09, interestPayment: 428.83, endingBalance: 92174.86 },
+  { paymentNumber: 30, paymentDate: "12/01/2027", startingBalance: 92174.86, principalPayment: 1394.45, interestPayment: 422.47, endingBalance: 90780.40 },
+  { paymentNumber: 31, paymentDate: "01/01/2028", startingBalance: 90780.40, principalPayment: 1400.84, interestPayment: 416.08, endingBalance: 89379.56 },
+  { paymentNumber: 32, paymentDate: "02/01/2028", startingBalance: 89379.56, principalPayment: 1407.26, interestPayment: 409.66, endingBalance: 87972.30 },
+  { paymentNumber: 33, paymentDate: "03/01/2028", startingBalance: 87972.30, principalPayment: 1413.71, interestPayment: 403.21, endingBalance: 86558.58 },
+  { paymentNumber: 34, paymentDate: "04/01/2028", startingBalance: 86558.58, principalPayment: 1420.19, interestPayment: 396.73, endingBalance: 85138.39 },
+  { paymentNumber: 35, paymentDate: "05/01/2028", startingBalance: 85138.39, principalPayment: 1426.70, interestPayment: 390.22, endingBalance: 83711.69 },
+  { paymentNumber: 36, paymentDate: "06/01/2028", startingBalance: 83711.69, principalPayment: 1433.24, interestPayment: 383.68, endingBalance: 82278.45 },
+  { paymentNumber: 37, paymentDate: "07/01/2028", startingBalance: 82278.45, principalPayment: 1439.81, interestPayment: 377.11, endingBalance: 80838.64 },
+  { paymentNumber: 38, paymentDate: "08/01/2028", startingBalance: 80838.64, principalPayment: 1446.41, interestPayment: 370.51, endingBalance: 79392.23 },
+  { paymentNumber: 39, paymentDate: "09/01/2028", startingBalance: 79392.23, principalPayment: 1453.04, interestPayment: 363.88, endingBalance: 77939.19 },
+  { paymentNumber: 40, paymentDate: "10/01/2028", startingBalance: 77939.19, principalPayment: 1459.70, interestPayment: 357.22, endingBalance: 76479.49 },
+  { paymentNumber: 41, paymentDate: "11/01/2028", startingBalance: 76479.49, principalPayment: 1466.39, interestPayment: 350.53, endingBalance: 75013.10 },
+  { paymentNumber: 42, paymentDate: "12/01/2028", startingBalance: 75013.10, principalPayment: 1473.11, interestPayment: 343.81, endingBalance: 73539.99 },
+  { paymentNumber: 43, paymentDate: "01/01/2029", startingBalance: 73539.99, principalPayment: 1479.86, interestPayment: 337.06, endingBalance: 72060.13 },
+  { paymentNumber: 44, paymentDate: "02/01/2029", startingBalance: 72060.13, principalPayment: 1486.64, interestPayment: 330.28, endingBalance: 70573.48 },
+  { paymentNumber: 45, paymentDate: "03/01/2029", startingBalance: 70573.48, principalPayment: 1493.46, interestPayment: 323.46, endingBalance: 69080.03 },
+  { paymentNumber: 46, paymentDate: "04/01/2029", startingBalance: 69080.03, principalPayment: 1500.30, interestPayment: 316.62, endingBalance: 67579.72 },
+  { paymentNumber: 47, paymentDate: "05/01/2029", startingBalance: 67579.72, principalPayment: 1507.18, interestPayment: 309.74, endingBalance: 66072.54 },
+  { paymentNumber: 48, paymentDate: "06/01/2029", startingBalance: 66072.54, principalPayment: 1514.09, interestPayment: 302.83, endingBalance: 64558.46 },
+  { paymentNumber: 49, paymentDate: "07/01/2029", startingBalance: 64558.46, principalPayment: 1521.03, interestPayment: 295.89, endingBalance: 63037.43 },
+  { paymentNumber: 50, paymentDate: "08/01/2029", startingBalance: 63037.43, principalPayment: 1528.00, interestPayment: 288.92, endingBalance: 61509.43 },
+  { paymentNumber: 51, paymentDate: "09/01/2029", startingBalance: 61509.43, principalPayment: 1535.00, interestPayment: 281.92, endingBalance: 59974.43 },
+  { paymentNumber: 52, paymentDate: "10/01/2029", startingBalance: 59974.43, principalPayment: 1542.04, interestPayment: 274.88, endingBalance: 58432.39 },
+  { paymentNumber: 53, paymentDate: "11/01/2029", startingBalance: 58432.39, principalPayment: 1549.10, interestPayment: 267.82, endingBalance: 56883.29 },
+  { paymentNumber: 54, paymentDate: "12/01/2029", startingBalance: 56883.29, principalPayment: 1556.20, interestPayment: 260.72, endingBalance: 55327.08 },
+  { paymentNumber: 55, paymentDate: "01/01/2030", startingBalance: 55327.08, principalPayment: 1563.34, interestPayment: 253.58, endingBalance: 53763.74 },
+  { paymentNumber: 56, paymentDate: "02/01/2030", startingBalance: 53763.74, principalPayment: 1570.50, interestPayment: 246.42, endingBalance: 52193.24 },
+  { paymentNumber: 57, paymentDate: "03/01/2030", startingBalance: 52193.24, principalPayment: 1577.70, interestPayment: 239.22, endingBalance: 50615.54 },
+  { paymentNumber: 58, paymentDate: "04/01/2030", startingBalance: 50615.54, principalPayment: 1584.93, interestPayment: 231.99, endingBalance: 49030.61 },
+  { paymentNumber: 59, paymentDate: "05/01/2030", startingBalance: 49030.61, principalPayment: 1592.20, interestPayment: 224.72, endingBalance: 47438.41 },
+  { paymentNumber: 60, paymentDate: "06/01/2030", startingBalance: 47438.41, principalPayment: 1599.49, interestPayment: 217.43, endingBalance: 45838.92 },
+  { paymentNumber: 61, paymentDate: "07/01/2030", startingBalance: 45838.92, principalPayment: 1606.83, interestPayment: 210.10, endingBalance: 44232.09 },
+  { paymentNumber: 62, paymentDate: "08/01/2030", startingBalance: 44232.09, principalPayment: 1614.19, interestPayment: 202.73, endingBalance: 42617.90 },
+  { paymentNumber: 63, paymentDate: "09/01/2030", startingBalance: 42617.90, principalPayment: 1621.59, interestPayment: 195.33, endingBalance: 40996.31 },
+  { paymentNumber: 64, paymentDate: "10/01/2030", startingBalance: 40996.31, principalPayment: 1629.02, interestPayment: 187.90, endingBalance: 39367.29 },
+  { paymentNumber: 65, paymentDate: "11/01/2030", startingBalance: 39367.29, principalPayment: 1636.49, interestPayment: 180.43, endingBalance: 37730.81 },
+  { paymentNumber: 66, paymentDate: "12/01/2030", startingBalance: 37730.81, principalPayment: 1643.99, interestPayment: 172.93, endingBalance: 36086.82 },
+  { paymentNumber: 67, paymentDate: "01/01/2031", startingBalance: 36086.82, principalPayment: 1651.52, interestPayment: 165.40, endingBalance: 34435.30 },
+  { paymentNumber: 68, paymentDate: "02/01/2031", startingBalance: 34435.30, principalPayment: 1659.09, interestPayment: 157.83, endingBalance: 32776.21 },
+  { paymentNumber: 69, paymentDate: "03/01/2031", startingBalance: 32776.21, principalPayment: 1666.70, interestPayment: 150.22, endingBalance: 31109.51 },
+  { paymentNumber: 70, paymentDate: "04/01/2031", startingBalance: 31109.51, principalPayment: 1674.33, interestPayment: 142.59, endingBalance: 29435.18 },
+  { paymentNumber: 71, paymentDate: "05/01/2031", startingBalance: 29435.18, principalPayment: 1682.01, interestPayment: 134.91, endingBalance: 27753.17 },
+  { paymentNumber: 72, paymentDate: "06/01/2031", startingBalance: 27753.17, principalPayment: 1689.72, interestPayment: 127.20, endingBalance: 26063.45 },
+  { paymentNumber: 73, paymentDate: "07/01/2031", startingBalance: 26063.45, principalPayment: 1697.46, interestPayment: 119.46, endingBalance: 24365.99 },
+  { paymentNumber: 74, paymentDate: "08/01/2031", startingBalance: 24365.99, principalPayment: 1705.24, interestPayment: 111.68, endingBalance: 22660.74 },
+  { paymentNumber: 75, paymentDate: "09/01/2031", startingBalance: 22660.74, principalPayment: 1713.06, interestPayment: 103.86, endingBalance: 20947.69 },
+  { paymentNumber: 76, paymentDate: "10/01/2031", startingBalance: 20947.69, principalPayment: 1720.91, interestPayment: 96.01, endingBalance: 19226.78 },
+  { paymentNumber: 77, paymentDate: "11/01/2031", startingBalance: 19226.78, principalPayment: 1728.80, interestPayment: 88.12, endingBalance: 17497.98 },
+  { paymentNumber: 78, paymentDate: "12/01/2031", startingBalance: 17497.98, principalPayment: 1736.72, interestPayment: 80.20, endingBalance: 15761.26 },
+  { paymentNumber: 79, paymentDate: "01/01/2032", startingBalance: 15761.26, principalPayment: 1744.68, interestPayment: 72.24, endingBalance: 14016.58 },
+  { paymentNumber: 80, paymentDate: "02/01/2032", startingBalance: 14016.58, principalPayment: 1752.68, interestPayment: 64.24, endingBalance: 12263.90 },
+  { paymentNumber: 81, paymentDate: "03/01/2032", startingBalance: 12263.90, principalPayment: 1760.71, interestPayment: 56.21, endingBalance: 10503.19 },
+  { paymentNumber: 82, paymentDate: "04/01/2032", startingBalance: 10503.19, principalPayment: 1768.78, interestPayment: 48.14, endingBalance: 8734.41 },
+  { paymentNumber: 83, paymentDate: "05/01/2032", startingBalance: 8734.41, principalPayment: 1776.89, interestPayment: 40.03, endingBalance: 6957.52 },
+  { paymentNumber: 84, paymentDate: "06/01/2032", startingBalance: 6957.52, principalPayment: 1785.03, interestPayment: 31.89, endingBalance: 5172.49 },
+  { paymentNumber: 85, paymentDate: "07/01/2032", startingBalance: 5172.49, principalPayment: 1793.21, interestPayment: 23.71, endingBalance: 3379.28 },
+  { paymentNumber: 86, paymentDate: "08/01/2032", startingBalance: 3379.28, principalPayment: 1801.43, interestPayment: 15.49, endingBalance: 1577.85 },
+  { paymentNumber: 87, paymentDate: "09/01/2032", startingBalance: 1577.85, principalPayment: 1577.85, interestPayment: 7.23, endingBalance: 0.00 }
+];
+
+export function getMortgagePaymentByMonth(monthIndex: number): MortgagePayment | null {
+  // monthIndex is 0-based starting from June 2025 (month 0 = June 2025, 1 = July 2025)
+  // The amortization schedule starts July 2025, so we offset by 1
+  const scheduleIndex = monthIndex - 1;
+  if (scheduleIndex < 0 || scheduleIndex >= mortgageAmortizationSchedule.length) {
+    return null;
+  }
+  return mortgageAmortizationSchedule[scheduleIndex];
 }
 
 export function calculateMortgagePayment(balance: number, rate: number, months: number): number {
@@ -491,18 +601,10 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
     }
   }
   
-  // Calculate mortgage payment based on remaining balance
-  const extraPayment = state.housing.acceleratePayoff ? calculateExtraPayment(
-    currentMortgageBalance, 
-    state.housing.interestRate, 
-    state.housing.monthlyPayment, 
-    state.housing.targetPayoffMonths
-  ) : 0;
-  const totalMortgagePayment = state.housing.monthlyPayment + extraPayment;
-  
-  // Determine if mortgage is still active
-  const mortgageActive = currentMortgageBalance > 0;
-  const mortgageMonthly = mortgageActive ? totalMortgagePayment : 0;
+  // Get mortgage payment from amortization schedule
+  const mortgagePayment = getMortgagePaymentByMonth(totalMonthsElapsed);
+  const mortgageMonthly = mortgagePayment ? (mortgagePayment.principalPayment + mortgagePayment.interestPayment) : 0;
+  currentMortgageBalance = mortgagePayment ? mortgagePayment.endingBalance : 0;
   
   let runningBalance = state.savings.initialAmount;
   if (yearIndex > 0) {
@@ -520,22 +622,13 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
       currentMortgageBalance = Math.max(0, currentMortgageBalance - lumpSumPayment);
     }
     
-    // Recalculate mortgage payment for current balance
-    const currentExtraPayment = state.housing.acceleratePayoff ? calculateExtraPayment(
-      currentMortgageBalance, 
-      state.housing.interestRate, 
-      state.housing.monthlyPayment, 
-      state.housing.targetPayoffMonths
-    ) : 0;
-    const currentTotalMortgagePayment = state.housing.monthlyPayment + currentExtraPayment;
-    const currentMortgageActive = currentMortgageBalance > 0;
-    const currentMortgageMonthly = currentMortgageActive ? currentTotalMortgagePayment : 0;
+    // Get mortgage payment from amortization schedule for this specific month
+    const currentMortgagePayment = getMortgagePaymentByMonth(currentMonthOffset);
+    const currentMortgageMonthly = currentMortgagePayment ? (currentMortgagePayment.principalPayment + currentMortgagePayment.interestPayment) : 0;
     
-    // Update mortgage balance for next month
-    if (currentMortgageActive && currentMortgageMonthly > 0) {
-      const monthlyInterest = currentMortgageBalance * (state.housing.interestRate / 100 / 12);
-      const monthlyPrincipal = Math.min(currentMortgageMonthly - monthlyInterest, currentMortgageBalance);
-      currentMortgageBalance = Math.max(0, currentMortgageBalance - monthlyPrincipal);
+    // Update mortgage balance based on amortization schedule
+    if (currentMortgagePayment) {
+      currentMortgageBalance = currentMortgagePayment.endingBalance;
     }
     
     const grossIncome = paulSSMonthly + jessicaSSMonthly + vaDisabilityMonthly + businessMonthly + jessicaWorkMonthly + chapter35Monthly + income1Monthly + income2Monthly + income3Monthly;
@@ -784,22 +877,15 @@ export function calculateAnnualProjections(state: CalculatorState): AnnualData[]
       expense3Annual = state.expenses.expense3 * expense3MonthsThisYear;
     }
     
-    // Calculate mortgage payments
-    const extraPayment = state.housing.acceleratePayoff ? calculateExtraPayment(
-      state.housing.mortgageBalance, 
-      state.housing.interestRate, 
-      state.housing.monthlyPayment, 
-      state.housing.targetPayoffMonths
-    ) : 0;
-    const totalMortgagePayment = (state.housing.monthlyPayment + extraPayment) * 12;
-    
-    // Determine if mortgage is paid off
-    const mortgageMonthsElapsed = monthsElapsed;
-    const payoffMonths = state.housing.acceleratePayoff ? 
-      state.housing.targetPayoffMonths : 
-      calculateStandardPayoffMonths(state.housing.mortgageBalance, state.housing.interestRate, state.housing.monthlyPayment);
-    const mortgageActive = mortgageMonthsElapsed < payoffMonths;
-    const mortgageAnnual = mortgageActive ? totalMortgagePayment : 0;
+    // Calculate annual mortgage payments from amortization schedule
+    let mortgageAnnual = 0;
+    for (let month = 0; month < 12; month++) {
+      const monthOffset = monthsElapsed + month;
+      const mortgagePayment = getMortgagePaymentByMonth(monthOffset);
+      if (mortgagePayment) {
+        mortgageAnnual += mortgagePayment.principalPayment + mortgagePayment.interestPayment;
+      }
+    }
     
     const netCashFlow = afterTaxIncome - livingExpAnnual - insuranceAnnual - mortgageAnnual - expense1Annual - expense2Annual - expense3Annual;
     
@@ -812,25 +898,9 @@ export function calculateAnnualProjections(state: CalculatorState): AnnualData[]
     // All positive cash flow automatically increases savings, negative cash flow comes from savings
     currentSavingsBalance += netCashFlow + netInvestmentReturn + state.savings.additionalAnnual;
     
-    // Calculate mortgage balance
-    if (mortgageActive) {
-      // Apply lump sum payment if it occurs in this year
-      if (state.housing.lumpSumAmount > 0) {
-        const lumpSumMonthOffset = (state.housing.lumpSumYear - 1) * 12 + (state.housing.lumpSumMonth - 1);
-        const currentYearStart = monthsElapsed;
-        const currentYearEnd = monthsElapsed + 12;
-        
-        if (lumpSumMonthOffset >= currentYearStart && lumpSumMonthOffset < currentYearEnd) {
-          currentMortgageBalance = Math.max(0, currentMortgageBalance - state.housing.lumpSumAmount);
-        }
-      }
-      
-      // Simple calculation - in reality this would be more complex amortization
-      const monthlyPrincipal = (state.housing.monthlyPayment + extraPayment) - (currentMortgageBalance * state.housing.interestRate / 100 / 12);
-      currentMortgageBalance = Math.max(0, currentMortgageBalance - (monthlyPrincipal * 12));
-    } else {
-      currentMortgageBalance = 0;
-    }
+    // Calculate mortgage balance from amortization schedule
+    const endOfYearMortgagePayment = getMortgagePaymentByMonth(monthsElapsed + 11); // Last month of the year
+    currentMortgageBalance = endOfYearMortgagePayment ? endOfYearMortgagePayment.endingBalance : 0;
     
     // Calculate home value with appreciation
     const homeValue = calculateInflationAdjusted(state.housing.homeValue, state.housing.homeAppreciation, yearIndex);
