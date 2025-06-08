@@ -1637,7 +1637,10 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                     type="button"
                     variant="outline"
                     size="sm"
-                    onClick={() => onUpdate('expenses', { expense1: 100 })}
+                    onClick={() => onUpdate('expenses', { 
+                      expense1: 100,
+                      expense1Name: "Additional Expense 1" 
+                    })}
                     className="border-dashed"
                   >
                     <Plus className="h-4 w-4 mr-2" />
@@ -1649,7 +1652,10 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                     type="button"
                     variant="outline"
                     size="sm"
-                    onClick={() => onUpdate('expenses', { expense2: 100 })}
+                    onClick={() => onUpdate('expenses', { 
+                      expense2: 100,
+                      expense2Name: "Additional Expense 2" 
+                    })}
                     className="border-dashed"
                   >
                     <Plus className="h-4 w-4 mr-2" />
@@ -1661,7 +1667,10 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                     type="button"
                     variant="outline"
                     size="sm"
-                    onClick={() => onUpdate('expenses', { expense3: 100 })}
+                    onClick={() => onUpdate('expenses', { 
+                      expense3: 100,
+                      expense3Name: "Additional Expense 3" 
+                    })}
                     className="border-dashed"
                   >
                     <Plus className="h-4 w-4 mr-2" />
