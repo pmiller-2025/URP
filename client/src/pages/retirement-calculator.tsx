@@ -4,6 +4,7 @@ import { SummaryCards } from "@/components/retirement/summary-cards";
 import { ResultsTable } from "@/components/retirement/results-table";
 import { SavingsChart } from "@/components/retirement/savings-chart";
 import { ScenarioManager } from "@/components/retirement/scenario-manager";
+import { AIDialogue } from "@/components/retirement/ai-dialogue";
 import { Button } from "@/components/ui/button";
 import { 
   CalculatorState, 
@@ -112,6 +113,12 @@ export default function RetirementCalculator() {
             </Button>
           </div>
         </div>
+
+        {/* AI Dialogue Section */}
+        <AIDialogue 
+          currentState={state}
+          onStateUpdate={setState}
+        />
 
         {/* Summary Cards */}
         <SummaryCards metrics={summaryMetrics} />

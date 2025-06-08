@@ -130,6 +130,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // AI Analysis endpoint
+  app.post("/api/ai/analyze", async (req, res) => {
+    try {
+      const { prompt, currentState } = req.body;
+      
+      if (!prompt || !currentState) {
+        return res.status(400).json({ error: "Prompt and current state are required" });
+      }
+
+      const analysisRequest: AIAnalysisRequest = {
+        prompt,
+        currentState
+      };
+
+      const result = await analyzeFinancialScenario(analysisRequest);
+      res.json(result);
+    } catch (error) {
+      console.error("Error analyzing financial scenario:", error);
+      res.status(500).json({ error: "Failed to analyze scenario. Please try rephrasing your request." });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
