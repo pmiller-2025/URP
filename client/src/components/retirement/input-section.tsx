@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { CalculatorState, ssBenefitOptions } from "@/lib/calculator";
+import { CalculatorState, ssBenefitOptions, calculateAge, getCurrentDate } from "@/lib/calculator";
 
 interface InputSectionProps {
   state: CalculatorState;
@@ -14,6 +14,25 @@ interface InputSectionProps {
 }
 
 export function InputSection({ state, onUpdate, extraPayment, standardPayoffMonths, payoffDate }: InputSectionProps) {
+  const currentDate = getCurrentDate();
+  
+  const handleBirthdayUpdate = (person: 'paul' | 'jessica', month: number, year: number) => {
+    const age = calculateAge(month, year, currentDate.month, currentDate.year);
+    if (person === 'paul') {
+      onUpdate('personalInfo', { 
+        paulBirthMonth: month, 
+        paulBirthYear: year, 
+        paulAge: age 
+      });
+    } else {
+      onUpdate('personalInfo', { 
+        jessicaBirthMonth: month, 
+        jessicaBirthYear: year, 
+        jessicaAge: age 
+      });
+    }
+  };
+
   return (
     <>
       {/* First Row */}
@@ -21,30 +40,75 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
         {/* Personal Information Card */}
         <Card className="bg-white rounded-xl shadow-sm border border-gray-200">
           <CardContent className="p-6">
-            <div className="flex items-center mb-4">
-              <i className="fas fa-users text-finance-blue mr-3"></i>
-              <h2 className="text-lg font-semibold text-gray-900">Personal Information</h2>
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center">
+                <i className="fas fa-users text-finance-blue mr-3"></i>
+                <h2 className="text-lg font-semibold text-gray-900">Personal Information</h2>
+              </div>
+              <div className="text-sm text-gray-500">
+                Current: {currentDate.month}/{currentDate.year}
+              </div>
             </div>
             
             <div className="space-y-4">
               <div>
-                <Label className="block text-sm font-medium text-gray-700 mb-1">Paul's Age</Label>
-                <Input 
-                  type="number" 
-                  value={state.personalInfo.paulAge}
-                  onChange={(e) => onUpdate('personalInfo', { paulAge: parseInt(e.target.value) || 0 })}
-                  className="focus:ring-2 focus:ring-finance-blue focus:border-transparent"
-                />
+                <Label className="block text-sm font-medium text-gray-700 mb-1">Paul's Birthday</Label>
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <Label className="block text-xs text-gray-600 mb-1">Month</Label>
+                    <Input 
+                      type="number" 
+                      min="1"
+                      max="12"
+                      value={state.personalInfo.paulBirthMonth}
+                      onChange={(e) => handleBirthdayUpdate('paul', parseInt(e.target.value) || 1, state.personalInfo.paulBirthYear)}
+                      className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                    />
+                  </div>
+                  <div>
+                    <Label className="block text-xs text-gray-600 mb-1">Year</Label>
+                    <Input 
+                      type="number" 
+                      min="1930"
+                      max="2010"
+                      value={state.personalInfo.paulBirthYear}
+                      onChange={(e) => handleBirthdayUpdate('paul', state.personalInfo.paulBirthMonth, parseInt(e.target.value) || 1961)}
+                      className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                    />
+                  </div>
+                </div>
+                <p className="text-xs text-gray-500 mt-1">Current age: {state.personalInfo.paulAge}</p>
               </div>
+              
               <div>
-                <Label className="block text-sm font-medium text-gray-700 mb-1">Jessica's Age</Label>
-                <Input 
-                  type="number" 
-                  value={state.personalInfo.jessicaAge}
-                  onChange={(e) => onUpdate('personalInfo', { jessicaAge: parseInt(e.target.value) || 0 })}
-                  className="focus:ring-2 focus:ring-finance-blue focus:border-transparent"
-                />
+                <Label className="block text-sm font-medium text-gray-700 mb-1">Jessica's Birthday</Label>
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <Label className="block text-xs text-gray-600 mb-1">Month</Label>
+                    <Input 
+                      type="number" 
+                      min="1"
+                      max="12"
+                      value={state.personalInfo.jessicaBirthMonth}
+                      onChange={(e) => handleBirthdayUpdate('jessica', parseInt(e.target.value) || 1, state.personalInfo.jessicaBirthYear)}
+                      className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                    />
+                  </div>
+                  <div>
+                    <Label className="block text-xs text-gray-600 mb-1">Year</Label>
+                    <Input 
+                      type="number" 
+                      min="1930"
+                      max="2010"
+                      value={state.personalInfo.jessicaBirthYear}
+                      onChange={(e) => handleBirthdayUpdate('jessica', state.personalInfo.jessicaBirthMonth, parseInt(e.target.value) || 1968)}
+                      className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                    />
+                  </div>
+                </div>
+                <p className="text-xs text-gray-500 mt-1">Current age: {state.personalInfo.jessicaAge}</p>
               </div>
+              
               <div>
                 <Label className="block text-sm font-medium text-gray-700 mb-1">Projection Years</Label>
                 <Input 

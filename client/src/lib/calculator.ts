@@ -1,6 +1,10 @@
 export interface PersonalInfo {
   paulAge: number;
   jessicaAge: number;
+  paulBirthMonth: number;
+  paulBirthYear: number;
+  jessicaBirthMonth: number;
+  jessicaBirthYear: number;
   projectionYears: number;
 }
 
@@ -139,11 +143,31 @@ export interface SummaryMetrics {
   savingsGrowthPercent: number;
 }
 
+export function calculateAge(birthMonth: number, birthYear: number, currentMonth: number = 6, currentYear: number = 2025): number {
+  let age = currentYear - birthYear;
+  if (currentMonth < birthMonth) {
+    age--;
+  }
+  return age;
+}
+
+export function getCurrentDate(): { month: number; year: number } {
+  const now = new Date();
+  return {
+    month: now.getMonth() + 1, // JavaScript months are 0-indexed
+    year: now.getFullYear()
+  };
+}
+
 export function getDefaultState(): CalculatorState {
   return {
     personalInfo: {
       paulAge: 63,
       jessicaAge: 56,
+      paulBirthMonth: 6,
+      paulBirthYear: 1961,
+      jessicaBirthMonth: 3,
+      jessicaBirthYear: 1968,
       projectionYears: 20
     },
     socialSecurity: {
