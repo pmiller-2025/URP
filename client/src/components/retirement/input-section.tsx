@@ -3,8 +3,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { CalculatorState, ssBenefitOptions, calculateAge, getCurrentDate } from "@/lib/calculator";
+import { CalculatorState, ssBenefitOptions, calculateAge, getCurrentDate, BudgetCategory, getTotalLivingExpenses } from "@/lib/calculator";
+import { Trash2, Plus } from "lucide-react";
 
 interface InputSectionProps {
   state: CalculatorState;
@@ -825,20 +827,113 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
               <h2 className="text-lg font-semibold text-gray-900">Expenses</h2>
             </div>
             
-            <div className="space-y-4">
-              <div>
-                <Label className="block text-sm font-medium text-gray-700 mb-1">Basic Living (Monthly)</Label>
-                <div className="relative">
-                  <span className="absolute left-3 top-2 text-gray-500">$</span>
-                  <Input 
-                    type="number" 
-                    value={state.expenses.basicLiving}
-                    onChange={(e) => onUpdate('expenses', { basicLiving: parseFloat(e.target.value) || 0 })}
-                    className="pl-8 focus:ring-2 focus:ring-finance-blue focus:border-transparent"
-                  />
+            <Tabs 
+              value={state.expenses.budgetType} 
+              onValueChange={(value) => onUpdate('expenses', { budgetType: value as 'fixed' | 'detailed' })}
+              className="w-full"
+            >
+              <TabsList className="grid w-full grid-cols-2 mb-4">
+                <TabsTrigger value="fixed">Fixed Amount</TabsTrigger>
+                <TabsTrigger value="detailed">Detailed Budget</TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="fixed" className="space-y-4">
+                <div>
+                  <Label className="block text-sm font-medium text-gray-700 mb-1">Total Monthly Living Expenses</Label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-2 text-gray-500">$</span>
+                    <Input 
+                      type="number" 
+                      value={state.expenses.basicLiving}
+                      onChange={(e) => onUpdate('expenses', { basicLiving: parseFloat(e.target.value) || 0 })}
+                      className="pl-8 focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                    />
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">All living expenses combined</p>
                 </div>
-                <p className="text-xs text-gray-500 mt-1">{state.expenses.inflationRate}% annual increase</p>
-              </div>
+              </TabsContent>
+              
+              <TabsContent value="detailed" className="space-y-4">
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center">
+                    <Label className="text-sm font-medium text-gray-700">Budget Categories</Label>
+                    <div className="text-sm text-gray-600 bg-gray-50 px-3 py-1 rounded">
+                      Total: ${getTotalLivingExpenses(state.expenses).toLocaleString()}
+                    </div>
+                  </div>
+                  
+                  {state.expenses.detailedBudget?.map((category, index) => (
+                    <div key={category.id} className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
+                      <div className="flex-1">
+                        <Input 
+                          type="text"
+                          value={category.name}
+                          onChange={(e) => {
+                            const updated = [...state.expenses.detailedBudget];
+                            updated[index] = { ...category, name: e.target.value };
+                            onUpdate('expenses', { detailedBudget: updated });
+                          }}
+                          className="text-sm font-medium"
+                          placeholder="Category name"
+                        />
+                      </div>
+                      <div className="w-24">
+                        <div className="relative">
+                          <span className="absolute left-2 top-2 text-gray-500 text-xs">$</span>
+                          <Input 
+                            type="number"
+                            value={category.amount}
+                            onChange={(e) => {
+                              const updated = [...state.expenses.detailedBudget];
+                              updated[index] = { ...category, amount: parseFloat(e.target.value) || 0 };
+                              onUpdate('expenses', { detailedBudget: updated });
+                            }}
+                            className="pl-6 text-sm"
+                            placeholder="0"
+                          />
+                        </div>
+                      </div>
+                      {category.isCustom && (
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            const updated = state.expenses.detailedBudget.filter((_, i) => i !== index);
+                            onUpdate('expenses', { detailedBudget: updated });
+                          }}
+                          className="text-red-500 hover:text-red-700 p-1"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      )}
+                    </div>
+                  ))}
+                  
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      const newCategory: BudgetCategory = {
+                        id: `custom-${Date.now()}`,
+                        name: 'New Category',
+                        amount: 100,
+                        isCustom: true
+                      };
+                      const updated = [...(state.expenses.detailedBudget || []), newCategory];
+                      onUpdate('expenses', { detailedBudget: updated });
+                    }}
+                    className="w-full border-dashed"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Custom Category
+                  </Button>
+                </div>
+              </TabsContent>
+            </Tabs>
+            
+            <div className="border-t pt-4 mt-6 space-y-4">
               <div>
                 <Label className="block text-sm font-medium text-gray-700 mb-1">Life Insurance (Monthly)</Label>
                 <div className="relative">
@@ -851,6 +946,21 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                   />
                 </div>
                 <p className="text-xs text-gray-500 mt-1">Years {state.expenses.lifeInsuranceStartYear}-{state.expenses.lifeInsuranceEndYear} only</p>
+              </div>
+              
+              <div>
+                <Label className="block text-sm font-medium text-gray-700 mb-1">Inflation Rate</Label>
+                <div className="relative">
+                  <Input 
+                    type="number" 
+                    step="0.1"
+                    value={state.expenses.inflationRate}
+                    onChange={(e) => onUpdate('expenses', { inflationRate: parseFloat(e.target.value) || 0 })}
+                    className="pr-8 focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                  />
+                  <span className="absolute right-3 top-2 text-gray-500">%</span>
+                </div>
+                <p className="text-xs text-gray-500 mt-1">{state.expenses.inflationRate}% annual increase</p>
               </div>
             </div>
           </CardContent>

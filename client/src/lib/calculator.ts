@@ -323,7 +323,7 @@ export function calculateInflationAdjusted(baseAmount: number, rate: number, yea
 }
 
 export function getTotalLivingExpenses(expenses: Expenses): number {
-  if (expenses.budgetType === 'fixed') {
+  if (expenses.budgetType === 'fixed' || !expenses.detailedBudget) {
     return expenses.basicLiving;
   } else {
     return expenses.detailedBudget.reduce((total, category) => total + category.amount, 0);
@@ -600,7 +600,8 @@ export function calculateAnnualProjections(state: CalculatorState): AnnualData[]
     const afterTaxIncome = totalIncome - totalTaxes;
     
     // Calculate expenses
-    const livingExpAnnual = calculateInflationAdjusted(state.expenses.basicLiving * 12, state.expenses.inflationRate, yearIndex);
+    const baseLivingExpenses = getTotalLivingExpenses(state.expenses);
+    const livingExpAnnual = calculateInflationAdjusted(baseLivingExpenses * 12, state.expenses.inflationRate, yearIndex);
     const isLifeInsuranceYear = year >= state.expenses.lifeInsuranceStartYear && year <= state.expenses.lifeInsuranceEndYear;
     const insuranceAnnual = isLifeInsuranceYear ? state.expenses.lifeInsurance * 12 : 0;
     
