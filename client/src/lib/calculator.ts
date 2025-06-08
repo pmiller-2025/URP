@@ -102,7 +102,8 @@ export interface Expenses {
   lifeInsurance: number;
   lifeInsuranceStartMonth: number;
   lifeInsuranceStartYear: number;
-  lifeInsuranceDuration: number;
+  lifeInsuranceEndMonth: number;
+  lifeInsuranceEndYear: number;
   inflationRate: number;
 }
 
@@ -262,7 +263,7 @@ export function getDefaultState(): CalculatorState {
       lumpSumYear: 1
     },
     savings: {
-      initialAmount: 50000,
+      initialAmount: 100000,
       annualReturn: 5.0,
       additionalAnnual: 0,
       taxOnGains: true,
@@ -275,7 +276,8 @@ export function getDefaultState(): CalculatorState {
       lifeInsurance: 500,
       lifeInsuranceStartMonth: 1,
       lifeInsuranceStartYear: 4,
-      lifeInsuranceDuration: 96,
+      lifeInsuranceEndMonth: 12,
+      lifeInsuranceEndYear: 11,
       inflationRate: 3.0
     },
     taxRates: {
@@ -336,6 +338,20 @@ export function getTotalLivingExpenses(expenses: Expenses): number {
   } else {
     return expenses.detailedBudget.reduce((total, category) => total + category.amount, 0);
   }
+}
+
+export function calculateLifeInsuranceDuration(expenses: Expenses): number {
+  if (!expenses.lifeInsuranceStartYear || !expenses.lifeInsuranceEndYear || 
+      !expenses.lifeInsuranceStartMonth || !expenses.lifeInsuranceEndMonth) {
+    return 0;
+  }
+  const startMonthOffset = (expenses.lifeInsuranceStartYear - 1) * 12 + (expenses.lifeInsuranceStartMonth - 1);
+  const endMonthOffset = (expenses.lifeInsuranceEndYear - 1) * 12 + (expenses.lifeInsuranceEndMonth - 1);
+  return Math.max(0, endMonthOffset - startMonthOffset + 1);
+}
+
+export function calculateLifeInsuranceTotalCost(expenses: Expenses): number {
+  return expenses.lifeInsurance * calculateLifeInsuranceDuration(expenses);
 }
 
 export function calculateMonthlyProjections(state: CalculatorState, year: number): MonthlyData[] {
@@ -403,10 +419,10 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
   const baseLivingExpenses = getTotalLivingExpenses(state.expenses);
   const livingExpMonthly = calculateInflationAdjusted(baseLivingExpenses, state.expenses.inflationRate, yearIndex);
   
-  // Calculate life insurance with start month/year and duration
+  // Calculate life insurance with start/end month/year
   const lifeInsuranceStartMonthOffset = (state.expenses.lifeInsuranceStartYear - 1) * 12 + (state.expenses.lifeInsuranceStartMonth - 1);
-  const lifeInsuranceMonthsElapsed = totalMonthsElapsed - lifeInsuranceStartMonthOffset;
-  const insuranceMonthly = (lifeInsuranceMonthsElapsed >= 0 && lifeInsuranceMonthsElapsed < state.expenses.lifeInsuranceDuration) 
+  const lifeInsuranceEndMonthOffset = (state.expenses.lifeInsuranceEndYear - 1) * 12 + (state.expenses.lifeInsuranceEndMonth - 1);
+  const insuranceMonthly = (totalMonthsElapsed >= lifeInsuranceStartMonthOffset && totalMonthsElapsed <= lifeInsuranceEndMonthOffset) 
     ? state.expenses.lifeInsurance 
     : 0;
   
@@ -614,19 +630,18 @@ export function calculateAnnualProjections(state: CalculatorState): AnnualData[]
     const baseLivingExpenses = getTotalLivingExpenses(state.expenses);
     const livingExpAnnual = calculateInflationAdjusted(baseLivingExpenses * 12, state.expenses.inflationRate, yearIndex);
     
-    // Calculate life insurance annual (with start month/year and duration)
+    // Calculate life insurance annual (with start/end month/year)
     const lifeInsuranceStartMonthOffset = (state.expenses.lifeInsuranceStartYear - 1) * 12 + (state.expenses.lifeInsuranceStartMonth - 1);
-    const lifeInsuranceMonthsElapsed = monthsElapsed - lifeInsuranceStartMonthOffset;
+    const lifeInsuranceEndMonthOffset = (state.expenses.lifeInsuranceEndYear - 1) * 12 + (state.expenses.lifeInsuranceEndMonth - 1);
     let lifeInsuranceMonthsThisYear = 0;
-    if (lifeInsuranceMonthsElapsed >= 0 && lifeInsuranceMonthsElapsed < state.expenses.lifeInsuranceDuration) {
-      const lifeInsuranceMonthsRemaining = state.expenses.lifeInsuranceDuration - lifeInsuranceMonthsElapsed;
-      lifeInsuranceMonthsThisYear = Math.min(12, lifeInsuranceMonthsRemaining);
-    } else if (lifeInsuranceMonthsElapsed < 0) {
-      const monthsUntilStart = -lifeInsuranceMonthsElapsed;
-      if (monthsUntilStart < 12) {
-        lifeInsuranceMonthsThisYear = Math.min(12 - monthsUntilStart, state.expenses.lifeInsuranceDuration);
+    
+    for (let month = 0; month < 12; month++) {
+      const currentMonthOffset = monthsElapsed + month;
+      if (currentMonthOffset >= lifeInsuranceStartMonthOffset && currentMonthOffset <= lifeInsuranceEndMonthOffset) {
+        lifeInsuranceMonthsThisYear++;
       }
     }
+    
     const insuranceAnnual = state.expenses.lifeInsurance * lifeInsuranceMonthsThisYear;
     
     // Calculate mortgage payments

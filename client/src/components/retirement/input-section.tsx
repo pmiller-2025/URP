@@ -5,7 +5,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { CalculatorState, ssBenefitOptions, calculateAge, getCurrentDate, BudgetCategory, getTotalLivingExpenses } from "@/lib/calculator";
+import { CalculatorState, ssBenefitOptions, calculateAge, getCurrentDate, BudgetCategory, getTotalLivingExpenses, calculateLifeInsuranceDuration, calculateLifeInsuranceTotalCost } from "@/lib/calculator";
 import { Trash2, Plus } from "lucide-react";
 
 interface InputSectionProps {
@@ -1020,38 +1020,62 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                     className="pl-8 focus:ring-2 focus:ring-finance-blue focus:border-transparent"
                   />
                 </div>
-                <div className="grid grid-cols-3 gap-2 mt-2">
+                <div className="grid grid-cols-2 gap-2 mt-2">
                   <div>
-                    <Label className="block text-xs text-gray-600 mb-1">Start Month</Label>
-                    <Input 
-                      type="number" 
-                      min="1"
-                      max="12"
-                      value={state.expenses.lifeInsuranceStartMonth}
-                      onChange={(e) => onUpdate('expenses', { lifeInsuranceStartMonth: parseInt(e.target.value) || 1 })}
-                      className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
-                    />
+                    <Label className="block text-xs text-gray-600 mb-1">Start Month/Year</Label>
+                    <div className="grid grid-cols-2 gap-1">
+                      <Input 
+                        type="number" 
+                        min="1"
+                        max="12"
+                        value={state.expenses.lifeInsuranceStartMonth}
+                        onChange={(e) => onUpdate('expenses', { lifeInsuranceStartMonth: parseInt(e.target.value) || 1 })}
+                        className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                        placeholder="Mo"
+                      />
+                      <Input 
+                        type="number" 
+                        min="1"
+                        max="20"
+                        value={state.expenses.lifeInsuranceStartYear}
+                        onChange={(e) => onUpdate('expenses', { lifeInsuranceStartYear: parseInt(e.target.value) || 1 })}
+                        className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                        placeholder="Yr"
+                      />
+                    </div>
                   </div>
                   <div>
-                    <Label className="block text-xs text-gray-600 mb-1">Start Year</Label>
-                    <Input 
-                      type="number" 
-                      min="1"
-                      max="20"
-                      value={state.expenses.lifeInsuranceStartYear}
-                      onChange={(e) => onUpdate('expenses', { lifeInsuranceStartYear: parseInt(e.target.value) || 1 })}
-                      className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
-                    />
+                    <Label className="block text-xs text-gray-600 mb-1">End Month/Year</Label>
+                    <div className="grid grid-cols-2 gap-1">
+                      <Input 
+                        type="number" 
+                        min="1"
+                        max="12"
+                        value={state.expenses.lifeInsuranceEndMonth}
+                        onChange={(e) => onUpdate('expenses', { lifeInsuranceEndMonth: parseInt(e.target.value) || 12 })}
+                        className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                        placeholder="Mo"
+                      />
+                      <Input 
+                        type="number" 
+                        min="1"
+                        max="20"
+                        value={state.expenses.lifeInsuranceEndYear}
+                        onChange={(e) => onUpdate('expenses', { lifeInsuranceEndYear: parseInt(e.target.value) || 1 })}
+                        className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                        placeholder="Yr"
+                      />
+                    </div>
                   </div>
-                  <div>
-                    <Label className="block text-xs text-gray-600 mb-1">Duration (months)</Label>
-                    <Input 
-                      type="number" 
-                      min="1"
-                      value={state.expenses.lifeInsuranceDuration}
-                      onChange={(e) => onUpdate('expenses', { lifeInsuranceDuration: parseInt(e.target.value) || 12 })}
-                      className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
-                    />
+                </div>
+                <div className="mt-2 p-2 bg-gray-50 rounded text-xs">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Total Months:</span>
+                    <span className="font-medium">{calculateLifeInsuranceDuration(state.expenses)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Total Cost:</span>
+                    <span className="font-medium">${calculateLifeInsuranceTotalCost(state.expenses).toLocaleString()}</span>
                   </div>
                 </div>
               </div>
