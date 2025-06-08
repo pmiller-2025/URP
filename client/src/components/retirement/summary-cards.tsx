@@ -53,11 +53,13 @@ export function SummaryCards({ metrics }: SummaryCardsProps) {
       
       <Card className="bg-white rounded-xl shadow-sm border border-gray-200">
         <CardContent className="p-6 text-center">
-          <div className="text-3xl font-bold text-amber-600 mb-2">
-            {formatPercent(metrics.savingsGrowthPercent)}
+          <div className="text-3xl font-bold text-orange-600 mb-2">
+            {formatCurrency(metrics.totalInterestPaid)}
           </div>
-          <div className="text-sm text-gray-600">Savings Growth</div>
-          <div className="text-xs text-gray-500 mt-1">Including home equity</div>
+          <div className="text-sm text-gray-600">Total Mortgage Interest</div>
+          <div className="text-xs text-gray-500 mt-1">
+            {metrics.interestSaved > 0 ? `Saving $${metrics.interestSaved.toLocaleString()}` : `Payoff ${metrics.mortgagePayoffDate}`}
+          </div>
         </CardContent>
       </Card>
     </div>
