@@ -57,6 +57,17 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
             </div>
             
             <div className="space-y-4">
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
+                <Label className="block text-sm font-medium text-blue-800 mb-1">Projection Years</Label>
+                <Input 
+                  type="number" 
+                  value={state.personalInfo.projectionYears}
+                  onChange={(e) => onUpdate('personalInfo', { projectionYears: parseInt(e.target.value) || 0 })}
+                  className="focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                />
+                <p className="text-xs text-blue-600 mt-1">Years to project into retirement</p>
+              </div>
+              
               <div>
                 <Label className="block text-sm font-medium text-gray-700 mb-1">Paul's Birthday</Label>
                 <div className="grid grid-cols-2 gap-2">
@@ -113,16 +124,6 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                   </div>
                 </div>
                 <p className="text-xs text-gray-500 mt-1">Current age: {state.personalInfo.jessicaAge}</p>
-              </div>
-              
-              <div>
-                <Label className="block text-sm font-medium text-gray-700 mb-1">Projection Years</Label>
-                <Input 
-                  type="number" 
-                  value={state.personalInfo.projectionYears}
-                  onChange={(e) => onUpdate('personalInfo', { projectionYears: parseInt(e.target.value) || 0 })}
-                  className="focus:ring-2 focus:ring-finance-blue focus:border-transparent"
-                />
               </div>
               
               <div className="border-t pt-4">
