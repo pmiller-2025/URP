@@ -3,6 +3,7 @@ import { InputSection } from "@/components/retirement/input-section";
 import { SummaryCards } from "@/components/retirement/summary-cards";
 import { ResultsTable } from "@/components/retirement/results-table";
 import { SavingsChart } from "@/components/retirement/savings-chart";
+import { ScenarioManager } from "@/components/retirement/scenario-manager";
 import { Button } from "@/components/ui/button";
 import { 
   CalculatorState, 
@@ -55,9 +56,15 @@ export default function RetirementCalculator() {
               <i className="fas fa-calculator text-2xl text-finance-blue"></i>
               <h1 className="text-2xl font-bold text-gray-900">Retirement Cash Flow Calculator</h1>
             </div>
-            <div className="flex items-center space-x-2">
-              <span className="text-sm text-gray-600">20-Year Projection</span>
-              <div className="w-2 h-2 bg-finance-green rounded-full animate-pulse"></div>
+            <div className="flex items-center space-x-4">
+              <ScenarioManager 
+                currentState={state} 
+                onLoadScenario={setState}
+              />
+              <div className="flex items-center space-x-2">
+                <span className="text-sm text-gray-600">20-Year Projection</span>
+                <div className="w-2 h-2 bg-finance-green rounded-full animate-pulse"></div>
+              </div>
             </div>
           </div>
         </div>
