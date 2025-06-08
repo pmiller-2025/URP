@@ -1031,23 +1031,31 @@ export function calculateAnnualProjections(state: CalculatorState): AnnualData[]
     let mortgageAnnual = 0;
     let lumpSumAnnual = 0;
     let workingMortgageBalance = currentMortgageBalance;
+    let lumpSumApplied = false;
+    
+    // Check if lump sum payment occurs this year
+    const lumpSumMonthOffset = (state.housing.lumpSumYear - 1) * 12 + (state.housing.lumpSumMonth - 1);
+    const yearStartMonth = monthsElapsed;
+    const yearEndMonth = monthsElapsed + 11;
+    
+    if (state.housing.lumpSumAmount > 0 && lumpSumMonthOffset >= yearStartMonth && lumpSumMonthOffset <= yearEndMonth) {
+      // Apply lump sum at the beginning of the year for simplicity
+      const lumpSumPayment = Math.min(state.housing.lumpSumAmount, workingMortgageBalance);
+      lumpSumAnnual += lumpSumPayment;
+      workingMortgageBalance = Math.max(0, workingMortgageBalance - lumpSumPayment);
+      lumpSumApplied = true;
+    }
     
     for (let month = 0; month < 12; month++) {
       const monthOffset = monthsElapsed + month;
       const mortgagePayment = getMortgagePaymentByMonth(monthOffset, state);
-      if (mortgagePayment) {
-        mortgageAnnual += mortgagePayment.principalPayment + mortgagePayment.interestPayment;
-        workingMortgageBalance = mortgagePayment.endingBalance;
+      if (mortgagePayment && workingMortgageBalance > 0) {
+        // Calculate monthly payment on the adjusted balance
+        const monthlyInterest = workingMortgageBalance * (state.housing.interestRate / 100 / 12);
+        const monthlyPrincipal = Math.min(state.housing.monthlyPayment - monthlyInterest, workingMortgageBalance);
         
-        // Check if lump sum payment occurs this month
-        if (state.housing.lumpSumAmount > 0) {
-          const lumpSumMonthOffset = (state.housing.lumpSumYear - 1) * 12 + (state.housing.lumpSumMonth - 1);
-          if (monthOffset === lumpSumMonthOffset) {
-            const lumpSumPayment = Math.min(state.housing.lumpSumAmount, workingMortgageBalance);
-            lumpSumAnnual += lumpSumPayment;
-            workingMortgageBalance = Math.max(0, workingMortgageBalance - lumpSumPayment);
-          }
-        }
+        mortgageAnnual += monthlyInterest + monthlyPrincipal;
+        workingMortgageBalance = Math.max(0, workingMortgageBalance - monthlyPrincipal);
       }
     }
     
