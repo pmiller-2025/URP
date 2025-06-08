@@ -5,7 +5,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { CalculatorState, ssBenefitOptions, calculateAge, getCurrentDate, BudgetCategory, getTotalLivingExpenses, calculateLifeInsuranceDuration, calculateLifeInsuranceTotalCost } from "@/lib/calculator";
+import { CalculatorState, ssBenefitOptions, calculateAge, getCurrentDate, BudgetCategory, getTotalLivingExpenses, calculateLifeInsuranceDuration, calculateLifeInsuranceTotalCost, calculateExtraPayment } from "@/lib/calculator";
 import { InvestmentAllocator } from "./investment-allocator";
 import { Trash2, Plus } from "lucide-react";
 
@@ -24,6 +24,14 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
   const effectiveMortgageBalance = state.housing.lumpSumAmount > 0 
     ? Math.max(0, state.housing.mortgageBalance - state.housing.lumpSumAmount)
     : state.housing.mortgageBalance;
+  
+  // Recalculate extra payment based on effective balance
+  const effectiveExtraPayment = state.housing.acceleratePayoff ? calculateExtraPayment(
+    effectiveMortgageBalance,
+    state.housing.interestRate,
+    state.housing.monthlyPayment,
+    state.housing.targetPayoffMonths
+  ) : 0;
   
   // Format currency for display
   const formatCurrency = (value: number): string => {
@@ -954,16 +962,16 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                         <span className="text-gray-600">Regular Payment:</span>
                         <span className="font-medium">${Math.round(state.housing.monthlyPayment).toLocaleString()}</span>
                       </div>
-                      {state.housing.acceleratePayoff && extraPayment > 0 && (
+                      {state.housing.acceleratePayoff && effectiveExtraPayment > 0 && (
                         <div className="flex justify-between text-xs">
                           <span className="text-gray-600">Extra Payment:</span>
-                          <span className="font-medium text-blue-600">+${Math.round(extraPayment).toLocaleString()}</span>
+                          <span className="font-medium text-blue-600">+${Math.round(effectiveExtraPayment).toLocaleString()}</span>
                         </div>
                       )}
                       <div className="flex justify-between text-xs border-t border-gray-200 pt-1">
                         <span className="text-gray-600">Total Monthly:</span>
                         <span className="font-semibold text-blue-600">
-                          ${Math.round(state.housing.monthlyPayment + extraPayment).toLocaleString()}
+                          ${Math.round(state.housing.monthlyPayment + effectiveExtraPayment).toLocaleString()}
                         </span>
                       </div>
                       <div className="flex justify-between text-xs">
