@@ -925,16 +925,16 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                     <div className="bg-white rounded-md p-3 space-y-1">
                       <div className="flex justify-between text-xs">
                         <span className="text-gray-600">Home Value:</span>
-                        <span className="font-medium">${state.housing.homeValue.toLocaleString()}</span>
+                        <span className="font-medium">${Math.round(state.housing.homeValue).toLocaleString()}</span>
                       </div>
                       <div className="flex justify-between text-xs">
                         <span className="text-gray-600">Mortgage Balance:</span>
-                        <span className="font-medium">${effectiveMortgageBalance.toLocaleString()}</span>
+                        <span className="font-medium">${Math.round(effectiveMortgageBalance).toLocaleString()}</span>
                       </div>
                       <div className="flex justify-between text-xs border-t border-gray-200 pt-1">
                         <span className="text-gray-600">Current Equity:</span>
                         <span className="font-semibold text-green-600">
-                          ${(state.housing.homeValue - effectiveMortgageBalance).toLocaleString()}
+                          ${Math.round(state.housing.homeValue - effectiveMortgageBalance).toLocaleString()}
                         </span>
                       </div>
                       <div className="flex justify-between text-xs">
@@ -952,7 +952,7 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                     <div className="bg-white rounded-md p-3 space-y-1">
                       <div className="flex justify-between text-xs">
                         <span className="text-gray-600">Regular Payment:</span>
-                        <span className="font-medium">${state.housing.monthlyPayment.toLocaleString()}</span>
+                        <span className="font-medium">${Math.round(state.housing.monthlyPayment).toLocaleString()}</span>
                       </div>
                       {state.housing.acceleratePayoff && extraPayment > 0 && (
                         <div className="flex justify-between text-xs">
@@ -984,7 +984,7 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                     <div className="grid grid-cols-2 gap-4 text-xs">
                       <div className="flex justify-between">
                         <span className="text-gray-600">Amount:</span>
-                        <span className="font-medium text-orange-600">${state.housing.lumpSumAmount.toLocaleString()}</span>
+                        <span className="font-medium text-orange-600">${Math.round(state.housing.lumpSumAmount).toLocaleString()}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-gray-600">Date:</span>
