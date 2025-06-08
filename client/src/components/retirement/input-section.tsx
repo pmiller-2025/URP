@@ -731,6 +731,52 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                   </div>
                 )}
                 
+                {/* Lump Sum Payment */}
+                <div className="border-t pt-4">
+                  <Label className="block text-sm font-medium text-gray-700 mb-3">Lump Sum Payment (Optional)</Label>
+                  <div className="space-y-3">
+                    <div>
+                      <Label className="block text-xs text-gray-600 mb-1">Payment Amount</Label>
+                      <div className="relative">
+                        <span className="absolute left-3 top-2 text-gray-500">$</span>
+                        <Input 
+                          type="number" 
+                          value={state.housing.lumpSumAmount}
+                          onChange={(e) => onUpdate('housing', { lumpSumAmount: parseFloat(e.target.value) || 0 })}
+                          className="pl-8 focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                          placeholder="0"
+                        />
+                      </div>
+                    </div>
+                    {state.housing.lumpSumAmount > 0 && (
+                      <div className="grid grid-cols-2 gap-2">
+                        <div>
+                          <Label className="block text-xs text-gray-600 mb-1">Payment Month</Label>
+                          <Input 
+                            type="number" 
+                            min="1"
+                            max="12"
+                            value={state.housing.lumpSumMonth}
+                            onChange={(e) => onUpdate('housing', { lumpSumMonth: parseInt(e.target.value) || 1 })}
+                            className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                          />
+                        </div>
+                        <div>
+                          <Label className="block text-xs text-gray-600 mb-1">Payment Year</Label>
+                          <Input 
+                            type="number" 
+                            min="1"
+                            max="20"
+                            value={state.housing.lumpSumYear}
+                            onChange={(e) => onUpdate('housing', { lumpSumYear: parseInt(e.target.value) || 1 })}
+                            className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                
                 <div className="mt-3 p-3 bg-blue-50 rounded-lg">
                   <div className="space-y-1">
                     <div className="flex justify-between text-xs">

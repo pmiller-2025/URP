@@ -75,6 +75,9 @@ export interface Housing {
   targetPayoffMonths: number;
   homeAppreciation: number;
   acceleratePayoff: boolean;
+  lumpSumAmount: number;
+  lumpSumMonth: number;
+  lumpSumYear: number;
 }
 
 export interface Savings {
@@ -247,12 +250,15 @@ export function getDefaultState(): CalculatorState {
     },
     housing: {
       homeValue: 1000000,
-      mortgageBalance: 90000,
+      mortgageBalance: 130000,
       monthlyPayment: 2000,
       interestRate: 5.5,
       targetPayoffMonths: 24,
       homeAppreciation: 2.5,
-      acceleratePayoff: true
+      acceleratePayoff: true,
+      lumpSumAmount: 0,
+      lumpSumMonth: 1,
+      lumpSumYear: 1
     },
     savings: {
       initialAmount: 50000,
@@ -635,6 +641,17 @@ export function calculateAnnualProjections(state: CalculatorState): AnnualData[]
     
     // Calculate mortgage balance
     if (mortgageActive) {
+      // Apply lump sum payment if it occurs in this year
+      if (state.housing.lumpSumAmount > 0) {
+        const lumpSumMonthOffset = (state.housing.lumpSumYear - 1) * 12 + (state.housing.lumpSumMonth - 1);
+        const currentYearStart = monthsElapsed;
+        const currentYearEnd = monthsElapsed + 12;
+        
+        if (lumpSumMonthOffset >= currentYearStart && lumpSumMonthOffset < currentYearEnd) {
+          currentMortgageBalance = Math.max(0, currentMortgageBalance - state.housing.lumpSumAmount);
+        }
+      }
+      
       // Simple calculation - in reality this would be more complex amortization
       const monthlyPrincipal = (state.housing.monthlyPayment + extraPayment) - (currentMortgageBalance * state.housing.interestRate / 100 / 12);
       currentMortgageBalance = Math.max(0, currentMortgageBalance - (monthlyPrincipal * 12));
