@@ -405,6 +405,7 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
     const netIncome = grossIncome - taxes;
     const netCashFlow = netIncome - livingExpMonthly - insuranceMonthly - mortgageMonthly;
     
+    // All positive cash flow goes to savings, negative cash flow comes from savings
     runningBalance += netCashFlow;
     
     monthlyData.push({
@@ -596,7 +597,7 @@ export function calculateAnnualProjections(state: CalculatorState): AnnualData[]
     const taxOnGains = state.savings.taxOnGains ? investmentReturn * (state.savings.gainsTaxRate / 100) : 0;
     const netInvestmentReturn = investmentReturn - taxOnGains;
     
-    // Update savings balance
+    // All positive cash flow automatically increases savings, negative cash flow comes from savings
     currentSavingsBalance += netCashFlow + netInvestmentReturn + state.savings.additionalAnnual;
     
     // Calculate mortgage balance
