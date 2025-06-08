@@ -109,9 +109,9 @@ export function ResultsTable({
                     <td className="px-4 py-3 text-sm font-medium text-gray-900">{formatCurrency(year.totalIncome)}</td>
                     <td className="px-4 py-3 text-sm text-finance-red">{formatCurrency(year.totalTaxes)}</td>
                     <td className="px-4 py-3 text-sm text-gray-900">{formatCurrency(year.afterTaxIncome)}</td>
-                    <td className="px-4 py-3 text-sm text-finance-red">{formatCurrency(-year.livingExp)}</td>
-                    <td className="px-4 py-3 text-sm text-gray-900">{year.insurance > 0 ? formatCurrency(-year.insurance) : '$0'}</td>
-                    <td className="px-4 py-3 text-sm text-finance-red">{year.mortgage > 0 ? formatCurrency(-year.mortgage) : '$0'}</td>
+                    <td className="px-4 py-3 text-sm text-finance-red">{formatCurrency(year.livingExp)}</td>
+                    <td className="px-4 py-3 text-sm text-finance-red">{year.insurance > 0 ? formatCurrency(year.insurance) : '$0'}</td>
+                    <td className="px-4 py-3 text-sm text-finance-red">{year.mortgage > 0 ? formatCurrency(year.mortgage) : '$0'}</td>
                     <td className={`px-4 py-3 text-sm font-medium ${getCashFlowColor(year.netCashFlow)}`}>{formatCurrency(year.netCashFlow)}</td>
                     <td className="px-4 py-3 text-sm text-gray-900">{formatCurrency(year.investmentReturn)}</td>
                     <td className="px-4 py-3 text-sm text-gray-900">{formatCurrency(year.savingsBalance)}</td>
@@ -156,11 +156,11 @@ export function ResultsTable({
                     <td className="px-4 py-3 text-sm text-gray-900">{formatCurrency(month.jessicaWork)}</td>
                     <td className="px-4 py-3 text-sm text-gray-900">{formatCurrency(month.chapter35)}</td>
                     <td className="px-4 py-3 text-sm font-medium text-gray-900">{formatCurrency(month.grossIncome)}</td>
-                    <td className="px-4 py-3 text-sm text-finance-red">{formatCurrency(-month.taxes)}</td>
+                    <td className="px-4 py-3 text-sm text-finance-red">{formatCurrency(month.taxes)}</td>
                     <td className="px-4 py-3 text-sm text-gray-900">{formatCurrency(month.netIncome)}</td>
-                    <td className="px-4 py-3 text-sm text-finance-red">{formatCurrency(-month.livingExp)}</td>
-                    <td className="px-4 py-3 text-sm text-gray-900">{month.insurance > 0 ? formatCurrency(-month.insurance) : '$0'}</td>
-                    <td className="px-4 py-3 text-sm text-finance-red">{month.mortgage > 0 ? formatCurrency(-month.mortgage) : '$0'}</td>
+                    <td className="px-4 py-3 text-sm text-finance-red">{formatCurrency(month.livingExp)}</td>
+                    <td className="px-4 py-3 text-sm text-finance-red">{month.insurance > 0 ? formatCurrency(month.insurance) : '$0'}</td>
+                    <td className="px-4 py-3 text-sm text-finance-red">{month.mortgage > 0 ? formatCurrency(month.mortgage) : '$0'}</td>
                     <td className={`px-4 py-3 text-sm font-medium ${getCashFlowColor(month.netCashFlow)}`}>{formatCurrency(month.netCashFlow)}</td>
                     <td className="px-4 py-3 text-sm text-gray-900">{formatCurrency(month.savingsBalance)}</td>
                   </tr>
