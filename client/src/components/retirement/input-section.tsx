@@ -1020,7 +1020,40 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                     className="pl-8 focus:ring-2 focus:ring-finance-blue focus:border-transparent"
                   />
                 </div>
-                <p className="text-xs text-gray-500 mt-1">Years {state.expenses.lifeInsuranceStartYear}-{state.expenses.lifeInsuranceEndYear} only</p>
+                <div className="grid grid-cols-3 gap-2 mt-2">
+                  <div>
+                    <Label className="block text-xs text-gray-600 mb-1">Start Month</Label>
+                    <Input 
+                      type="number" 
+                      min="1"
+                      max="12"
+                      value={state.expenses.lifeInsuranceStartMonth}
+                      onChange={(e) => onUpdate('expenses', { lifeInsuranceStartMonth: parseInt(e.target.value) || 1 })}
+                      className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                    />
+                  </div>
+                  <div>
+                    <Label className="block text-xs text-gray-600 mb-1">Start Year</Label>
+                    <Input 
+                      type="number" 
+                      min="1"
+                      max="20"
+                      value={state.expenses.lifeInsuranceStartYear}
+                      onChange={(e) => onUpdate('expenses', { lifeInsuranceStartYear: parseInt(e.target.value) || 1 })}
+                      className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                    />
+                  </div>
+                  <div>
+                    <Label className="block text-xs text-gray-600 mb-1">Duration (months)</Label>
+                    <Input 
+                      type="number" 
+                      min="1"
+                      value={state.expenses.lifeInsuranceDuration}
+                      onChange={(e) => onUpdate('expenses', { lifeInsuranceDuration: parseInt(e.target.value) || 12 })}
+                      className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                    />
+                  </div>
+                </div>
               </div>
               
               <div>
