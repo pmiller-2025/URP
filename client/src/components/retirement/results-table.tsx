@@ -85,12 +85,12 @@ export function ResultsTable({
                   <th className="px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[110px]">After-Tax</th>
                   <th className="px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[100px]">Living Exp</th>
                   <th className="px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[100px]">Insurance</th>
-                  <th className="px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[100px]">Mortgage</th>
+                  <th className="px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[120px]">Mortgage Payments</th>
+                  <th className="px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[140px]">Mortgage Balance</th>
                   <th className="px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[130px]">Net Cash Flow</th>
                   <th className="px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[140px]">Investment Return</th>
                   <th className="px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[140px]">Savings Balance</th>
                   <th className="px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[120px]">Home Value</th>
-                  <th className="px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[140px]">Mortgage Balance</th>
                   <th className="px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[120px]">Net Worth</th>
                 </tr>
               </thead>
@@ -112,11 +112,11 @@ export function ResultsTable({
                     <td className="px-4 py-3 text-sm text-finance-red">{formatCurrency(year.livingExp)}</td>
                     <td className="px-4 py-3 text-sm text-finance-red">{year.insurance > 0 ? formatCurrency(year.insurance) : '$0'}</td>
                     <td className="px-4 py-3 text-sm text-finance-red">{year.mortgage > 0 ? formatCurrency(year.mortgage) : '$0'}</td>
+                    <td className="px-4 py-3 text-sm text-gray-900">{formatCurrency(year.mortgageBalance)}</td>
                     <td className={`px-4 py-3 text-sm font-medium ${getCashFlowColor(year.netCashFlow)}`}>{formatCurrency(year.netCashFlow)}</td>
                     <td className="px-4 py-3 text-sm text-gray-900">{formatCurrency(year.investmentReturn)}</td>
                     <td className="px-4 py-3 text-sm text-gray-900">{formatCurrency(year.savingsBalance)}</td>
                     <td className="px-4 py-3 text-sm text-gray-900">{formatCurrency(year.homeValue)}</td>
-                    <td className="px-4 py-3 text-sm text-gray-900">{formatCurrency(year.mortgageBalance)}</td>
                     <td className="px-4 py-3 text-sm font-medium text-finance-green">{formatCurrency(year.netWorth)}</td>
                   </tr>
                 ))}
