@@ -43,7 +43,7 @@ export default function RetirementCalculator() {
   );
   
   const actualPayoffMonths = state.housing.acceleratePayoff ? state.housing.targetPayoffMonths : standardPayoffMonths;
-  const payoffDate = getPayoffDate(2024, actualPayoffMonths);
+  const payoffDate = getPayoffDate(actualPayoffMonths);
 
   // No automatic updates needed - SS amounts are now set by age selection
 

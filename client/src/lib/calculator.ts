@@ -214,9 +214,9 @@ export function calculateStandardPayoffMonths(balance: number, rate: number, pay
   return Math.ceil(numerator / denominator);
 }
 
-export function getPayoffDate(startYear: number, months: number): string {
-  const startDate = new Date(startYear, 0, 1); // January 1st of start year
-  const payoffDate = new Date(startDate);
+export function getPayoffDate(months: number): string {
+  const currentDate = new Date(); // Use actual current date
+  const payoffDate = new Date(currentDate);
   payoffDate.setMonth(payoffDate.getMonth() + months);
   
   return payoffDate.toLocaleDateString('en-US', { 
