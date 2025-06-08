@@ -199,17 +199,48 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                     className="pl-8 focus:ring-2 focus:ring-finance-blue focus:border-transparent"
                   />
                 </div>
-                <div className="flex items-center justify-between mt-2">
-                  <div className="flex items-center">
-                    <Checkbox 
-                      id="business-tax" 
-                      checked={true}
-                      disabled
-                      className="rounded border-gray-300 text-finance-blue focus:ring-finance-blue"
+                <div className="grid grid-cols-3 gap-2 mt-2">
+                  <div>
+                    <Label className="block text-xs text-gray-600 mb-1">Start Year</Label>
+                    <Input 
+                      type="number" 
+                      min="1"
+                      max="20"
+                      value={state.otherIncome.businessStartYear}
+                      onChange={(e) => onUpdate('otherIncome', { businessStartYear: parseInt(e.target.value) || 1 })}
+                      className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
                     />
-                    <Label htmlFor="business-tax" className="ml-2 text-sm text-gray-600">Taxable at {state.taxRates.business}%</Label>
                   </div>
-                  <span className="text-xs text-gray-500">{state.otherIncome.businessDuration} months</span>
+                  <div>
+                    <Label className="block text-xs text-gray-600 mb-1">Start Month</Label>
+                    <Input 
+                      type="number" 
+                      min="1"
+                      max="12"
+                      value={state.otherIncome.businessStartMonth}
+                      onChange={(e) => onUpdate('otherIncome', { businessStartMonth: parseInt(e.target.value) || 1 })}
+                      className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                    />
+                  </div>
+                  <div>
+                    <Label className="block text-xs text-gray-600 mb-1">Duration (months)</Label>
+                    <Input 
+                      type="number" 
+                      min="1"
+                      value={state.otherIncome.businessDuration}
+                      onChange={(e) => onUpdate('otherIncome', { businessDuration: parseInt(e.target.value) || 60 })}
+                      className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                    />
+                  </div>
+                </div>
+                <div className="flex items-center mt-2">
+                  <Checkbox 
+                    id="business-tax" 
+                    checked={true}
+                    disabled
+                    className="rounded border-gray-300 text-finance-blue focus:ring-finance-blue"
+                  />
+                  <Label htmlFor="business-tax" className="ml-2 text-sm text-gray-600">Taxable at {state.taxRates.business}%</Label>
                 </div>
               </div>
               <div>
@@ -223,17 +254,48 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                     className="pl-8 focus:ring-2 focus:ring-finance-blue focus:border-transparent"
                   />
                 </div>
-                <div className="flex items-center justify-between mt-2">
-                  <div className="flex items-center">
-                    <Checkbox 
-                      id="jessica-tax" 
-                      checked={true}
-                      disabled
-                      className="rounded border-gray-300 text-finance-blue focus:ring-finance-blue"
+                <div className="grid grid-cols-3 gap-2 mt-2">
+                  <div>
+                    <Label className="block text-xs text-gray-600 mb-1">Start Year</Label>
+                    <Input 
+                      type="number" 
+                      min="1"
+                      max="20"
+                      value={state.otherIncome.jessicaStartYear}
+                      onChange={(e) => onUpdate('otherIncome', { jessicaStartYear: parseInt(e.target.value) || 1 })}
+                      className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
                     />
-                    <Label htmlFor="jessica-tax" className="ml-2 text-sm text-gray-600">Taxable at {state.taxRates.jessica}%</Label>
                   </div>
-                  <span className="text-xs text-gray-500">{state.otherIncome.jessicaDuration} months</span>
+                  <div>
+                    <Label className="block text-xs text-gray-600 mb-1">Start Month</Label>
+                    <Input 
+                      type="number" 
+                      min="1"
+                      max="12"
+                      value={state.otherIncome.jessicaStartMonth}
+                      onChange={(e) => onUpdate('otherIncome', { jessicaStartMonth: parseInt(e.target.value) || 1 })}
+                      className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                    />
+                  </div>
+                  <div>
+                    <Label className="block text-xs text-gray-600 mb-1">Duration (months)</Label>
+                    <Input 
+                      type="number" 
+                      min="1"
+                      value={state.otherIncome.jessicaDuration}
+                      onChange={(e) => onUpdate('otherIncome', { jessicaDuration: parseInt(e.target.value) || 24 })}
+                      className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                    />
+                  </div>
+                </div>
+                <div className="flex items-center mt-2">
+                  <Checkbox 
+                    id="jessica-tax" 
+                    checked={true}
+                    disabled
+                    className="rounded border-gray-300 text-finance-blue focus:ring-finance-blue"
+                  />
+                  <Label htmlFor="jessica-tax" className="ml-2 text-sm text-gray-600">Taxable at {state.taxRates.jessica}%</Label>
                 </div>
               </div>
               

@@ -38,7 +38,11 @@ export interface OtherIncome {
   jessicaIncome: number;
   chapter35: number;
   businessDuration: number;
+  businessStartMonth: number;
+  businessStartYear: number;
   jessicaDuration: number;
+  jessicaStartMonth: number;
+  jessicaStartYear: number;
   chapter35Duration: number;
   chapter35StartMonth: number;
   chapter35StartYear: number;
@@ -157,7 +161,11 @@ export function getDefaultState(): CalculatorState {
       jessicaIncome: 1250,
       chapter35: 1000,
       businessDuration: 60,
+      businessStartMonth: 1,
+      businessStartYear: 1,
       jessicaDuration: 24,
+      jessicaStartMonth: 1,
+      jessicaStartYear: 1,
       chapter35Duration: 24,
       chapter35StartMonth: 1,
       chapter35StartYear: 1
@@ -257,14 +265,20 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
   // Calculate VA Disability with inflation
   const vaDisabilityMonthly = calculateInflationAdjusted(state.otherIncome.vaDisability, state.expenses.inflationRate, yearIndex);
   
-  // Calculate business income duration
+  // Calculate business income with start month/year and duration
   const totalMonthsElapsed = yearIndex * 12;
-  const businessActive = totalMonthsElapsed < state.otherIncome.businessDuration;
-  const businessMonthly = businessActive ? state.otherIncome.businessIncome : 0;
+  const businessStartMonthOffset = (state.otherIncome.businessStartYear - 1) * 12 + (state.otherIncome.businessStartMonth - 1);
+  const businessMonthsElapsed = totalMonthsElapsed - businessStartMonthOffset;
+  const businessMonthly = (businessMonthsElapsed >= 0 && businessMonthsElapsed < state.otherIncome.businessDuration) 
+    ? state.otherIncome.businessIncome 
+    : 0;
   
-  // Calculate Jessica's income duration
-  const jessicaActive = totalMonthsElapsed < state.otherIncome.jessicaDuration;
-  const jessicaWorkMonthly = jessicaActive ? state.otherIncome.jessicaIncome : 0;
+  // Calculate Jessica's income with start month/year and duration
+  const jessicaStartMonthOffset = (state.otherIncome.jessicaStartYear - 1) * 12 + (state.otherIncome.jessicaStartMonth - 1);
+  const jessicaMonthsElapsed = totalMonthsElapsed - jessicaStartMonthOffset;
+  const jessicaWorkMonthly = (jessicaMonthsElapsed >= 0 && jessicaMonthsElapsed < state.otherIncome.jessicaDuration) 
+    ? state.otherIncome.jessicaIncome 
+    : 0;
   
   // Calculate Chapter 35 with start month/year and duration
   const chapter35StartMonthOffset = (state.otherIncome.chapter35StartYear - 1) * 12 + (state.otherIncome.chapter35StartMonth - 1);
@@ -365,15 +379,37 @@ export function calculateAnnualProjections(state: CalculatorState): AnnualData[]
     // Calculate VA Disability with inflation
     const vaDisabilityAnnual = calculateInflationAdjusted(state.otherIncome.vaDisability * 12, state.expenses.inflationRate, yearIndex);
     
-    // Calculate business income (limited duration)
+    // Calculate business income (limited duration with start month/year)
     const monthsElapsed = yearIndex * 12;
-    const businessMonthsRemaining = Math.max(0, state.otherIncome.businessDuration - monthsElapsed);
-    const businessMonthsThisYear = Math.min(12, businessMonthsRemaining);
+    const businessStartMonthOffset = (state.otherIncome.businessStartYear - 1) * 12 + (state.otherIncome.businessStartMonth - 1);
+    const businessMonthsElapsed = monthsElapsed - businessStartMonthOffset;
+    
+    let businessMonthsThisYear = 0;
+    if (businessMonthsElapsed >= 0 && businessMonthsElapsed < state.otherIncome.businessDuration) {
+      const businessMonthsRemaining = state.otherIncome.businessDuration - businessMonthsElapsed;
+      businessMonthsThisYear = Math.min(12, businessMonthsRemaining);
+    } else if (businessMonthsElapsed < 0) {
+      const monthsUntilStart = -businessMonthsElapsed;
+      if (monthsUntilStart < 12) {
+        businessMonthsThisYear = Math.min(12 - monthsUntilStart, state.otherIncome.businessDuration);
+      }
+    }
     const businessAnnual = state.otherIncome.businessIncome * businessMonthsThisYear;
     
-    // Calculate Jessica's income (limited duration)
-    const jessicaMonthsRemaining = Math.max(0, state.otherIncome.jessicaDuration - monthsElapsed);
-    const jessicaMonthsThisYear = Math.min(12, jessicaMonthsRemaining);
+    // Calculate Jessica's income (limited duration with start month/year)
+    const jessicaStartMonthOffset = (state.otherIncome.jessicaStartYear - 1) * 12 + (state.otherIncome.jessicaStartMonth - 1);
+    const jessicaMonthsElapsed = monthsElapsed - jessicaStartMonthOffset;
+    
+    let jessicaMonthsThisYear = 0;
+    if (jessicaMonthsElapsed >= 0 && jessicaMonthsElapsed < state.otherIncome.jessicaDuration) {
+      const jessicaMonthsRemaining = state.otherIncome.jessicaDuration - jessicaMonthsElapsed;
+      jessicaMonthsThisYear = Math.min(12, jessicaMonthsRemaining);
+    } else if (jessicaMonthsElapsed < 0) {
+      const monthsUntilStart = -jessicaMonthsElapsed;
+      if (monthsUntilStart < 12) {
+        jessicaMonthsThisYear = Math.min(12 - monthsUntilStart, state.otherIncome.jessicaDuration);
+      }
+    }
     const jessicaAnnual = state.otherIncome.jessicaIncome * jessicaMonthsThisYear;
     
     // Calculate Chapter 35 (limited duration with start month/year)
