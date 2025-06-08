@@ -246,7 +246,7 @@ export function getDefaultState(): CalculatorState {
       jessicaIncome: 1250,
       chapter35: 1000,
       businessDuration: 60,
-      businessStartMonth: 1,
+      businessStartMonth: 6,
       businessStartYear: 1,
       jessicaDuration: 24,
       jessicaStartMonth: 1,
