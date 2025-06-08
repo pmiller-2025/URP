@@ -13,7 +13,7 @@ export function SummaryCards({ metrics }: SummaryCardsProps) {
       currency: 'USD',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
-    }).format(amount);
+    }).format(Math.round(amount));
   };
 
   const formatPercent = (percent: number) => {
