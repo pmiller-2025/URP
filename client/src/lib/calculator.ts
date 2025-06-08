@@ -1,0 +1,432 @@
+export interface PersonalInfo {
+  paulAge: number;
+  jessicaAge: number;
+  projectionYears: number;
+}
+
+export interface SocialSecurity {
+  paulAmount: number;
+  jessicaAmount: number;
+  cola: number;
+  paulTaxable: boolean;
+  jessicaTaxable: boolean;
+  paulStartAge: number;
+  jessicaStartAge: number;
+}
+
+export interface OtherIncome {
+  vaDisability: number;
+  businessIncome: number;
+  jessicaIncome: number;
+  chapter35: number;
+  businessDuration: number;
+  jessicaDuration: number;
+  chapter35Duration: number;
+}
+
+export interface Housing {
+  homeValue: number;
+  mortgageBalance: number;
+  monthlyPayment: number;
+  interestRate: number;
+  targetPayoffMonths: number;
+  homeAppreciation: number;
+}
+
+export interface Savings {
+  initialAmount: number;
+  annualReturn: number;
+  additionalAnnual: number;
+  taxOnGains: boolean;
+  gainsTaxRate: number;
+}
+
+export interface Expenses {
+  basicLiving: number;
+  lifeInsurance: number;
+  lifeInsuranceStartYear: number;
+  lifeInsuranceEndYear: number;
+  inflationRate: number;
+}
+
+export interface TaxRates {
+  socialSecurity: number;
+  business: number;
+  jessica: number;
+}
+
+export interface CalculatorState {
+  personalInfo: PersonalInfo;
+  socialSecurity: SocialSecurity;
+  otherIncome: OtherIncome;
+  housing: Housing;
+  savings: Savings;
+  expenses: Expenses;
+  taxRates: TaxRates;
+}
+
+export interface MonthlyData {
+  month: string;
+  paulSS: number;
+  jessicaSS: number;
+  vaDisability: number;
+  business: number;
+  jessicaWork: number;
+  chapter35: number;
+  grossIncome: number;
+  taxes: number;
+  netIncome: number;
+  livingExp: number;
+  insurance: number;
+  mortgage: number;
+  netCashFlow: number;
+  savingsBalance: number;
+}
+
+export interface AnnualData {
+  year: number;
+  paulAge: number;
+  jessicaAge: number;
+  paulSS: number;
+  jessicaSS: number;
+  vaDisability: number;
+  business: number;
+  jessicaWork: number;
+  chapter35: number;
+  totalIncome: number;
+  totalTaxes: number;
+  afterTaxIncome: number;
+  livingExp: number;
+  insurance: number;
+  mortgage: number;
+  netCashFlow: number;
+  investmentReturn: number;
+  savingsBalance: number;
+  homeValue: number;
+  mortgageBalance: number;
+  netWorth: number;
+}
+
+export interface SummaryMetrics {
+  finalNetWorth: number;
+  totalTaxesPaid: number;
+  avgMonthlyCashFlow: number;
+  savingsGrowthPercent: number;
+}
+
+export function getDefaultState(): CalculatorState {
+  return {
+    personalInfo: {
+      paulAge: 63,
+      jessicaAge: 56,
+      projectionYears: 20
+    },
+    socialSecurity: {
+      paulAmount: 3500,
+      jessicaAmount: 1750,
+      cola: 3.0,
+      paulTaxable: true,
+      jessicaTaxable: true,
+      paulStartAge: 68,
+      jessicaStartAge: 68
+    },
+    otherIncome: {
+      vaDisability: 4000,
+      businessIncome: 4000,
+      jessicaIncome: 1250,
+      chapter35: 1000,
+      businessDuration: 60,
+      jessicaDuration: 24,
+      chapter35Duration: 24
+    },
+    housing: {
+      homeValue: 1000000,
+      mortgageBalance: 90000,
+      monthlyPayment: 2000,
+      interestRate: 5.5,
+      targetPayoffMonths: 24,
+      homeAppreciation: 2.5
+    },
+    savings: {
+      initialAmount: 50000,
+      annualReturn: 5.0,
+      additionalAnnual: 0,
+      taxOnGains: true,
+      gainsTaxRate: 15
+    },
+    expenses: {
+      basicLiving: 5000,
+      lifeInsurance: 500,
+      lifeInsuranceStartYear: 4,
+      lifeInsuranceEndYear: 12,
+      inflationRate: 3.0
+    },
+    taxRates: {
+      socialSecurity: 12,
+      business: 22,
+      jessica: 12
+    }
+  };
+}
+
+export function calculateMortgagePayment(balance: number, rate: number, months: number): number {
+  if (balance <= 0 || months <= 0) return 0;
+  const monthlyRate = rate / 100 / 12;
+  if (monthlyRate === 0) return balance / months;
+  
+  const payment = balance * (monthlyRate * Math.pow(1 + monthlyRate, months)) / (Math.pow(1 + monthlyRate, months) - 1);
+  return payment;
+}
+
+export function calculateExtraPayment(balance: number, rate: number, regularPayment: number, targetMonths: number): number {
+  if (balance <= 0) return 0;
+  const requiredPayment = calculateMortgagePayment(balance, rate, targetMonths);
+  return Math.max(0, requiredPayment - regularPayment);
+}
+
+export function calculateTaxes(income: number, rate: number, isTaxable: boolean): number {
+  return isTaxable ? income * (rate / 100) : 0;
+}
+
+export function calculateInflationAdjusted(baseAmount: number, rate: number, years: number): number {
+  return baseAmount * Math.pow(1 + (rate / 100), years);
+}
+
+export function calculateMonthlyProjections(state: CalculatorState, year: number): MonthlyData[] {
+  const monthlyData: MonthlyData[] = [];
+  const yearIndex = year - 1;
+  
+  // Calculate age-based SS eligibility
+  const paulCurrentAge = state.personalInfo.paulAge + yearIndex;
+  const jessicaCurrentAge = state.personalInfo.jessicaAge + yearIndex;
+  
+  const paulSSEligible = paulCurrentAge >= state.socialSecurity.paulStartAge;
+  const jessicaSSEligible = jessicaCurrentAge >= state.socialSecurity.jessicaStartAge;
+  
+  // Calculate SS amounts with COLA adjustments
+  const paulSSMonthly = paulSSEligible ? 
+    calculateInflationAdjusted(state.socialSecurity.paulAmount, state.socialSecurity.cola, yearIndex) : 0;
+  const jessicaSSMonthly = jessicaSSEligible ? 
+    calculateInflationAdjusted(state.socialSecurity.jessicaAmount, state.socialSecurity.cola, yearIndex) : 0;
+  
+  // Calculate VA Disability with inflation
+  const vaDisabilityMonthly = calculateInflationAdjusted(state.otherIncome.vaDisability, state.expenses.inflationRate, yearIndex);
+  
+  // Calculate business income duration
+  const totalMonthsElapsed = yearIndex * 12;
+  const businessActive = totalMonthsElapsed < state.otherIncome.businessDuration;
+  const businessMonthly = businessActive ? state.otherIncome.businessIncome : 0;
+  
+  // Calculate Jessica's income duration
+  const jessicaActive = totalMonthsElapsed < state.otherIncome.jessicaDuration;
+  const jessicaWorkMonthly = jessicaActive ? state.otherIncome.jessicaIncome : 0;
+  
+  // Calculate Chapter 35 duration
+  const chapter35Active = totalMonthsElapsed < state.otherIncome.chapter35Duration;
+  const chapter35Monthly = chapter35Active ? state.otherIncome.chapter35 : 0;
+  
+  // Calculate living expenses with inflation
+  const livingExpMonthly = calculateInflationAdjusted(state.expenses.basicLiving, state.expenses.inflationRate, yearIndex);
+  
+  // Calculate life insurance (only during specified years)
+  const isLifeInsuranceYear = year >= state.expenses.lifeInsuranceStartYear && year <= state.expenses.lifeInsuranceEndYear;
+  const insuranceMonthly = isLifeInsuranceYear ? state.expenses.lifeInsurance : 0;
+  
+  // Calculate mortgage payment
+  const extraPayment = calculateExtraPayment(
+    state.housing.mortgageBalance, 
+    state.housing.interestRate, 
+    state.housing.monthlyPayment, 
+    state.housing.targetPayoffMonths
+  );
+  const totalMortgagePayment = state.housing.monthlyPayment + extraPayment;
+  
+  // Determine if mortgage is still active
+  const mortgageMonthsElapsed = totalMonthsElapsed;
+  const mortgageActive = mortgageMonthsElapsed < state.housing.targetPayoffMonths;
+  const mortgageMonthly = mortgageActive ? totalMortgagePayment : 0;
+  
+  let runningBalance = state.savings.initialAmount;
+  if (yearIndex > 0) {
+    // Calculate balance from previous years
+    const annualData = calculateAnnualProjections(state);
+    runningBalance = annualData[yearIndex - 1].savingsBalance;
+  }
+  
+  for (let month = 0; month < 12; month++) {
+    const monthName = new Date(2024 + yearIndex, month).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+    
+    const grossIncome = paulSSMonthly + jessicaSSMonthly + vaDisabilityMonthly + businessMonthly + jessicaWorkMonthly + chapter35Monthly;
+    
+    const taxes = 
+      calculateTaxes(paulSSMonthly, state.taxRates.socialSecurity, state.socialSecurity.paulTaxable) +
+      calculateTaxes(jessicaSSMonthly, state.taxRates.socialSecurity, state.socialSecurity.jessicaTaxable) +
+      calculateTaxes(businessMonthly, state.taxRates.business, true) +
+      calculateTaxes(jessicaWorkMonthly, state.taxRates.jessica, true);
+    
+    const netIncome = grossIncome - taxes;
+    const netCashFlow = netIncome - livingExpMonthly - insuranceMonthly - mortgageMonthly;
+    
+    runningBalance += netCashFlow;
+    
+    monthlyData.push({
+      month: monthName,
+      paulSS: paulSSMonthly,
+      jessicaSS: jessicaSSMonthly,
+      vaDisability: vaDisabilityMonthly,
+      business: businessMonthly,
+      jessicaWork: jessicaWorkMonthly,
+      chapter35: chapter35Monthly,
+      grossIncome,
+      taxes,
+      netIncome,
+      livingExp: livingExpMonthly,
+      insurance: insuranceMonthly,
+      mortgage: mortgageMonthly,
+      netCashFlow,
+      savingsBalance: runningBalance
+    });
+  }
+  
+  return monthlyData;
+}
+
+export function calculateAnnualProjections(state: CalculatorState): AnnualData[] {
+  const annualData: AnnualData[] = [];
+  let currentSavingsBalance = state.savings.initialAmount;
+  let currentMortgageBalance = state.housing.mortgageBalance;
+  
+  for (let year = 1; year <= state.personalInfo.projectionYears; year++) {
+    const yearIndex = year - 1;
+    const paulAge = state.personalInfo.paulAge + yearIndex;
+    const jessicaAge = state.personalInfo.jessicaAge + yearIndex;
+    
+    // Calculate age-based SS eligibility
+    const paulSSEligible = paulAge >= state.socialSecurity.paulStartAge;
+    const jessicaSSEligible = jessicaAge >= state.socialSecurity.jessicaStartAge;
+    
+    // Calculate annual SS amounts with COLA
+    const paulSSAnnual = paulSSEligible ? 
+      calculateInflationAdjusted(state.socialSecurity.paulAmount * 12, state.socialSecurity.cola, yearIndex) : 0;
+    const jessicaSSAnnual = jessicaSSEligible ? 
+      calculateInflationAdjusted(state.socialSecurity.jessicaAmount * 12, state.socialSecurity.cola, yearIndex) : 0;
+    
+    // Calculate VA Disability with inflation
+    const vaDisabilityAnnual = calculateInflationAdjusted(state.otherIncome.vaDisability * 12, state.expenses.inflationRate, yearIndex);
+    
+    // Calculate business income (limited duration)
+    const monthsElapsed = yearIndex * 12;
+    const businessMonthsRemaining = Math.max(0, state.otherIncome.businessDuration - monthsElapsed);
+    const businessMonthsThisYear = Math.min(12, businessMonthsRemaining);
+    const businessAnnual = state.otherIncome.businessIncome * businessMonthsThisYear;
+    
+    // Calculate Jessica's income (limited duration)
+    const jessicaMonthsRemaining = Math.max(0, state.otherIncome.jessicaDuration - monthsElapsed);
+    const jessicaMonthsThisYear = Math.min(12, jessicaMonthsRemaining);
+    const jessicaAnnual = state.otherIncome.jessicaIncome * jessicaMonthsThisYear;
+    
+    // Calculate Chapter 35 (limited duration)
+    const chapter35MonthsRemaining = Math.max(0, state.otherIncome.chapter35Duration - monthsElapsed);
+    const chapter35MonthsThisYear = Math.min(12, chapter35MonthsRemaining);
+    const chapter35Annual = state.otherIncome.chapter35 * chapter35MonthsThisYear;
+    
+    const totalIncome = paulSSAnnual + jessicaSSAnnual + vaDisabilityAnnual + businessAnnual + jessicaAnnual + chapter35Annual;
+    
+    // Calculate taxes
+    const totalTaxes = 
+      calculateTaxes(paulSSAnnual, state.taxRates.socialSecurity, state.socialSecurity.paulTaxable) +
+      calculateTaxes(jessicaSSAnnual, state.taxRates.socialSecurity, state.socialSecurity.jessicaTaxable) +
+      calculateTaxes(businessAnnual, state.taxRates.business, true) +
+      calculateTaxes(jessicaAnnual, state.taxRates.jessica, true);
+    
+    const afterTaxIncome = totalIncome - totalTaxes;
+    
+    // Calculate expenses
+    const livingExpAnnual = calculateInflationAdjusted(state.expenses.basicLiving * 12, state.expenses.inflationRate, yearIndex);
+    const isLifeInsuranceYear = year >= state.expenses.lifeInsuranceStartYear && year <= state.expenses.lifeInsuranceEndYear;
+    const insuranceAnnual = isLifeInsuranceYear ? state.expenses.lifeInsurance * 12 : 0;
+    
+    // Calculate mortgage payments
+    const extraPayment = calculateExtraPayment(
+      state.housing.mortgageBalance, 
+      state.housing.interestRate, 
+      state.housing.monthlyPayment, 
+      state.housing.targetPayoffMonths
+    );
+    const totalMortgagePayment = (state.housing.monthlyPayment + extraPayment) * 12;
+    
+    // Determine if mortgage is paid off
+    const mortgageMonthsElapsed = monthsElapsed;
+    const mortgageActive = mortgageMonthsElapsed < state.housing.targetPayoffMonths;
+    const mortgageAnnual = mortgageActive ? totalMortgagePayment : 0;
+    
+    const netCashFlow = afterTaxIncome - livingExpAnnual - insuranceAnnual - mortgageAnnual;
+    
+    // Calculate investment returns
+    const beginningBalance = currentSavingsBalance;
+    const investmentReturn = beginningBalance * (state.savings.annualReturn / 100);
+    const taxOnGains = state.savings.taxOnGains ? investmentReturn * (state.savings.gainsTaxRate / 100) : 0;
+    const netInvestmentReturn = investmentReturn - taxOnGains;
+    
+    // Update savings balance
+    currentSavingsBalance += netCashFlow + netInvestmentReturn + state.savings.additionalAnnual;
+    
+    // Calculate mortgage balance
+    if (mortgageActive) {
+      // Simple calculation - in reality this would be more complex amortization
+      const monthlyPrincipal = (state.housing.monthlyPayment + extraPayment) - (currentMortgageBalance * state.housing.interestRate / 100 / 12);
+      currentMortgageBalance = Math.max(0, currentMortgageBalance - (monthlyPrincipal * 12));
+    } else {
+      currentMortgageBalance = 0;
+    }
+    
+    // Calculate home value with appreciation
+    const homeValue = calculateInflationAdjusted(state.housing.homeValue, state.housing.homeAppreciation, yearIndex);
+    
+    // Calculate net worth
+    const netWorth = homeValue + currentSavingsBalance - currentMortgageBalance;
+    
+    annualData.push({
+      year: 2024 + yearIndex,
+      paulAge,
+      jessicaAge,
+      paulSS: paulSSAnnual,
+      jessicaSS: jessicaSSAnnual,
+      vaDisability: vaDisabilityAnnual,
+      business: businessAnnual,
+      jessicaWork: jessicaAnnual,
+      chapter35: chapter35Annual,
+      totalIncome,
+      totalTaxes,
+      afterTaxIncome,
+      livingExp: livingExpAnnual,
+      insurance: insuranceAnnual,
+      mortgage: mortgageAnnual,
+      netCashFlow,
+      investmentReturn: netInvestmentReturn,
+      savingsBalance: currentSavingsBalance,
+      homeValue,
+      mortgageBalance: currentMortgageBalance,
+      netWorth
+    });
+  }
+  
+  return annualData;
+}
+
+export function calculateSummaryMetrics(annualData: AnnualData[], state: CalculatorState): SummaryMetrics {
+  const finalYear = annualData[annualData.length - 1];
+  const totalTaxesPaid = annualData.reduce((sum, year) => sum + year.totalTaxes, 0);
+  const totalCashFlow = annualData.reduce((sum, year) => sum + year.netCashFlow, 0);
+  const avgMonthlyCashFlow = totalCashFlow / (state.personalInfo.projectionYears * 12);
+  
+  const initialNetWorth = state.housing.homeValue + state.savings.initialAmount - state.housing.mortgageBalance;
+  const savingsGrowthPercent = ((finalYear.netWorth - initialNetWorth) / initialNetWorth) * 100;
+  
+  return {
+    finalNetWorth: finalYear.netWorth,
+    totalTaxesPaid,
+    avgMonthlyCashFlow,
+    savingsGrowthPercent
+  };
+}
