@@ -707,6 +707,21 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
               </div>
               
               <div>
+                <Label className="block text-sm font-medium text-gray-700 mb-1">Annual Home Appreciation</Label>
+                <div className="relative">
+                  <Input 
+                    type="number" 
+                    step="0.1"
+                    value={state.housing.homeAppreciation}
+                    onChange={(e) => onUpdate('housing', { homeAppreciation: parseFloat(e.target.value) || 0 })}
+                    className="pr-8 focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                  />
+                  <span className="absolute right-3 top-2 text-gray-500">%</span>
+                </div>
+                <p className="text-xs text-gray-500 mt-1">Expected annual increase in home value</p>
+              </div>
+              
+              <div>
                 <div className="flex items-center space-x-2 mb-3">
                   <Checkbox 
                     id="accelerate-payoff" 
@@ -780,6 +795,20 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                 <div className="mt-3 p-3 bg-blue-50 rounded-lg">
                   <div className="space-y-1">
                     <div className="flex justify-between text-xs">
+                      <span className="text-gray-600">Home Value:</span>
+                      <span className="font-medium">${state.housing.homeValue.toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between text-xs">
+                      <span className="text-gray-600">Mortgage Balance:</span>
+                      <span className="font-medium">${state.housing.mortgageBalance.toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between text-xs border-t border-blue-200 pt-1">
+                      <span className="text-gray-600">Current Equity:</span>
+                      <span className="font-semibold text-finance-green">
+                        ${(state.housing.homeValue - state.housing.mortgageBalance).toLocaleString()}
+                      </span>
+                    </div>
+                    <div className="flex justify-between text-xs mt-2 pt-2 border-t border-blue-200">
                       <span className="text-gray-600">Regular Payment:</span>
                       <span className="font-medium">${state.housing.monthlyPayment.toLocaleString()}</span>
                     </div>
