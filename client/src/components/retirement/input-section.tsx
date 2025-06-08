@@ -312,14 +312,21 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                 <div className="grid grid-cols-3 gap-2 mt-2">
                   <div>
                     <Label className="block text-xs text-gray-600 mb-1">Start Month</Label>
-                    <Input 
-                      type="number" 
-                      min="1"
-                      max="12"
-                      value={state.otherIncome.chapter35StartMonth}
-                      onChange={(e) => onUpdate('otherIncome', { chapter35StartMonth: parseInt(e.target.value) || 1 })}
-                      className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
-                    />
+                    <Select 
+                      value={state.otherIncome.chapter35StartMonth.toString()}
+                      onValueChange={(value) => onUpdate('otherIncome', { chapter35StartMonth: parseInt(value) })}
+                    >
+                      <SelectTrigger className="text-xs focus:ring-2 focus:ring-finance-blue focus:border-transparent">
+                        <SelectValue placeholder="Month" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {Array.from({ length: 12 }, (_, i) => (
+                          <SelectItem key={i + 1} value={(i + 1).toString()}>
+                            {String(i + 1).padStart(2, '0')}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                   <div>
                     <Label className="block text-xs text-gray-600 mb-1">Start Year</Label>
@@ -379,14 +386,21 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                 <div className="grid grid-cols-3 gap-2 mt-2">
                   <div>
                     <Label className="block text-xs text-gray-600 mb-1">Start Month</Label>
-                    <Input 
-                      type="number" 
-                      min="1"
-                      max="12"
-                      value={state.otherIncome.businessStartMonth}
-                      onChange={(e) => onUpdate('otherIncome', { businessStartMonth: parseInt(e.target.value) || 1 })}
-                      className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
-                    />
+                    <Select 
+                      value={state.otherIncome.businessStartMonth.toString()}
+                      onValueChange={(value) => onUpdate('otherIncome', { businessStartMonth: parseInt(value) })}
+                    >
+                      <SelectTrigger className="text-xs focus:ring-2 focus:ring-finance-blue focus:border-transparent">
+                        <SelectValue placeholder="Month" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {Array.from({ length: 12 }, (_, i) => (
+                          <SelectItem key={i + 1} value={(i + 1).toString()}>
+                            {String(i + 1).padStart(2, '0')}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                   <div>
                     <Label className="block text-xs text-gray-600 mb-1">Start Year</Label>
@@ -441,14 +455,21 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                 <div className="grid grid-cols-3 gap-2 mt-2">
                   <div>
                     <Label className="block text-xs text-gray-600 mb-1">Start Month</Label>
-                    <Input 
-                      type="number" 
-                      min="1"
-                      max="12"
-                      value={state.otherIncome.jessicaStartMonth}
-                      onChange={(e) => onUpdate('otherIncome', { jessicaStartMonth: parseInt(e.target.value) || 1 })}
-                      className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
-                    />
+                    <Select 
+                      value={state.otherIncome.jessicaStartMonth.toString()}
+                      onValueChange={(value) => onUpdate('otherIncome', { jessicaStartMonth: parseInt(value) })}
+                    >
+                      <SelectTrigger className="text-xs focus:ring-2 focus:ring-finance-blue focus:border-transparent">
+                        <SelectValue placeholder="Month" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {Array.from({ length: 12 }, (_, i) => (
+                          <SelectItem key={i + 1} value={(i + 1).toString()}>
+                            {String(i + 1).padStart(2, '0')}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                   <div>
                     <Label className="block text-xs text-gray-600 mb-1">Start Year</Label>
@@ -506,14 +527,21 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                   <div className="grid grid-cols-3 gap-2 mt-2">
                     <div>
                       <Label className="block text-xs text-gray-600 mb-1">Start Month</Label>
-                      <Input 
-                        type="number" 
-                        min="1"
-                        max="12"
-                        value={state.otherIncome.income1StartMonth}
-                        onChange={(e) => onUpdate('otherIncome', { income1StartMonth: parseInt(e.target.value) || 1 })}
-                        className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
-                      />
+                      <Select 
+                        value={state.otherIncome.income1StartMonth.toString()}
+                        onValueChange={(value) => onUpdate('otherIncome', { income1StartMonth: parseInt(value) })}
+                      >
+                        <SelectTrigger className="text-xs focus:ring-2 focus:ring-finance-blue focus:border-transparent">
+                          <SelectValue placeholder="Month" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {Array.from({ length: 12 }, (_, i) => (
+                            <SelectItem key={i + 1} value={(i + 1).toString()}>
+                              {String(i + 1).padStart(2, '0')}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
                     <div>
                       <Label className="block text-xs text-gray-600 mb-1">Start Year</Label>
@@ -564,14 +592,21 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                   <div className="grid grid-cols-3 gap-2 mt-2">
                     <div>
                       <Label className="block text-xs text-gray-600 mb-1">Start Month</Label>
-                      <Input 
-                        type="number" 
-                        min="1"
-                        max="12"
-                        value={state.otherIncome.income2StartMonth}
-                        onChange={(e) => onUpdate('otherIncome', { income2StartMonth: parseInt(e.target.value) || 1 })}
-                        className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
-                      />
+                      <Select 
+                        value={state.otherIncome.income2StartMonth.toString()}
+                        onValueChange={(value) => onUpdate('otherIncome', { income2StartMonth: parseInt(value) })}
+                      >
+                        <SelectTrigger className="text-xs focus:ring-2 focus:ring-finance-blue focus:border-transparent">
+                          <SelectValue placeholder="Month" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {Array.from({ length: 12 }, (_, i) => (
+                            <SelectItem key={i + 1} value={(i + 1).toString()}>
+                              {String(i + 1).padStart(2, '0')}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
                     <div>
                       <Label className="block text-xs text-gray-600 mb-1">Start Year</Label>
@@ -622,14 +657,21 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                   <div className="grid grid-cols-3 gap-2 mt-2">
                     <div>
                       <Label className="block text-xs text-gray-600 mb-1">Start Month</Label>
-                      <Input 
-                        type="number" 
-                        min="1"
-                        max="12"
-                        value={state.otherIncome.income3StartMonth}
-                        onChange={(e) => onUpdate('otherIncome', { income3StartMonth: parseInt(e.target.value) || 1 })}
-                        className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
-                      />
+                      <Select 
+                        value={state.otherIncome.income3StartMonth.toString()}
+                        onValueChange={(value) => onUpdate('otherIncome', { income3StartMonth: parseInt(value) })}
+                      >
+                        <SelectTrigger className="text-xs focus:ring-2 focus:ring-finance-blue focus:border-transparent">
+                          <SelectValue placeholder="Month" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {Array.from({ length: 12 }, (_, i) => (
+                            <SelectItem key={i + 1} value={(i + 1).toString()}>
+                              {String(i + 1).padStart(2, '0')}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
                     <div>
                       <Label className="block text-xs text-gray-600 mb-1">Start Year</Label>
@@ -809,7 +851,7 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                           <SelectContent>
                             {Array.from({ length: 12 }, (_, i) => (
                               <SelectItem key={i + 1} value={(i + 1).toString()}>
-                                {new Date(2024, i).toLocaleDateString('en-US', { month: 'short' })}
+                                {String(i + 1).padStart(2, '0')}
                               </SelectItem>
                             ))}
                           </SelectContent>
@@ -1106,24 +1148,36 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                   <div>
                     <Label className="block text-xs text-gray-600 mb-1">Start Month/Year</Label>
                     <div className="grid grid-cols-2 gap-1">
-                      <Input 
-                        type="number" 
-                        min="1"
-                        max="12"
-                        value={state.expenses.lifeInsuranceStartMonth}
-                        onChange={(e) => onUpdate('expenses', { lifeInsuranceStartMonth: parseInt(e.target.value) || 1 })}
-                        className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
-                        placeholder="Mo"
-                      />
-                      <Input 
-                        type="number" 
-                        min="1"
-                        max="20"
-                        value={state.expenses.lifeInsuranceStartYear}
-                        onChange={(e) => onUpdate('expenses', { lifeInsuranceStartYear: parseInt(e.target.value) || 1 })}
-                        className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
-                        placeholder="Yr"
-                      />
+                      <Select 
+                        value={state.expenses.lifeInsuranceStartMonth.toString()}
+                        onValueChange={(value) => onUpdate('expenses', { lifeInsuranceStartMonth: parseInt(value) })}
+                      >
+                        <SelectTrigger className="text-xs focus:ring-2 focus:ring-finance-blue focus:border-transparent">
+                          <SelectValue placeholder="Mo" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {Array.from({ length: 12 }, (_, i) => (
+                            <SelectItem key={i + 1} value={(i + 1).toString()}>
+                              {String(i + 1).padStart(2, '0')}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <Select 
+                        value={state.expenses.lifeInsuranceStartYear.toString()}
+                        onValueChange={(value) => onUpdate('expenses', { lifeInsuranceStartYear: parseInt(value) })}
+                      >
+                        <SelectTrigger className="text-xs focus:ring-2 focus:ring-finance-blue focus:border-transparent">
+                          <SelectValue placeholder="Yr" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {Array.from({ length: 20 }, (_, i) => (
+                            <SelectItem key={i + 1} value={(i + 1).toString()}>
+                              {2024 + i + 1}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
                   </div>
                   <div>
