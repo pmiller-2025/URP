@@ -402,13 +402,13 @@ const mortgageAmortizationSchedule: MortgagePayment[] = [
   { paymentNumber: 16, paymentDate: "09/01/2026", startingBalance: 111042.19, principalPayment: 1307.98, interestPayment: 508.94, endingBalance: 109734.22 },
   { paymentNumber: 17, paymentDate: "10/01/2026", startingBalance: 109734.22, principalPayment: 1313.97, interestPayment: 502.95, endingBalance: 108420.24 },
   { paymentNumber: 18, paymentDate: "11/01/2026", startingBalance: 108420.24, principalPayment: 1319.99, interestPayment: 496.93, endingBalance: 107100.25 },
-  { paymentNumber: 19, paymentDate: "01/01/2027", startingBalance: 107100.25, principalPayment: 1326.04, interestPayment: 490.88, endingBalance: 105774.21 },
-  { paymentNumber: 20, paymentDate: "02/01/2027", startingBalance: 105774.21, principalPayment: 1332.12, interestPayment: 484.80, endingBalance: 104442.09 },
-  { paymentNumber: 21, paymentDate: "03/01/2027", startingBalance: 104442.09, principalPayment: 1338.23, interestPayment: 478.69, endingBalance: 103103.86 },
-  { paymentNumber: 22, paymentDate: "04/01/2027", startingBalance: 103103.86, principalPayment: 1344.36, interestPayment: 472.56, endingBalance: 101759.50 },
-  { paymentNumber: 23, paymentDate: "05/01/2027", startingBalance: 101759.50, principalPayment: 1350.52, interestPayment: 466.40, endingBalance: 100408.98 },
-  { paymentNumber: 24, paymentDate: "06/01/2027", startingBalance: 100408.98, principalPayment: 1356.71, interestPayment: 460.21, endingBalance: 99052.26 },
-  { paymentNumber: 25, paymentDate: "07/01/2027", startingBalance: 99052.26, principalPayment: 1362.93, interestPayment: 453.99, endingBalance: 97689.33 },
+  { paymentNumber: 19, paymentDate: "12/01/2026", startingBalance: 107100.25, principalPayment: 1326.04, interestPayment: 490.88, endingBalance: 105774.21 },
+  { paymentNumber: 20, paymentDate: "01/01/2027", startingBalance: 105774.21, principalPayment: 1332.12, interestPayment: 484.80, endingBalance: 104442.09 },
+  { paymentNumber: 21, paymentDate: "02/01/2027", startingBalance: 104442.09, principalPayment: 1338.23, interestPayment: 478.69, endingBalance: 103103.86 },
+  { paymentNumber: 22, paymentDate: "03/01/2027", startingBalance: 103103.86, principalPayment: 1344.36, interestPayment: 472.56, endingBalance: 101759.50 },
+  { paymentNumber: 23, paymentDate: "04/01/2027", startingBalance: 101759.50, principalPayment: 1350.52, interestPayment: 466.40, endingBalance: 100408.98 },
+  { paymentNumber: 24, paymentDate: "05/01/2027", startingBalance: 100408.98, principalPayment: 1356.71, interestPayment: 460.21, endingBalance: 99052.26 },
+  { paymentNumber: 25, paymentDate: "06/01/2027", startingBalance: 99052.26, principalPayment: 1362.93, interestPayment: 453.99, endingBalance: 97689.33 },
   { paymentNumber: 26, paymentDate: "08/01/2027", startingBalance: 97689.33, principalPayment: 1369.18, interestPayment: 447.74, endingBalance: 96320.16 },
   { paymentNumber: 27, paymentDate: "09/01/2027", startingBalance: 96320.16, principalPayment: 1375.45, interestPayment: 441.47, endingBalance: 94944.70 },
   { paymentNumber: 28, paymentDate: "10/01/2027", startingBalance: 94944.70, principalPayment: 1381.76, interestPayment: 435.16, endingBalance: 93562.95 },
@@ -630,8 +630,8 @@ export function calculateLumpSumInterestSavings(lumpSumAmount: number, lumpSumMo
 export function getMortgagePayoffDate(targetMonths?: number): string {
   const monthsToUse = targetMonths || mortgageAmortizationSchedule.length;
   if (monthsToUse < mortgageAmortizationSchedule.length) {
-    // Calculate early payoff date
-    const startDate = new Date(2025, 6, 1); // July 2025
+    // Calculate early payoff date starting from June 2025
+    const startDate = new Date(2025, 5, 1); // June 2025 (month is 0-indexed)
     const payoffDate = new Date(startDate.getTime() + (monthsToUse - 1) * 30.44 * 24 * 60 * 60 * 1000);
     return payoffDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
   }
