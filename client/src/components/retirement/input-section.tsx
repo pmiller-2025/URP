@@ -2,6 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CalculatorState, ssBenefitOptions, calculateAge, getCurrentDate } from "@/lib/calculator";
 
@@ -450,6 +451,201 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                   <Label htmlFor="jessica-tax" className="ml-2 text-sm text-gray-600">Taxable at {state.taxRates.jessica}%</Label>
                 </div>
               </div>
+              
+              {/* Additional Income 1 */}
+              {state.otherIncome.income1 > 0 && (
+                <div>
+                  <Label className="block text-sm font-medium text-gray-700 mb-1">Additional Income 1</Label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-2 text-gray-500">$</span>
+                    <Input 
+                      type="number" 
+                      value={state.otherIncome.income1}
+                      onChange={(e) => onUpdate('otherIncome', { income1: parseFloat(e.target.value) || 0 })}
+                      className="pl-8 focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                    />
+                  </div>
+                  <div className="grid grid-cols-3 gap-2 mt-2">
+                    <div>
+                      <Label className="block text-xs text-gray-600 mb-1">Start Month</Label>
+                      <Input 
+                        type="number" 
+                        min="1"
+                        max="12"
+                        value={state.otherIncome.income1StartMonth}
+                        onChange={(e) => onUpdate('otherIncome', { income1StartMonth: parseInt(e.target.value) || 1 })}
+                        className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                      />
+                    </div>
+                    <div>
+                      <Label className="block text-xs text-gray-600 mb-1">Start Year</Label>
+                      <Input 
+                        type="number" 
+                        min="1"
+                        max="20"
+                        value={state.otherIncome.income1StartYear}
+                        onChange={(e) => onUpdate('otherIncome', { income1StartYear: parseInt(e.target.value) || 1 })}
+                        className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                      />
+                    </div>
+                    <div>
+                      <Label className="block text-xs text-gray-600 mb-1">Duration (months)</Label>
+                      <Input 
+                        type="number" 
+                        min="1"
+                        value={state.otherIncome.income1Duration}
+                        onChange={(e) => onUpdate('otherIncome', { income1Duration: parseInt(e.target.value) || 12 })}
+                        className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                      />
+                    </div>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">Non-taxable</p>
+                </div>
+              )}
+              
+              {/* Additional Income 2 */}
+              {state.otherIncome.income2 > 0 && (
+                <div>
+                  <Label className="block text-sm font-medium text-gray-700 mb-1">Additional Income 2</Label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-2 text-gray-500">$</span>
+                    <Input 
+                      type="number" 
+                      value={state.otherIncome.income2}
+                      onChange={(e) => onUpdate('otherIncome', { income2: parseFloat(e.target.value) || 0 })}
+                      className="pl-8 focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                    />
+                  </div>
+                  <div className="grid grid-cols-3 gap-2 mt-2">
+                    <div>
+                      <Label className="block text-xs text-gray-600 mb-1">Start Month</Label>
+                      <Input 
+                        type="number" 
+                        min="1"
+                        max="12"
+                        value={state.otherIncome.income2StartMonth}
+                        onChange={(e) => onUpdate('otherIncome', { income2StartMonth: parseInt(e.target.value) || 1 })}
+                        className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                      />
+                    </div>
+                    <div>
+                      <Label className="block text-xs text-gray-600 mb-1">Start Year</Label>
+                      <Input 
+                        type="number" 
+                        min="1"
+                        max="20"
+                        value={state.otherIncome.income2StartYear}
+                        onChange={(e) => onUpdate('otherIncome', { income2StartYear: parseInt(e.target.value) || 1 })}
+                        className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                      />
+                    </div>
+                    <div>
+                      <Label className="block text-xs text-gray-600 mb-1">Duration (months)</Label>
+                      <Input 
+                        type="number" 
+                        min="1"
+                        value={state.otherIncome.income2Duration}
+                        onChange={(e) => onUpdate('otherIncome', { income2Duration: parseInt(e.target.value) || 12 })}
+                        className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                      />
+                    </div>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">Non-taxable</p>
+                </div>
+              )}
+              
+              {/* Additional Income 3 */}
+              {state.otherIncome.income3 > 0 && (
+                <div>
+                  <Label className="block text-sm font-medium text-gray-700 mb-1">Additional Income 3</Label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-2 text-gray-500">$</span>
+                    <Input 
+                      type="number" 
+                      value={state.otherIncome.income3}
+                      onChange={(e) => onUpdate('otherIncome', { income3: parseFloat(e.target.value) || 0 })}
+                      className="pl-8 focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                    />
+                  </div>
+                  <div className="grid grid-cols-3 gap-2 mt-2">
+                    <div>
+                      <Label className="block text-xs text-gray-600 mb-1">Start Month</Label>
+                      <Input 
+                        type="number" 
+                        min="1"
+                        max="12"
+                        value={state.otherIncome.income3StartMonth}
+                        onChange={(e) => onUpdate('otherIncome', { income3StartMonth: parseInt(e.target.value) || 1 })}
+                        className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                      />
+                    </div>
+                    <div>
+                      <Label className="block text-xs text-gray-600 mb-1">Start Year</Label>
+                      <Input 
+                        type="number" 
+                        min="1"
+                        max="20"
+                        value={state.otherIncome.income3StartYear}
+                        onChange={(e) => onUpdate('otherIncome', { income3StartYear: parseInt(e.target.value) || 1 })}
+                        className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                      />
+                    </div>
+                    <div>
+                      <Label className="block text-xs text-gray-600 mb-1">Duration (months)</Label>
+                      <Input 
+                        type="number" 
+                        min="1"
+                        value={state.otherIncome.income3Duration}
+                        onChange={(e) => onUpdate('otherIncome', { income3Duration: parseInt(e.target.value) || 12 })}
+                        className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                      />
+                    </div>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">Non-taxable</p>
+                </div>
+              )}
+              
+              {/* Add Income Button */}
+              {(state.otherIncome.income1 === 0 || state.otherIncome.income2 === 0 || state.otherIncome.income3 === 0) && (
+                <div className="border-t pt-4">
+                  <Label className="block text-sm font-medium text-gray-700 mb-2">Add Additional Income</Label>
+                  <div className="flex gap-2">
+                    {state.otherIncome.income1 === 0 && (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => onUpdate('otherIncome', { income1: 1000 })}
+                        className="text-xs"
+                      >
+                        + Income 1
+                      </Button>
+                    )}
+                    {state.otherIncome.income2 === 0 && (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => onUpdate('otherIncome', { income2: 1000 })}
+                        className="text-xs"
+                      >
+                        + Income 2
+                      </Button>
+                    )}
+                    {state.otherIncome.income3 === 0 && (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => onUpdate('otherIncome', { income3: 1000 })}
+                        className="text-xs"
+                      >
+                        + Income 3
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>

@@ -53,6 +53,18 @@ export interface OtherIncome {
   chapter35Duration: number;
   chapter35StartMonth: number;
   chapter35StartYear: number;
+  income1: number;
+  income1Duration: number;
+  income1StartMonth: number;
+  income1StartYear: number;
+  income2: number;
+  income2Duration: number;
+  income2StartMonth: number;
+  income2StartYear: number;
+  income3: number;
+  income3Duration: number;
+  income3StartMonth: number;
+  income3StartYear: number;
 }
 
 export interface Housing {
@@ -198,7 +210,19 @@ export function getDefaultState(): CalculatorState {
       jessicaStartYear: 1,
       chapter35Duration: 24,
       chapter35StartMonth: 1,
-      chapter35StartYear: 1
+      chapter35StartYear: 1,
+      income1: 0,
+      income1Duration: 12,
+      income1StartMonth: 1,
+      income1StartYear: 1,
+      income2: 0,
+      income2Duration: 12,
+      income2StartMonth: 1,
+      income2StartYear: 1,
+      income3: 0,
+      income3Duration: 12,
+      income3StartMonth: 1,
+      income3StartYear: 1
     },
     housing: {
       homeValue: 1000000,
@@ -316,6 +340,25 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
   const chapter35Monthly = (chapter35MonthsElapsed >= 0 && chapter35MonthsElapsed < state.otherIncome.chapter35Duration) 
     ? state.otherIncome.chapter35 
     : 0;
+
+  // Calculate Additional Income streams (only if amount > 0)
+  const income1StartMonthOffset = (state.otherIncome.income1StartYear - 1) * 12 + (state.otherIncome.income1StartMonth - 1);
+  const income1MonthsElapsed = totalMonthsElapsed - income1StartMonthOffset;
+  const income1Monthly = (state.otherIncome.income1 > 0 && income1MonthsElapsed >= 0 && income1MonthsElapsed < state.otherIncome.income1Duration) 
+    ? state.otherIncome.income1 
+    : 0;
+
+  const income2StartMonthOffset = (state.otherIncome.income2StartYear - 1) * 12 + (state.otherIncome.income2StartMonth - 1);
+  const income2MonthsElapsed = totalMonthsElapsed - income2StartMonthOffset;
+  const income2Monthly = (state.otherIncome.income2 > 0 && income2MonthsElapsed >= 0 && income2MonthsElapsed < state.otherIncome.income2Duration) 
+    ? state.otherIncome.income2 
+    : 0;
+
+  const income3StartMonthOffset = (state.otherIncome.income3StartYear - 1) * 12 + (state.otherIncome.income3StartMonth - 1);
+  const income3MonthsElapsed = totalMonthsElapsed - income3StartMonthOffset;
+  const income3Monthly = (state.otherIncome.income3 > 0 && income3MonthsElapsed >= 0 && income3MonthsElapsed < state.otherIncome.income3Duration) 
+    ? state.otherIncome.income3 
+    : 0;
   
   // Calculate living expenses with inflation
   const livingExpMonthly = calculateInflationAdjusted(state.expenses.basicLiving, state.expenses.inflationRate, yearIndex);
@@ -351,7 +394,7 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
   for (let month = 0; month < 12; month++) {
     const monthName = new Date(2024 + yearIndex, month).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
     
-    const grossIncome = paulSSMonthly + jessicaSSMonthly + vaDisabilityMonthly + businessMonthly + jessicaWorkMonthly + chapter35Monthly;
+    const grossIncome = paulSSMonthly + jessicaSSMonthly + vaDisabilityMonthly + businessMonthly + jessicaWorkMonthly + chapter35Monthly + income1Monthly + income2Monthly + income3Monthly;
     
     const taxes = 
       calculateTaxes(paulSSMonthly, state.taxRates.socialSecurity, state.socialSecurity.paulTaxable) +
@@ -460,7 +503,59 @@ export function calculateAnnualProjections(state: CalculatorState): AnnualData[]
     
     const chapter35Annual = state.otherIncome.chapter35 * chapter35MonthsThisYear;
     
-    const totalIncome = paulSSAnnual + jessicaSSAnnual + vaDisabilityAnnual + businessAnnual + jessicaAnnual + chapter35Annual;
+    // Calculate Additional Income streams (annual, only if amount > 0)
+    let income1Annual = 0;
+    if (state.otherIncome.income1 > 0) {
+      const income1StartMonthOffset = (state.otherIncome.income1StartYear - 1) * 12 + (state.otherIncome.income1StartMonth - 1);
+      const income1MonthsElapsed = monthsElapsed - income1StartMonthOffset;
+      let income1MonthsThisYear = 0;
+      if (income1MonthsElapsed >= 0 && income1MonthsElapsed < state.otherIncome.income1Duration) {
+        const income1MonthsRemaining = state.otherIncome.income1Duration - income1MonthsElapsed;
+        income1MonthsThisYear = Math.min(12, income1MonthsRemaining);
+      } else if (income1MonthsElapsed < 0) {
+        const monthsUntilStart = -income1MonthsElapsed;
+        if (monthsUntilStart < 12) {
+          income1MonthsThisYear = Math.min(12 - monthsUntilStart, state.otherIncome.income1Duration);
+        }
+      }
+      income1Annual = state.otherIncome.income1 * income1MonthsThisYear;
+    }
+
+    let income2Annual = 0;
+    if (state.otherIncome.income2 > 0) {
+      const income2StartMonthOffset = (state.otherIncome.income2StartYear - 1) * 12 + (state.otherIncome.income2StartMonth - 1);
+      const income2MonthsElapsed = monthsElapsed - income2StartMonthOffset;
+      let income2MonthsThisYear = 0;
+      if (income2MonthsElapsed >= 0 && income2MonthsElapsed < state.otherIncome.income2Duration) {
+        const income2MonthsRemaining = state.otherIncome.income2Duration - income2MonthsElapsed;
+        income2MonthsThisYear = Math.min(12, income2MonthsRemaining);
+      } else if (income2MonthsElapsed < 0) {
+        const monthsUntilStart = -income2MonthsElapsed;
+        if (monthsUntilStart < 12) {
+          income2MonthsThisYear = Math.min(12 - monthsUntilStart, state.otherIncome.income2Duration);
+        }
+      }
+      income2Annual = state.otherIncome.income2 * income2MonthsThisYear;
+    }
+
+    let income3Annual = 0;
+    if (state.otherIncome.income3 > 0) {
+      const income3StartMonthOffset = (state.otherIncome.income3StartYear - 1) * 12 + (state.otherIncome.income3StartMonth - 1);
+      const income3MonthsElapsed = monthsElapsed - income3StartMonthOffset;
+      let income3MonthsThisYear = 0;
+      if (income3MonthsElapsed >= 0 && income3MonthsElapsed < state.otherIncome.income3Duration) {
+        const income3MonthsRemaining = state.otherIncome.income3Duration - income3MonthsElapsed;
+        income3MonthsThisYear = Math.min(12, income3MonthsRemaining);
+      } else if (income3MonthsElapsed < 0) {
+        const monthsUntilStart = -income3MonthsElapsed;
+        if (monthsUntilStart < 12) {
+          income3MonthsThisYear = Math.min(12 - monthsUntilStart, state.otherIncome.income3Duration);
+        }
+      }
+      income3Annual = state.otherIncome.income3 * income3MonthsThisYear;
+    }
+    
+    const totalIncome = paulSSAnnual + jessicaSSAnnual + vaDisabilityAnnual + businessAnnual + jessicaAnnual + chapter35Annual + income1Annual + income2Annual + income3Annual;
     
     // Calculate taxes
     const totalTaxes = 
