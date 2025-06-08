@@ -721,6 +721,52 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                 <p className="text-xs text-gray-500 mt-1">Expected annual increase in home value</p>
               </div>
               
+              {/* Lump Sum Payment */}
+              <div className="border-t pt-4">
+                <Label className="block text-sm font-medium text-gray-700 mb-3">Lump Sum Payment (Optional)</Label>
+                <div className="space-y-3">
+                  <div>
+                    <Label className="block text-xs text-gray-600 mb-1">Payment Amount</Label>
+                    <div className="relative">
+                      <span className="absolute left-3 top-2 text-gray-500">$</span>
+                      <Input 
+                        type="number" 
+                        value={state.housing.lumpSumAmount}
+                        onChange={(e) => onUpdate('housing', { lumpSumAmount: parseFloat(e.target.value) || 0 })}
+                        className="pl-8 focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                        placeholder="0"
+                      />
+                    </div>
+                  </div>
+                  {state.housing.lumpSumAmount > 0 && (
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <Label className="block text-xs text-gray-600 mb-1">Payment Month</Label>
+                        <Input 
+                          type="number" 
+                          min="1"
+                          max="12"
+                          value={state.housing.lumpSumMonth}
+                          onChange={(e) => onUpdate('housing', { lumpSumMonth: parseInt(e.target.value) || 1 })}
+                          className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                        />
+                      </div>
+                      <div>
+                        <Label className="block text-xs text-gray-600 mb-1">Payment Year</Label>
+                        <Input 
+                          type="number" 
+                          min="1"
+                          max="20"
+                          value={state.housing.lumpSumYear}
+                          onChange={(e) => onUpdate('housing', { lumpSumYear: parseInt(e.target.value) || 1 })}
+                          className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
               <div>
                 <div className="flex items-center space-x-2 mb-3">
                   <Checkbox 
@@ -745,89 +791,43 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                     />
                   </div>
                 )}
+              </div>
                 
-                {/* Lump Sum Payment */}
-                <div className="border-t pt-4">
-                  <Label className="block text-sm font-medium text-gray-700 mb-3">Lump Sum Payment (Optional)</Label>
-                  <div className="space-y-3">
-                    <div>
-                      <Label className="block text-xs text-gray-600 mb-1">Payment Amount</Label>
-                      <div className="relative">
-                        <span className="absolute left-3 top-2 text-gray-500">$</span>
-                        <Input 
-                          type="number" 
-                          value={state.housing.lumpSumAmount}
-                          onChange={(e) => onUpdate('housing', { lumpSumAmount: parseFloat(e.target.value) || 0 })}
-                          className="pl-8 focus:ring-2 focus:ring-finance-blue focus:border-transparent"
-                          placeholder="0"
-                        />
-                      </div>
-                    </div>
-                    {state.housing.lumpSumAmount > 0 && (
-                      <div className="grid grid-cols-2 gap-2">
-                        <div>
-                          <Label className="block text-xs text-gray-600 mb-1">Payment Month</Label>
-                          <Input 
-                            type="number" 
-                            min="1"
-                            max="12"
-                            value={state.housing.lumpSumMonth}
-                            onChange={(e) => onUpdate('housing', { lumpSumMonth: parseInt(e.target.value) || 1 })}
-                            className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
-                          />
-                        </div>
-                        <div>
-                          <Label className="block text-xs text-gray-600 mb-1">Payment Year</Label>
-                          <Input 
-                            type="number" 
-                            min="1"
-                            max="20"
-                            value={state.housing.lumpSumYear}
-                            onChange={(e) => onUpdate('housing', { lumpSumYear: parseInt(e.target.value) || 1 })}
-                            className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
-                          />
-                        </div>
-                      </div>
-                    )}
+              <div className="mt-3 p-3 bg-blue-50 rounded-lg">
+                <div className="space-y-1">
+                  <div className="flex justify-between text-xs">
+                    <span className="text-gray-600">Home Value:</span>
+                    <span className="font-medium">${state.housing.homeValue.toLocaleString()}</span>
                   </div>
-                </div>
-                
-                <div className="mt-3 p-3 bg-blue-50 rounded-lg">
-                  <div className="space-y-1">
+                  <div className="flex justify-between text-xs">
+                    <span className="text-gray-600">Mortgage Balance:</span>
+                    <span className="font-medium">${state.housing.mortgageBalance.toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between text-xs border-t border-blue-200 pt-1">
+                    <span className="text-gray-600">Current Equity:</span>
+                    <span className="font-semibold text-finance-green">
+                      ${(state.housing.homeValue - state.housing.mortgageBalance).toLocaleString()}
+                    </span>
+                  </div>
+                  <div className="flex justify-between text-xs mt-2 pt-2 border-t border-blue-200">
+                    <span className="text-gray-600">Regular Payment:</span>
+                    <span className="font-medium">${state.housing.monthlyPayment.toLocaleString()}</span>
+                  </div>
+                  {state.housing.acceleratePayoff && extraPayment > 0 && (
                     <div className="flex justify-between text-xs">
-                      <span className="text-gray-600">Home Value:</span>
-                      <span className="font-medium">${state.housing.homeValue.toLocaleString()}</span>
+                      <span className="text-gray-600">Extra Payment:</span>
+                      <span className="font-medium text-finance-blue">+${Math.round(extraPayment).toLocaleString()}</span>
                     </div>
-                    <div className="flex justify-between text-xs">
-                      <span className="text-gray-600">Mortgage Balance:</span>
-                      <span className="font-medium">${state.housing.mortgageBalance.toLocaleString()}</span>
-                    </div>
-                    <div className="flex justify-between text-xs border-t border-blue-200 pt-1">
-                      <span className="text-gray-600">Current Equity:</span>
-                      <span className="font-semibold text-finance-green">
-                        ${(state.housing.homeValue - state.housing.mortgageBalance).toLocaleString()}
-                      </span>
-                    </div>
-                    <div className="flex justify-between text-xs mt-2 pt-2 border-t border-blue-200">
-                      <span className="text-gray-600">Regular Payment:</span>
-                      <span className="font-medium">${state.housing.monthlyPayment.toLocaleString()}</span>
-                    </div>
-                    {state.housing.acceleratePayoff && extraPayment > 0 && (
-                      <div className="flex justify-between text-xs">
-                        <span className="text-gray-600">Extra Payment:</span>
-                        <span className="font-medium text-finance-blue">+${Math.round(extraPayment).toLocaleString()}</span>
-                      </div>
-                    )}
-                    <div className="flex justify-between text-xs border-t border-blue-200 pt-1">
-                      <span className="text-gray-600">Total Payment:</span>
-                      <span className="font-semibold text-finance-blue">
-                        ${(state.housing.monthlyPayment + extraPayment).toLocaleString()}
-                      </span>
-                    </div>
-                    <div className="flex justify-between text-xs">
-                      <span className="text-gray-600">Payoff Date:</span>
-                      <span className="font-medium text-finance-green">{payoffDate}</span>
-                    </div>
+                  )}
+                  <div className="flex justify-between text-xs border-t border-blue-200 pt-1">
+                    <span className="text-gray-600">Total Payment:</span>
+                    <span className="font-semibold text-finance-blue">
+                      ${(state.housing.monthlyPayment + extraPayment).toLocaleString()}
+                    </span>
+                  </div>
+                  <div className="flex justify-between text-xs">
+                    <span className="text-gray-600">Payoff Date:</span>
+                    <span className="font-medium text-finance-green">{payoffDate}</span>
                   </div>
                 </div>
               </div>
