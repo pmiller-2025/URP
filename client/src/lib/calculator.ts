@@ -471,10 +471,16 @@ const mortgageAmortizationSchedule: MortgagePayment[] = [
   { paymentNumber: 87, paymentDate: "09/01/2032", startingBalance: 1577.85, principalPayment: 1577.85, interestPayment: 7.23, endingBalance: 0.00 }
 ];
 
-export function getMortgagePaymentByMonth(monthIndex: number): MortgagePayment | null {
+export function getMortgagePaymentByMonth(monthIndex: number, state?: CalculatorState): MortgagePayment | null {
   // monthIndex is 0-based starting from June 2025 (month 0 = June 2025, 1 = July 2025)
   // The amortization schedule starts July 2025, so we offset by 1
   const scheduleIndex = monthIndex - 1;
+  
+  // Check if mortgage is paid off early due to acceleration
+  if (state && state.housing.acceleratePayoff && scheduleIndex >= state.housing.targetPayoffMonths) {
+    return null; // Mortgage paid off early
+  }
+  
   if (scheduleIndex < 0 || scheduleIndex >= mortgageAmortizationSchedule.length) {
     return null;
   }
@@ -690,8 +696,8 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
     }
   }
   
-  // Get mortgage payment from amortization schedule
-  const mortgagePayment = getMortgagePaymentByMonth(totalMonthsElapsed);
+  // Get mortgage payment from amortization schedule with early payoff consideration
+  const mortgagePayment = getMortgagePaymentByMonth(totalMonthsElapsed, state);
   const mortgageMonthly = mortgagePayment ? (mortgagePayment.principalPayment + mortgagePayment.interestPayment) : 0;
   currentMortgageBalance = mortgagePayment ? mortgagePayment.endingBalance : 0;
   
@@ -711,8 +717,8 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
       currentMortgageBalance = Math.max(0, currentMortgageBalance - lumpSumPayment);
     }
     
-    // Get mortgage payment from amortization schedule for this specific month
-    const currentMortgagePayment = getMortgagePaymentByMonth(currentMonthOffset);
+    // Get mortgage payment from amortization schedule for this specific month with early payoff consideration
+    const currentMortgagePayment = getMortgagePaymentByMonth(currentMonthOffset, state);
     const currentMortgageMonthly = currentMortgagePayment ? (currentMortgagePayment.principalPayment + currentMortgagePayment.interestPayment) : 0;
     
     // Update mortgage balance based on amortization schedule
@@ -966,11 +972,11 @@ export function calculateAnnualProjections(state: CalculatorState): AnnualData[]
       expense3Annual = state.expenses.expense3 * expense3MonthsThisYear;
     }
     
-    // Calculate annual mortgage payments from amortization schedule
+    // Calculate annual mortgage payments from amortization schedule with early payoff consideration
     let mortgageAnnual = 0;
     for (let month = 0; month < 12; month++) {
       const monthOffset = monthsElapsed + month;
-      const mortgagePayment = getMortgagePaymentByMonth(monthOffset);
+      const mortgagePayment = getMortgagePaymentByMonth(monthOffset, state);
       if (mortgagePayment) {
         mortgageAnnual += mortgagePayment.principalPayment + mortgagePayment.interestPayment;
       }
@@ -987,8 +993,8 @@ export function calculateAnnualProjections(state: CalculatorState): AnnualData[]
     // All positive cash flow automatically increases savings, negative cash flow comes from savings
     currentSavingsBalance += netCashFlow + netInvestmentReturn + state.savings.additionalAnnual;
     
-    // Calculate mortgage balance from amortization schedule
-    const endOfYearMortgagePayment = getMortgagePaymentByMonth(monthsElapsed + 11); // Last month of the year
+    // Calculate mortgage balance from amortization schedule with early payoff consideration
+    const endOfYearMortgagePayment = getMortgagePaymentByMonth(monthsElapsed + 11, state); // Last month of the year
     currentMortgageBalance = endOfYearMortgagePayment ? endOfYearMortgagePayment.endingBalance : 0;
     
     // Calculate home value with appreciation
@@ -1042,7 +1048,8 @@ export function calculateSummaryMetrics(annualData: AnnualData[], state: Calcula
   const totalInterestPaid = calculateTotalInterestFromSchedule(actualPayoffMonths);
   const interestSaved = state.housing.acceleratePayoff ? 
     calculateInterestSaved(state.housing.targetPayoffMonths) : 0;
-  const mortgagePayoffDate = getMortgagePayoffDate(actualPayoffMonths);
+  const mortgagePayoffDate = state.housing.acceleratePayoff ? 
+    getMortgagePayoffDate(state.housing.targetPayoffMonths) : getMortgagePayoffDate();
 
   return {
     finalNetWorth: finalYear.netWorth,
