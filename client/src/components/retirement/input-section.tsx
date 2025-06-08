@@ -16,7 +16,7 @@ interface InputSectionProps {
 export function InputSection({ state, onUpdate, extraPayment, standardPayoffMonths, payoffDate }: InputSectionProps) {
   const currentDate = getCurrentDate();
   
-  const handleBirthdayUpdate = (person: 'paul' | 'jessica', month: number, year: number) => {
+  const handleBirthdayUpdate = (person: 'paul' | 'jessica' | 'luke', month: number, year: number) => {
     const age = calculateAge(month, year, currentDate.month, currentDate.year);
     if (person === 'paul') {
       onUpdate('personalInfo', { 
@@ -24,11 +24,17 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
         paulBirthYear: year, 
         paulAge: age 
       });
-    } else {
+    } else if (person === 'jessica') {
       onUpdate('personalInfo', { 
         jessicaBirthMonth: month, 
         jessicaBirthYear: year, 
         jessicaAge: age 
+      });
+    } else {
+      onUpdate('personalInfo', { 
+        lukeBirthMonth: month, 
+        lukeBirthYear: year, 
+        lukeAge: age 
       });
     }
   };
@@ -117,6 +123,38 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                   onChange={(e) => onUpdate('personalInfo', { projectionYears: parseInt(e.target.value) || 0 })}
                   className="focus:ring-2 focus:ring-finance-blue focus:border-transparent"
                 />
+              </div>
+              
+              <div className="border-t pt-4">
+                <Label className="block text-sm font-medium text-gray-700 mb-2">Dependents</Label>
+                <div>
+                  <Label className="block text-sm font-medium text-gray-600 mb-1">Luke's Birthday</Label>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <Label className="block text-xs text-gray-600 mb-1">Month</Label>
+                      <Input 
+                        type="number" 
+                        min="1"
+                        max="12"
+                        value={state.personalInfo.lukeBirthMonth}
+                        onChange={(e) => handleBirthdayUpdate('luke', parseInt(e.target.value) || 1, state.personalInfo.lukeBirthYear)}
+                        className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                      />
+                    </div>
+                    <div>
+                      <Label className="block text-xs text-gray-600 mb-1">Year</Label>
+                      <Input 
+                        type="number" 
+                        min="1990"
+                        max="2020"
+                        value={state.personalInfo.lukeBirthYear}
+                        onChange={(e) => handleBirthdayUpdate('luke', state.personalInfo.lukeBirthMonth, parseInt(e.target.value) || 2009)}
+                        className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                      />
+                    </div>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">Current age: {state.personalInfo.lukeAge}</p>
+                </div>
               </div>
             </div>
           </CardContent>

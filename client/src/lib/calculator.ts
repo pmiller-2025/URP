@@ -5,6 +5,9 @@ export interface PersonalInfo {
   paulBirthYear: number;
   jessicaBirthMonth: number;
   jessicaBirthYear: number;
+  lukeAge: number;
+  lukeBirthMonth: number;
+  lukeBirthYear: number;
   projectionYears: number;
 }
 
@@ -168,6 +171,9 @@ export function getDefaultState(): CalculatorState {
       paulBirthYear: 1961,
       jessicaBirthMonth: 3,
       jessicaBirthYear: 1968,
+      lukeAge: 15,
+      lukeBirthMonth: 9,
+      lukeBirthYear: 2009,
       projectionYears: 20
     },
     socialSecurity: {
