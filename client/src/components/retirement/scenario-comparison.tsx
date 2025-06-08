@@ -192,6 +192,7 @@ export function ScenarioComparison() {
           {/* Comparison Results */}
           {comparisonResult && (
             <div className="space-y-6 border-t pt-6">
+              <div className="text-sm text-green-600 font-medium">✓ Analysis Complete</div>
               {/* Selected Scenarios Header */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Card className="border-blue-200">
