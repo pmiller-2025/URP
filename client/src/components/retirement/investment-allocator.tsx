@@ -37,29 +37,35 @@ export function InvestmentAllocator({ selectedStrategy, currentReturn, onStrateg
         <h3 className="text-sm font-semibold">Investment Strategy</h3>
       </div>
       
-      <div className="grid grid-cols-3 gap-2">
+      <div className="space-y-2">
         {investmentStrategies.map((allocation) => (
-          <div key={allocation.strategy} className="flex flex-col gap-1">
+          <div key={allocation.strategy} className="flex gap-2">
             <Button
               variant={selectedStrategy === allocation.strategy ? "default" : "outline"}
-              size="sm"
               onClick={() => onStrategySelect(allocation.strategy, allocation.expectedReturn)}
-              className={`h-auto p-3 flex flex-col items-center gap-1 ${
+              className={`flex-1 h-auto p-3 flex items-center justify-between ${
                 selectedStrategy === allocation.strategy 
                   ? 'bg-blue-600 text-white' 
                   : 'hover:bg-gray-50'
               }`}
             >
-              {getStrategyIcon(allocation.strategy)}
-              <span className="text-xs font-medium capitalize">{allocation.strategy}</span>
-              <span className="text-xs opacity-80">{allocation.expectedReturn}%</span>
+              <div className="flex items-center gap-3">
+                {getStrategyIcon(allocation.strategy)}
+                <div className="text-left">
+                  <div className="text-sm font-medium capitalize">{allocation.strategy}</div>
+                  <div className="text-xs opacity-80">{allocation.riskLevel} Risk</div>
+                </div>
+              </div>
+              <div className="text-right">
+                <div className="text-sm font-bold">{allocation.expectedReturn}%</div>
+                <div className="text-xs opacity-80">Expected Return</div>
+              </div>
             </Button>
             
             <Dialog>
               <DialogTrigger asChild>
-                <Button variant="ghost" size="sm" className="h-6 p-1 text-xs text-gray-500 hover:text-gray-700">
-                  <Info className="h-3 w-3 mr-1" />
-                  Details
+                <Button variant="outline" size="sm" className="px-3">
+                  <Info className="h-4 w-4" />
                 </Button>
               </DialogTrigger>
               <DialogContent className="max-w-md">
