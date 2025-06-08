@@ -1,0 +1,76 @@
+Here's an optimized prompt for rebuilding this retirement calculator MVP in Replit:
+
+```
+Create a comprehensive retirement cash flow calculator web application with the following specifications:
+
+## CORE FUNCTIONALITY
+Build a single-page web app that calculates and displays 20-year retirement projections with both annual and monthly views.
+
+## INPUT PARAMETERS (with these exact defaults):
+**Personal Info:**
+- Paul's age: 63, Jessica's age: 56, Projection years: 20
+
+**Social Security:**
+- Paul's SS: $3,500/month at age 68 (12% tax rate)
+- Jessica's SS: Auto-calculate as 50% of Paul's, starts age 68 (12% tax rate)
+- Annual COLA: 3%
+
+**Other Income:**
+- VA Disability: $4,000/month (non-taxable, 3% annual increase)
+- Business Income: $4,000/month for 60 months (22% tax rate)
+- Jessica's Income: $1,250/month for 24 months (12% tax rate)
+- Chapter 35: $1,000/month for 24 months (non-taxable)
+
+**Housing & Mortgage:**
+- Home value: $1,000,000 (2.5% annual appreciation)
+- Mortgage balance: $90,000 at 5.5% interest
+- Regular payment: $2,000/month, payoff in 24 months
+- Auto-calculate required extra payment for 24-month payoff
+
+**Savings & Investments:**
+- Initial savings: $50,000
+- Annual return: 5% (15% tax rate on gains)
+- Additional annual savings: $0
+
+**Expenses:**
+- Basic living: $5,000/month (3% annual increase)
+- Life insurance: $500/month (years 4-12 only)
+
+## REQUIRED FEATURES:
+1. **Real-time calculations** - Update results as inputs change
+2. **Dual view modes** - Toggle between annual summary and monthly breakdown
+3. **Tax calculations** - Individual tax rates per income source with checkbox toggles
+4. **Mortgage amortization** - Calculate extra payments needed for specified payoff timeline
+5. **Investment growth** - Compound returns on savings with annual additions
+6. **Inflation adjustments** - Apply different growth rates to income/expenses
+7. **Summary metrics** - Final net worth, total taxes paid, average cash flow
+8. **Interactive chart** - Savings balance over time using HTML5 Canvas
+9. **Responsive design** - Clean, professional layout that works on all devices
+
+## TECHNICAL REQUIREMENTS:
+- Pure HTML, CSS, JavaScript (no external libraries)
+- Modular JavaScript functions for each calculation type
+- Clean data structure for storing results
+- Professional styling with hover effects and color coding
+- Input validation and error handling
+- Mobile-responsive grid layout
+
+## OUTPUT DISPLAY:
+- **Annual View:** 23-column table showing yearly breakdowns
+- **Monthly View:** 18-column table for selected year
+- **Summary Cards:** Key financial metrics with large, readable numbers
+- **Chart:** Savings growth visualization with axis labels
+- Color coding: Green for positive cash flow, red for negative, highlighting for milestone years
+
+## CALCULATION LOGIC:
+- Month-by-month income calculations respecting duration limits
+- Progressive tax calculations on each income source
+- Mortgage payment calculations with lump sum and extra payments
+- Investment returns calculated on beginning-of-year balance
+- Inflation applied year-over-year to appropriate categories
+- Net worth = Home Value + Savings - Remaining Mortgage
+
+Focus on accuracy, user experience, and clean code structure. The calculator should handle edge cases gracefully and provide immediate visual feedback for all user interactions.
+```
+
+This prompt provides all the essential requirements while being specific enough for an AI to recreate the calculator accurately in Replit.
