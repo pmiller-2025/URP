@@ -289,11 +289,59 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                     className="pl-8 focus:ring-2 focus:ring-finance-blue focus:border-transparent"
                   />
                 </div>
-                <div className="mt-2 p-2 bg-blue-50 rounded-lg">
-                  <p className="text-xs text-finance-blue">
-                    Auto-calculated extra payment for {state.housing.targetPayoffMonths}-month payoff: 
-                    <span className="font-semibold"> ${Math.round(extraPayment).toLocaleString()}</span>
-                  </p>
+                <p className="text-xs text-gray-500 mt-1">
+                  Standard payoff: {Math.round(standardPayoffMonths)} months
+                </p>
+              </div>
+              
+              <div>
+                <div className="flex items-center space-x-2 mb-3">
+                  <Checkbox 
+                    id="accelerate-payoff" 
+                    checked={state.housing.acceleratePayoff}
+                    onCheckedChange={(checked) => onUpdate('housing', { acceleratePayoff: checked })}
+                    className="rounded border-gray-300 text-finance-blue focus:ring-finance-blue"
+                  />
+                  <Label htmlFor="accelerate-payoff" className="text-sm font-medium text-gray-700">
+                    Accelerate Payoff
+                  </Label>
+                </div>
+                
+                {state.housing.acceleratePayoff && (
+                  <div>
+                    <Label className="block text-sm font-medium text-gray-700 mb-1">Target Payoff (Months)</Label>
+                    <Input 
+                      type="number" 
+                      value={state.housing.targetPayoffMonths}
+                      onChange={(e) => onUpdate('housing', { targetPayoffMonths: parseInt(e.target.value) || 0 })}
+                      className="focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                    />
+                  </div>
+                )}
+                
+                <div className="mt-3 p-3 bg-blue-50 rounded-lg">
+                  <div className="space-y-1">
+                    <div className="flex justify-between text-xs">
+                      <span className="text-gray-600">Regular Payment:</span>
+                      <span className="font-medium">${state.housing.monthlyPayment.toLocaleString()}</span>
+                    </div>
+                    {state.housing.acceleratePayoff && extraPayment > 0 && (
+                      <div className="flex justify-between text-xs">
+                        <span className="text-gray-600">Extra Payment:</span>
+                        <span className="font-medium text-finance-blue">+${Math.round(extraPayment).toLocaleString()}</span>
+                      </div>
+                    )}
+                    <div className="flex justify-between text-xs border-t border-blue-200 pt-1">
+                      <span className="text-gray-600">Total Payment:</span>
+                      <span className="font-semibold text-finance-blue">
+                        ${(state.housing.monthlyPayment + extraPayment).toLocaleString()}
+                      </span>
+                    </div>
+                    <div className="flex justify-between text-xs">
+                      <span className="text-gray-600">Payoff Date:</span>
+                      <span className="font-medium text-finance-green">{payoffDate}</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
