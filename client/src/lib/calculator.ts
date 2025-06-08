@@ -86,6 +86,7 @@ export interface Savings {
   additionalAnnual: number;
   taxOnGains: boolean;
   gainsTaxRate: number;
+  allocationStrategy: 'conservative' | 'balanced' | 'aggressive' | 'custom';
 }
 
 export interface BudgetCategory {
@@ -208,6 +209,55 @@ export function getCurrentDate(): { month: number; year: number } {
   };
 }
 
+export interface InvestmentAllocation {
+  strategy: 'conservative' | 'balanced' | 'aggressive' | 'custom';
+  description: string;
+  expectedReturn: number;
+  volatility: string;
+  allocation: {
+    stocks: number;
+    bonds: number;
+    cash: number;
+    international: number;
+  };
+  riskLevel: string;
+  timeHorizon: string;
+  suitableFor: string[];
+}
+
+export const investmentStrategies: InvestmentAllocation[] = [
+  {
+    strategy: 'conservative',
+    description: 'Low-risk strategy focused on capital preservation with steady, modest growth',
+    expectedReturn: 4.5,
+    volatility: 'Low (5-8%)',
+    allocation: { stocks: 20, bonds: 60, cash: 15, international: 5 },
+    riskLevel: 'Low',
+    timeHorizon: '1-5 years to retirement',
+    suitableFor: ['Risk-averse investors', 'Near retirement', 'Need steady income']
+  },
+  {
+    strategy: 'balanced',
+    description: 'Moderate-risk strategy balancing growth potential with stability',
+    expectedReturn: 6.5,
+    volatility: 'Moderate (8-12%)',
+    allocation: { stocks: 50, bonds: 35, cash: 5, international: 10 },
+    riskLevel: 'Moderate',
+    timeHorizon: '5-15 years to retirement',
+    suitableFor: ['Balanced risk tolerance', 'Medium-term goals', 'Diversified approach']
+  },
+  {
+    strategy: 'aggressive',
+    description: 'High-growth strategy with higher volatility for long-term wealth building',
+    expectedReturn: 8.5,
+    volatility: 'High (12-18%)',
+    allocation: { stocks: 70, bonds: 15, cash: 0, international: 15 },
+    riskLevel: 'High',
+    timeHorizon: '15+ years to retirement',
+    suitableFor: ['High risk tolerance', 'Young investors', 'Long-term growth focus']
+  }
+];
+
 export const defaultBudgetCategories: BudgetCategory[] = [
   { id: 'housing', name: 'Housing & Utilities', amount: 1500, isCustom: false },
   { id: 'food', name: 'Food & Dining', amount: 800, isCustom: false },
@@ -287,7 +337,8 @@ export function getDefaultState(): CalculatorState {
       annualReturn: 5.0,
       additionalAnnual: 0,
       taxOnGains: true,
-      gainsTaxRate: 15
+      gainsTaxRate: 15,
+      allocationStrategy: 'balanced'
     },
     expenses: {
       budgetType: 'fixed',
