@@ -201,17 +201,6 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                 </div>
                 <div className="grid grid-cols-3 gap-2 mt-2">
                   <div>
-                    <Label className="block text-xs text-gray-600 mb-1">Start Year</Label>
-                    <Input 
-                      type="number" 
-                      min="1"
-                      max="20"
-                      value={state.otherIncome.businessStartYear}
-                      onChange={(e) => onUpdate('otherIncome', { businessStartYear: parseInt(e.target.value) || 1 })}
-                      className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
-                    />
-                  </div>
-                  <div>
                     <Label className="block text-xs text-gray-600 mb-1">Start Month</Label>
                     <Input 
                       type="number" 
@@ -219,6 +208,17 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                       max="12"
                       value={state.otherIncome.businessStartMonth}
                       onChange={(e) => onUpdate('otherIncome', { businessStartMonth: parseInt(e.target.value) || 1 })}
+                      className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                    />
+                  </div>
+                  <div>
+                    <Label className="block text-xs text-gray-600 mb-1">Start Year</Label>
+                    <Input 
+                      type="number" 
+                      min="1"
+                      max="20"
+                      value={state.otherIncome.businessStartYear}
+                      onChange={(e) => onUpdate('otherIncome', { businessStartYear: parseInt(e.target.value) || 1 })}
                       className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
                     />
                   </div>
@@ -256,17 +256,6 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                 </div>
                 <div className="grid grid-cols-3 gap-2 mt-2">
                   <div>
-                    <Label className="block text-xs text-gray-600 mb-1">Start Year</Label>
-                    <Input 
-                      type="number" 
-                      min="1"
-                      max="20"
-                      value={state.otherIncome.jessicaStartYear}
-                      onChange={(e) => onUpdate('otherIncome', { jessicaStartYear: parseInt(e.target.value) || 1 })}
-                      className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
-                    />
-                  </div>
-                  <div>
                     <Label className="block text-xs text-gray-600 mb-1">Start Month</Label>
                     <Input 
                       type="number" 
@@ -274,6 +263,17 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                       max="12"
                       value={state.otherIncome.jessicaStartMonth}
                       onChange={(e) => onUpdate('otherIncome', { jessicaStartMonth: parseInt(e.target.value) || 1 })}
+                      className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                    />
+                  </div>
+                  <div>
+                    <Label className="block text-xs text-gray-600 mb-1">Start Year</Label>
+                    <Input 
+                      type="number" 
+                      min="1"
+                      max="20"
+                      value={state.otherIncome.jessicaStartYear}
+                      onChange={(e) => onUpdate('otherIncome', { jessicaStartYear: parseInt(e.target.value) || 1 })}
                       className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
                     />
                   </div>
@@ -312,17 +312,6 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                 </div>
                 <div className="grid grid-cols-3 gap-2 mt-2">
                   <div>
-                    <Label className="block text-xs text-gray-600 mb-1">Start Year</Label>
-                    <Input 
-                      type="number" 
-                      min="1"
-                      max="20"
-                      value={state.otherIncome.chapter35StartYear}
-                      onChange={(e) => onUpdate('otherIncome', { chapter35StartYear: parseInt(e.target.value) || 1 })}
-                      className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
-                    />
-                  </div>
-                  <div>
                     <Label className="block text-xs text-gray-600 mb-1">Start Month</Label>
                     <Input 
                       type="number" 
@@ -330,6 +319,17 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                       max="12"
                       value={state.otherIncome.chapter35StartMonth}
                       onChange={(e) => onUpdate('otherIncome', { chapter35StartMonth: parseInt(e.target.value) || 1 })}
+                      className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                    />
+                  </div>
+                  <div>
+                    <Label className="block text-xs text-gray-600 mb-1">Start Year</Label>
+                    <Input 
+                      type="number" 
+                      min="1"
+                      max="20"
+                      value={state.otherIncome.chapter35StartYear}
+                      onChange={(e) => onUpdate('otherIncome', { chapter35StartYear: parseInt(e.target.value) || 1 })}
                       className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
                     />
                   </div>
