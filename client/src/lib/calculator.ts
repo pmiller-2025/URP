@@ -330,7 +330,7 @@ export function getDefaultState(): CalculatorState {
       targetPayoffMonths: 24,
       homeAppreciation: 2.5,
       acceleratePayoff: true,
-      lumpSumAmount: 0,
+      lumpSumAmount: 50000,
       lumpSumMonth: 6,
       lumpSumYear: 1
     },
@@ -742,6 +742,8 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
   const yearStartMonthOffset = yearIndex * 12;
   const yearEndMonthOffset = (yearIndex + 1) * 12;
   
+  console.log(`Year ${yearIndex + 1}: Lump sum offset = ${lumpSumMonthOffset}, Year start = ${yearStartMonthOffset}, Year end = ${yearEndMonthOffset}`);
+  
   if (state.housing.lumpSumAmount > 0 && lumpSumMonthOffset >= yearStartMonthOffset && lumpSumMonthOffset < yearEndMonthOffset) {
     const lumpSumMonthInYear = lumpSumMonthOffset - yearStartMonthOffset;
     // Apply lump sum at the beginning of the month it occurs
@@ -770,8 +772,8 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
     // Apply lump sum payment if it occurs this month
     let lumpSumPayment = 0;
     if (state.housing.lumpSumAmount > 0 && currentMonthOffset === lumpSumMonthOffset) {
-      lumpSumPayment = Math.min(state.housing.lumpSumAmount, currentMortgageBalance);
-      currentMortgageBalance = Math.max(0, currentMortgageBalance - lumpSumPayment);
+      lumpSumPayment = state.housing.lumpSumAmount;
+      console.log(`Applying lump sum payment of ${lumpSumPayment} in month ${currentMonthOffset} (${monthName})`);
     }
     
     // Get mortgage payment from amortization schedule for this specific month with early payoff consideration
