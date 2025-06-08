@@ -85,8 +85,17 @@ export interface Savings {
   gainsTaxRate: number;
 }
 
+export interface BudgetCategory {
+  id: string;
+  name: string;
+  amount: number;
+  isCustom: boolean;
+}
+
 export interface Expenses {
+  budgetType: 'fixed' | 'detailed';
   basicLiving: number;
+  detailedBudget: BudgetCategory[];
   lifeInsurance: number;
   lifeInsuranceStartYear: number;
   lifeInsuranceEndYear: number;
@@ -174,6 +183,18 @@ export function getCurrentDate(): { month: number; year: number } {
   };
 }
 
+export const defaultBudgetCategories: BudgetCategory[] = [
+  { id: 'housing', name: 'Housing & Utilities', amount: 1500, isCustom: false },
+  { id: 'food', name: 'Food & Dining', amount: 800, isCustom: false },
+  { id: 'transportation', name: 'Transportation', amount: 600, isCustom: false },
+  { id: 'healthcare', name: 'Healthcare', amount: 400, isCustom: false },
+  { id: 'entertainment', name: 'Entertainment & Recreation', amount: 300, isCustom: false },
+  { id: 'personal', name: 'Personal Care', amount: 200, isCustom: false },
+  { id: 'clothing', name: 'Clothing', amount: 150, isCustom: false },
+  { id: 'gifts', name: 'Gifts & Donations', amount: 250, isCustom: false },
+  { id: 'miscellaneous', name: 'Miscellaneous', amount: 300, isCustom: false }
+];
+
 export function getDefaultState(): CalculatorState {
   return {
     personalInfo: {
@@ -241,7 +262,9 @@ export function getDefaultState(): CalculatorState {
       gainsTaxRate: 15
     },
     expenses: {
+      budgetType: 'fixed',
       basicLiving: 5000,
+      detailedBudget: [...defaultBudgetCategories],
       lifeInsurance: 500,
       lifeInsuranceStartYear: 4,
       lifeInsuranceEndYear: 12,
@@ -297,6 +320,14 @@ export function calculateTaxes(income: number, rate: number, isTaxable: boolean)
 
 export function calculateInflationAdjusted(baseAmount: number, rate: number, years: number): number {
   return baseAmount * Math.pow(1 + (rate / 100), years);
+}
+
+export function getTotalLivingExpenses(expenses: Expenses): number {
+  if (expenses.budgetType === 'fixed') {
+    return expenses.basicLiving;
+  } else {
+    return expenses.detailedBudget.reduce((total, category) => total + category.amount, 0);
+  }
 }
 
 export function calculateMonthlyProjections(state: CalculatorState, year: number): MonthlyData[] {
@@ -361,7 +392,8 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
     : 0;
   
   // Calculate living expenses with inflation
-  const livingExpMonthly = calculateInflationAdjusted(state.expenses.basicLiving, state.expenses.inflationRate, yearIndex);
+  const baseLivingExpenses = getTotalLivingExpenses(state.expenses);
+  const livingExpMonthly = calculateInflationAdjusted(baseLivingExpenses, state.expenses.inflationRate, yearIndex);
   
   // Calculate life insurance (only during specified years)
   const isLifeInsuranceYear = year >= state.expenses.lifeInsuranceStartYear && year <= state.expenses.lifeInsuranceEndYear;
