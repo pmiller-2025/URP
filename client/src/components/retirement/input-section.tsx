@@ -19,6 +19,11 @@ interface InputSectionProps {
 export function InputSection({ state, onUpdate, extraPayment, standardPayoffMonths, payoffDate }: InputSectionProps) {
   const currentDate = getCurrentDate();
   
+  // Calculate effective mortgage balance after lump sum payment
+  const effectiveMortgageBalance = state.housing.lumpSumAmount > 0 
+    ? Math.max(0, state.housing.mortgageBalance - state.housing.lumpSumAmount)
+    : state.housing.mortgageBalance;
+  
   const handleBirthdayUpdate = (person: 'paul' | 'jessica' | 'luke', month: number, year: number) => {
     const age = calculateAge(month, year, currentDate.month, currentDate.year);
     if (person === 'paul') {
@@ -812,12 +817,12 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                   </div>
                   <div className="flex justify-between text-xs">
                     <span className="text-gray-600">Mortgage Balance:</span>
-                    <span className="font-medium">${state.housing.mortgageBalance.toLocaleString()}</span>
+                    <span className="font-medium">${effectiveMortgageBalance.toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between text-xs border-t border-blue-200 pt-1">
                     <span className="text-gray-600">Current Equity:</span>
                     <span className="font-semibold text-finance-green">
-                      ${(state.housing.homeValue - state.housing.mortgageBalance).toLocaleString()}
+                      ${(state.housing.homeValue - effectiveMortgageBalance).toLocaleString()}
                     </span>
                   </div>
                   <div className="flex justify-between text-xs mt-2 pt-2 border-t border-blue-200">
