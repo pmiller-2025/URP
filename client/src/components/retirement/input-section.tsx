@@ -248,7 +248,7 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                     className="pl-8 focus:ring-2 focus:ring-finance-blue focus:border-transparent"
                   />
                 </div>
-                <div className="grid grid-cols-2 gap-2 mt-2">
+                <div className="grid grid-cols-3 gap-2 mt-2">
                   <div>
                     <Label className="block text-xs text-gray-600 mb-1">Start Year</Label>
                     <Input 
@@ -257,6 +257,17 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                       max="20"
                       value={state.otherIncome.chapter35StartYear}
                       onChange={(e) => onUpdate('otherIncome', { chapter35StartYear: parseInt(e.target.value) || 1 })}
+                      className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                    />
+                  </div>
+                  <div>
+                    <Label className="block text-xs text-gray-600 mb-1">Start Month</Label>
+                    <Input 
+                      type="number" 
+                      min="1"
+                      max="12"
+                      value={state.otherIncome.chapter35StartMonth}
+                      onChange={(e) => onUpdate('otherIncome', { chapter35StartMonth: parseInt(e.target.value) || 1 })}
                       className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
                     />
                   </div>

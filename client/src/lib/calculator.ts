@@ -40,6 +40,7 @@ export interface OtherIncome {
   businessDuration: number;
   jessicaDuration: number;
   chapter35Duration: number;
+  chapter35StartMonth: number;
   chapter35StartYear: number;
 }
 
@@ -158,6 +159,7 @@ export function getDefaultState(): CalculatorState {
       businessDuration: 60,
       jessicaDuration: 24,
       chapter35Duration: 24,
+      chapter35StartMonth: 1,
       chapter35StartYear: 1
     },
     housing: {
@@ -264,8 +266,8 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
   const jessicaActive = totalMonthsElapsed < state.otherIncome.jessicaDuration;
   const jessicaWorkMonthly = jessicaActive ? state.otherIncome.jessicaIncome : 0;
   
-  // Calculate Chapter 35 with start year and duration
-  const chapter35StartMonthOffset = (state.otherIncome.chapter35StartYear - 1) * 12;
+  // Calculate Chapter 35 with start month/year and duration
+  const chapter35StartMonthOffset = (state.otherIncome.chapter35StartYear - 1) * 12 + (state.otherIncome.chapter35StartMonth - 1);
   const chapter35MonthsElapsed = totalMonthsElapsed - chapter35StartMonthOffset;
   const chapter35Monthly = (chapter35MonthsElapsed >= 0 && chapter35MonthsElapsed < state.otherIncome.chapter35Duration) 
     ? state.otherIncome.chapter35 
@@ -374,8 +376,8 @@ export function calculateAnnualProjections(state: CalculatorState): AnnualData[]
     const jessicaMonthsThisYear = Math.min(12, jessicaMonthsRemaining);
     const jessicaAnnual = state.otherIncome.jessicaIncome * jessicaMonthsThisYear;
     
-    // Calculate Chapter 35 (limited duration with start year)
-    const chapter35StartMonthOffset = (state.otherIncome.chapter35StartYear - 1) * 12;
+    // Calculate Chapter 35 (limited duration with start month/year)
+    const chapter35StartMonthOffset = (state.otherIncome.chapter35StartYear - 1) * 12 + (state.otherIncome.chapter35StartMonth - 1);
     const chapter35MonthsElapsed = monthsElapsed - chapter35StartMonthOffset;
     
     let chapter35MonthsThisYear = 0;
