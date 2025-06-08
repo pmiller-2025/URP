@@ -776,13 +776,25 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
       console.log(`Applying lump sum payment of ${lumpSumPayment} in month ${currentMonthOffset} (${monthName})`);
     }
     
-    // Get mortgage payment from amortization schedule for this specific month with early payoff consideration
-    const currentMortgagePayment = getMortgagePaymentByMonth(currentMonthOffset, state);
-    const currentMortgageMonthly = currentMortgagePayment ? (currentMortgagePayment.principalPayment + currentMortgagePayment.interestPayment) : 0;
-    
-    // Update mortgage balance based on amortization schedule
-    if (currentMortgagePayment) {
-      currentMortgageBalance = currentMortgagePayment.endingBalance;
+    // Calculate monthly mortgage payment based on current balance and remaining months
+    let currentMortgageMonthly = 0;
+    if (currentMortgageBalance > 0) {
+      const remainingMonths = state.housing.targetPayoffMonths - currentMonthOffset;
+      if (remainingMonths > 0) {
+        // Calculate payment for remaining balance over remaining months
+        const monthlyRate = 0.0458 / 12; // Use 4.58% rate from amortization
+        const monthlyInterest = currentMortgageBalance * monthlyRate;
+        const monthlyPrincipal = Math.min(
+          calculateMortgagePayment(currentMortgageBalance, 4.58, remainingMonths) - monthlyInterest,
+          currentMortgageBalance
+        );
+        currentMortgageMonthly = monthlyInterest + monthlyPrincipal;
+        currentMortgageBalance = Math.max(0, currentMortgageBalance - monthlyPrincipal);
+      } else {
+        // Pay off remaining balance
+        currentMortgageMonthly = currentMortgageBalance;
+        currentMortgageBalance = 0;
+      }
     }
     
     const grossIncome = paulSSMonthly + jessicaSSMonthly + vaDisabilityMonthly + businessMonthly + jessicaWorkMonthly + chapter35Monthly + income1Monthly + income2Monthly + income3Monthly;
