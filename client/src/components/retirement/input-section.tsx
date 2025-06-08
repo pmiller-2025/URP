@@ -911,57 +911,112 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                 )}
               </div>
                 
-              <div className="mt-3 p-3 bg-blue-50 rounded-lg">
-                <div className="space-y-1">
-                  <div className="flex justify-between text-xs">
-                    <span className="text-gray-600">Home Value:</span>
-                    <span className="font-medium">${state.housing.homeValue.toLocaleString()}</span>
-                  </div>
-                  <div className="flex justify-between text-xs">
-                    <span className="text-gray-600">Mortgage Balance:</span>
-                    <span className="font-medium">${effectiveMortgageBalance.toLocaleString()}</span>
-                  </div>
-                  <div className="flex justify-between text-xs border-t border-blue-200 pt-1">
-                    <span className="text-gray-600">Current Equity:</span>
-                    <span className="font-semibold text-finance-green">
-                      ${(state.housing.homeValue - effectiveMortgageBalance).toLocaleString()}
-                    </span>
-                  </div>
-                  <div className="flex justify-between text-xs mt-2 pt-2 border-t border-blue-200">
-                    <span className="text-gray-600">Regular Payment:</span>
-                    <span className="font-medium">${state.housing.monthlyPayment.toLocaleString()}</span>
-                  </div>
-                  {state.housing.acceleratePayoff && extraPayment > 0 && (
-                    <div className="flex justify-between text-xs">
-                      <span className="text-gray-600">Extra Payment:</span>
-                      <span className="font-medium text-finance-blue">+${Math.round(extraPayment).toLocaleString()}</span>
+              {/* Enhanced Mortgage Calculator Widget */}
+              <div className="mt-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-4 border-2 border-blue-200">
+                <div className="flex items-center mb-3">
+                  <i className="fas fa-calculator text-blue-600 mr-2"></i>
+                  <h3 className="font-semibold text-blue-800">Mortgage Calculator</h3>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Current Status */}
+                  <div className="space-y-2">
+                    <h4 className="text-sm font-medium text-blue-700">Current Status</h4>
+                    <div className="bg-white rounded-md p-3 space-y-1">
+                      <div className="flex justify-between text-xs">
+                        <span className="text-gray-600">Home Value:</span>
+                        <span className="font-medium">${state.housing.homeValue.toLocaleString()}</span>
+                      </div>
+                      <div className="flex justify-between text-xs">
+                        <span className="text-gray-600">Mortgage Balance:</span>
+                        <span className="font-medium">${effectiveMortgageBalance.toLocaleString()}</span>
+                      </div>
+                      <div className="flex justify-between text-xs border-t border-gray-200 pt-1">
+                        <span className="text-gray-600">Current Equity:</span>
+                        <span className="font-semibold text-green-600">
+                          ${(state.housing.homeValue - effectiveMortgageBalance).toLocaleString()}
+                        </span>
+                      </div>
+                      <div className="flex justify-between text-xs">
+                        <span className="text-gray-600">Equity Ratio:</span>
+                        <span className="font-medium text-green-600">
+                          {Math.round(((state.housing.homeValue - effectiveMortgageBalance) / state.housing.homeValue) * 100)}%
+                        </span>
+                      </div>
                     </div>
-                  )}
-                  {state.housing.lumpSumAmount > 0 && (
-                    <div className="flex justify-between text-xs">
-                      <span className="text-gray-600">Lump Sum Payment:</span>
-                      <span className="font-medium text-orange-600">${state.housing.lumpSumAmount.toLocaleString()}</span>
-                    </div>
-                  )}
-                  {state.housing.lumpSumAmount > 0 && (
-                    <div className="flex justify-between text-xs">
-                      <span className="text-gray-600">Lump Sum Date:</span>
-                      <span className="font-medium text-orange-600">
-                        {new Date(2024, state.housing.lumpSumMonth - 1).toLocaleDateString('en-US', { month: 'short' })} {2024 + state.housing.lumpSumYear}
-                      </span>
-                    </div>
-                  )}
-                  <div className="flex justify-between text-xs border-t border-blue-200 pt-1">
-                    <span className="text-gray-600">Total Payment:</span>
-                    <span className="font-semibold text-finance-blue">
-                      ${(state.housing.monthlyPayment + extraPayment).toLocaleString()}
-                    </span>
                   </div>
-                  <div className="flex justify-between text-xs">
-                    <span className="text-gray-600">Payoff Date:</span>
-                    <span className="font-medium text-finance-green">{payoffDate}</span>
+
+                  {/* Payment Details */}
+                  <div className="space-y-2">
+                    <h4 className="text-sm font-medium text-blue-700">Payment Breakdown</h4>
+                    <div className="bg-white rounded-md p-3 space-y-1">
+                      <div className="flex justify-between text-xs">
+                        <span className="text-gray-600">Regular Payment:</span>
+                        <span className="font-medium">${state.housing.monthlyPayment.toLocaleString()}</span>
+                      </div>
+                      {state.housing.acceleratePayoff && extraPayment > 0 && (
+                        <div className="flex justify-between text-xs">
+                          <span className="text-gray-600">Extra Payment:</span>
+                          <span className="font-medium text-blue-600">+${Math.round(extraPayment).toLocaleString()}</span>
+                        </div>
+                      )}
+                      <div className="flex justify-between text-xs border-t border-gray-200 pt-1">
+                        <span className="text-gray-600">Total Monthly:</span>
+                        <span className="font-semibold text-blue-600">
+                          ${Math.round(state.housing.monthlyPayment + extraPayment).toLocaleString()}
+                        </span>
+                      </div>
+                      <div className="flex justify-between text-xs">
+                        <span className="text-gray-600">Payoff Date:</span>
+                        <span className="font-medium text-green-600">{payoffDate}</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
+
+                {/* Lump Sum Display */}
+                {state.housing.lumpSumAmount > 0 && (
+                  <div className="mt-3 bg-orange-50 rounded-md p-3 border border-orange-200">
+                    <div className="flex items-center mb-2">
+                      <i className="fas fa-money-bill-wave text-orange-600 mr-2 text-sm"></i>
+                      <span className="text-sm font-medium text-orange-700">Lump Sum Payment</span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4 text-xs">
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Amount:</span>
+                        <span className="font-medium text-orange-600">${state.housing.lumpSumAmount.toLocaleString()}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Date:</span>
+                        <span className="font-medium text-orange-600">
+                          {new Date(2024, state.housing.lumpSumMonth - 1).toLocaleDateString('en-US', { month: 'short' })} {2024 + state.housing.lumpSumYear}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Interest Savings Preview */}
+                {state.housing.acceleratePayoff && (
+                  <div className="mt-3 bg-green-50 rounded-md p-3 border border-green-200">
+                    <div className="flex items-center mb-2">
+                      <i className="fas fa-piggy-bank text-green-600 mr-2 text-sm"></i>
+                      <span className="text-sm font-medium text-green-700">Acceleration Benefits</span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4 text-xs">
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Time Saved:</span>
+                        <span className="font-medium text-green-600">
+                          {Math.max(0, standardPayoffMonths - state.housing.targetPayoffMonths)} months
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Interest Saved:</span>
+                        <span className="font-medium text-green-600">View Summary ↓</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </CardContent>
