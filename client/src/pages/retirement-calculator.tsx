@@ -11,7 +11,9 @@ import {
   calculateAnnualProjections, 
   calculateMonthlyProjections,
   calculateSummaryMetrics,
-  calculateExtraPayment
+  calculateExtraPayment,
+  calculateStandardPayoffMonths,
+  getPayoffDate
 } from "@/lib/calculator";
 
 type ViewMode = 'annual' | 'monthly';
@@ -26,13 +28,22 @@ export default function RetirementCalculator() {
   const monthlyData = calculateMonthlyProjections(state, selectedYear);
   const summaryMetrics = calculateSummaryMetrics(annualData, state);
   
-  // Calculate extra payment for display
-  const extraPayment = calculateExtraPayment(
+  // Calculate mortgage payment details for display
+  const extraPayment = state.housing.acceleratePayoff ? calculateExtraPayment(
     state.housing.mortgageBalance,
     state.housing.interestRate,
     state.housing.monthlyPayment,
     state.housing.targetPayoffMonths
+  ) : 0;
+  
+  const standardPayoffMonths = calculateStandardPayoffMonths(
+    state.housing.mortgageBalance,
+    state.housing.interestRate,
+    state.housing.monthlyPayment
   );
+  
+  const actualPayoffMonths = state.housing.acceleratePayoff ? state.housing.targetPayoffMonths : standardPayoffMonths;
+  const payoffDate = getPayoffDate(2024, actualPayoffMonths);
 
   // No automatic updates needed - SS amounts are now set by age selection
 
@@ -76,6 +87,8 @@ export default function RetirementCalculator() {
           state={state} 
           onUpdate={handleStateUpdate}
           extraPayment={extraPayment}
+          standardPayoffMonths={standardPayoffMonths}
+          payoffDate={payoffDate}
         />
 
         {/* View Toggle */}

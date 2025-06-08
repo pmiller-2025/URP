@@ -49,6 +49,7 @@ export interface Housing {
   interestRate: number;
   targetPayoffMonths: number;
   homeAppreciation: number;
+  acceleratePayoff: boolean;
 }
 
 export interface Savings {
@@ -163,7 +164,8 @@ export function getDefaultState(): CalculatorState {
       monthlyPayment: 2000,
       interestRate: 5.5,
       targetPayoffMonths: 24,
-      homeAppreciation: 2.5
+      homeAppreciation: 2.5,
+      acceleratePayoff: true
     },
     savings: {
       initialAmount: 50000,
@@ -200,6 +202,27 @@ export function calculateExtraPayment(balance: number, rate: number, regularPaym
   if (balance <= 0) return 0;
   const requiredPayment = calculateMortgagePayment(balance, rate, targetMonths);
   return Math.max(0, requiredPayment - regularPayment);
+}
+
+export function calculateStandardPayoffMonths(balance: number, rate: number, payment: number): number {
+  if (balance <= 0 || payment <= 0) return 0;
+  const monthlyRate = rate / 100 / 12;
+  if (monthlyRate === 0) return Math.ceil(balance / payment);
+  
+  const numerator = Math.log(1 + (balance * monthlyRate) / payment);
+  const denominator = Math.log(1 + monthlyRate);
+  return Math.ceil(numerator / denominator);
+}
+
+export function getPayoffDate(startYear: number, months: number): string {
+  const startDate = new Date(startYear, 0, 1); // January 1st of start year
+  const payoffDate = new Date(startDate);
+  payoffDate.setMonth(payoffDate.getMonth() + months);
+  
+  return payoffDate.toLocaleDateString('en-US', { 
+    month: 'short', 
+    year: 'numeric' 
+  });
 }
 
 export function calculateTaxes(income: number, rate: number, isTaxable: boolean): number {
@@ -251,17 +274,20 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
   const insuranceMonthly = isLifeInsuranceYear ? state.expenses.lifeInsurance : 0;
   
   // Calculate mortgage payment
-  const extraPayment = calculateExtraPayment(
+  const extraPayment = state.housing.acceleratePayoff ? calculateExtraPayment(
     state.housing.mortgageBalance, 
     state.housing.interestRate, 
     state.housing.monthlyPayment, 
     state.housing.targetPayoffMonths
-  );
+  ) : 0;
   const totalMortgagePayment = state.housing.monthlyPayment + extraPayment;
   
   // Determine if mortgage is still active
   const mortgageMonthsElapsed = totalMonthsElapsed;
-  const mortgageActive = mortgageMonthsElapsed < state.housing.targetPayoffMonths;
+  const payoffMonths = state.housing.acceleratePayoff ? 
+    state.housing.targetPayoffMonths : 
+    calculateStandardPayoffMonths(state.housing.mortgageBalance, state.housing.interestRate, state.housing.monthlyPayment);
+  const mortgageActive = mortgageMonthsElapsed < payoffMonths;
   const mortgageMonthly = mortgageActive ? totalMortgagePayment : 0;
   
   let runningBalance = state.savings.initialAmount;
@@ -365,17 +391,20 @@ export function calculateAnnualProjections(state: CalculatorState): AnnualData[]
     const insuranceAnnual = isLifeInsuranceYear ? state.expenses.lifeInsurance * 12 : 0;
     
     // Calculate mortgage payments
-    const extraPayment = calculateExtraPayment(
+    const extraPayment = state.housing.acceleratePayoff ? calculateExtraPayment(
       state.housing.mortgageBalance, 
       state.housing.interestRate, 
       state.housing.monthlyPayment, 
       state.housing.targetPayoffMonths
-    );
+    ) : 0;
     const totalMortgagePayment = (state.housing.monthlyPayment + extraPayment) * 12;
     
     // Determine if mortgage is paid off
     const mortgageMonthsElapsed = monthsElapsed;
-    const mortgageActive = mortgageMonthsElapsed < state.housing.targetPayoffMonths;
+    const payoffMonths = state.housing.acceleratePayoff ? 
+      state.housing.targetPayoffMonths : 
+      calculateStandardPayoffMonths(state.housing.mortgageBalance, state.housing.interestRate, state.housing.monthlyPayment);
+    const mortgageActive = mortgageMonthsElapsed < payoffMonths;
     const mortgageAnnual = mortgageActive ? totalMortgagePayment : 0;
     
     const netCashFlow = afterTaxIncome - livingExpAnnual - insuranceAnnual - mortgageAnnual;

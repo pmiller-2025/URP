@@ -9,9 +9,11 @@ interface InputSectionProps {
   state: CalculatorState;
   onUpdate: (section: keyof CalculatorState, updates: any) => void;
   extraPayment: number;
+  standardPayoffMonths: number;
+  payoffDate: string;
 }
 
-export function InputSection({ state, onUpdate, extraPayment }: InputSectionProps) {
+export function InputSection({ state, onUpdate, extraPayment, standardPayoffMonths, payoffDate }: InputSectionProps) {
   return (
     <>
       {/* First Row */}
