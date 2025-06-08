@@ -268,41 +268,29 @@ export function ResultsTable({
             <table className="w-full">
               <thead className="bg-gray-50">
                 <tr className="text-left">
-                  <th className="px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider sticky left-0 bg-gray-50 border-r border-gray-200 min-w-[100px]">Month</th>
-                  <th className="px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[100px]">Paul SS</th>
-                  <th className="px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[100px]">Jessica SS</th>
-                  <th className="px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[110px]">VA Disability</th>
-                  <th className="px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[100px]">Business</th>
-                  <th className="px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[110px]">Jessica Work</th>
-                  <th className="px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[100px]">Chapter 35</th>
-                  <th className="px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[120px]">Gross Income</th>
-                  <th className="px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[100px]">Taxes</th>
-                  <th className="px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[110px]">Net Income</th>
-                  <th className="px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[100px]">Living Exp</th>
-                  <th className="px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[100px]">Insurance</th>
-                  <th className="px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[100px]">Mortgage</th>
-                  <th className="px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[130px]">Net Cash Flow</th>
-                  <th className="px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[140px]">Savings Balance</th>
+                  {filteredColumns.map((column, index) => (
+                    <th 
+                      key={column.key}
+                      className={`px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[100px] ${
+                        column.key === 'month' ? 'sticky left-0 bg-gray-50 border-r border-gray-200' : ''
+                      }`}
+                    >
+                      {column.label}
+                    </th>
+                  ))}
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {monthlyData.map((month, index) => (
                   <tr key={`${month.month}-${index}`} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-4 py-3 text-sm font-medium text-gray-900 sticky left-0 bg-white border-r border-gray-200">{month.month}</td>
-                    <td className="px-4 py-3 text-sm text-gray-900">{formatCurrency(month.paulSS)}</td>
-                    <td className="px-4 py-3 text-sm text-gray-900">{formatCurrency(month.jessicaSS)}</td>
-                    <td className="px-4 py-3 text-sm text-gray-900">{formatCurrency(month.vaDisability)}</td>
-                    <td className="px-4 py-3 text-sm text-gray-900">{formatCurrency(month.business)}</td>
-                    <td className="px-4 py-3 text-sm text-gray-900">{formatCurrency(month.jessicaWork)}</td>
-                    <td className="px-4 py-3 text-sm text-gray-900">{formatCurrency(month.chapter35)}</td>
-                    <td className="px-4 py-3 text-sm font-medium text-gray-900">{formatCurrency(month.grossIncome)}</td>
-                    <td className="px-4 py-3 text-sm text-finance-red">{formatCurrency(month.taxes)}</td>
-                    <td className="px-4 py-3 text-sm text-gray-900">{formatCurrency(month.netIncome)}</td>
-                    <td className="px-4 py-3 text-sm text-finance-red">{formatCurrency(month.livingExp)}</td>
-                    <td className="px-4 py-3 text-sm text-finance-red">{month.insurance > 0 ? formatCurrency(month.insurance) : '$0'}</td>
-                    <td className="px-4 py-3 text-sm text-finance-red">{month.mortgage > 0 ? formatCurrency(month.mortgage) : '$0'}</td>
-                    <td className={`px-4 py-3 text-sm font-medium ${getCashFlowColor(month.netCashFlow)}`}>{formatCurrency(month.netCashFlow)}</td>
-                    <td className="px-4 py-3 text-sm text-gray-900">{formatCurrency(month.savingsBalance)}</td>
+                    {filteredColumns.map((column) => (
+                      <td 
+                        key={column.key}
+                        className={getCellStyle(column.key, month)}
+                      >
+                        {renderCellValue(column.key, month)}
+                      </td>
+                    ))}
                   </tr>
                 ))}
               </tbody>
