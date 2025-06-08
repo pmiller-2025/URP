@@ -819,6 +819,20 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                       <span className="font-medium text-finance-blue">+${Math.round(extraPayment).toLocaleString()}</span>
                     </div>
                   )}
+                  {state.housing.lumpSumAmount > 0 && (
+                    <div className="flex justify-between text-xs">
+                      <span className="text-gray-600">Lump Sum Payment:</span>
+                      <span className="font-medium text-orange-600">${state.housing.lumpSumAmount.toLocaleString()}</span>
+                    </div>
+                  )}
+                  {state.housing.lumpSumAmount > 0 && (
+                    <div className="flex justify-between text-xs">
+                      <span className="text-gray-600">Lump Sum Date:</span>
+                      <span className="font-medium text-orange-600">
+                        {new Date(2024, state.housing.lumpSumMonth - 1).toLocaleDateString('en-US', { month: 'short' })} {2024 + state.housing.lumpSumYear - 1}
+                      </span>
+                    </div>
+                  )}
                   <div className="flex justify-between text-xs border-t border-blue-200 pt-1">
                     <span className="text-gray-600">Total Payment:</span>
                     <span className="font-semibold text-finance-blue">
