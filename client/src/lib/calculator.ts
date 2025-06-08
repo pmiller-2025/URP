@@ -760,7 +760,10 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
   
   for (let month = 0; month < 12; month++) {
     const currentMonthOffset = yearIndex * 12 + month;
-    const monthName = new Date(2024 + yearIndex, month).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+    // Start from June 2025 (month 5 in 0-indexed system)
+    const actualMonth = (month + 5) % 12; // Start from June (month 5)
+    const actualYear = 2025 + yearIndex + Math.floor((month + 5) / 12);
+    const monthName = new Date(actualYear, actualMonth).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
     
     // Apply lump sum payment if it occurs this month
     let lumpSumPayment = 0;
