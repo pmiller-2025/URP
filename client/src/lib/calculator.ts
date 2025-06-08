@@ -104,6 +104,18 @@ export interface Expenses {
   lifeInsuranceStartYear: number;
   lifeInsuranceEndMonth: number;
   lifeInsuranceEndYear: number;
+  expense1: number;
+  expense1Duration: number;
+  expense1StartMonth: number;
+  expense1StartYear: number;
+  expense2: number;
+  expense2Duration: number;
+  expense2StartMonth: number;
+  expense2StartYear: number;
+  expense3: number;
+  expense3Duration: number;
+  expense3StartMonth: number;
+  expense3StartYear: number;
   inflationRate: number;
 }
 
@@ -278,6 +290,18 @@ export function getDefaultState(): CalculatorState {
       lifeInsuranceStartYear: 3,
       lifeInsuranceEndMonth: 4,
       lifeInsuranceEndYear: 11,
+      expense1: 0,
+      expense1Duration: 12,
+      expense1StartMonth: 1,
+      expense1StartYear: 1,
+      expense2: 0,
+      expense2Duration: 12,
+      expense2StartMonth: 1,
+      expense2StartYear: 1,
+      expense3: 0,
+      expense3Duration: 12,
+      expense3StartMonth: 1,
+      expense3StartYear: 1,
       inflationRate: 3.0
     },
     taxRates: {
@@ -681,6 +705,58 @@ export function calculateAnnualProjections(state: CalculatorState): AnnualData[]
     
     const insuranceAnnual = state.expenses.lifeInsurance * lifeInsuranceMonthsThisYear;
     
+    // Calculate additional expenses (with start month/year and duration)
+    let expense1Annual = 0;
+    if (state.expenses.expense1 > 0) {
+      const expense1StartMonthOffset = (state.expenses.expense1StartYear - 1) * 12 + (state.expenses.expense1StartMonth - 1);
+      const expense1MonthsElapsed = monthsElapsed - expense1StartMonthOffset;
+      let expense1MonthsThisYear = 0;
+      if (expense1MonthsElapsed >= 0 && expense1MonthsElapsed < state.expenses.expense1Duration) {
+        const expense1MonthsRemaining = state.expenses.expense1Duration - expense1MonthsElapsed;
+        expense1MonthsThisYear = Math.min(12, expense1MonthsRemaining);
+      } else if (expense1MonthsElapsed < 0) {
+        const monthsUntilStart = -expense1MonthsElapsed;
+        if (monthsUntilStart < 12) {
+          expense1MonthsThisYear = Math.min(12 - monthsUntilStart, state.expenses.expense1Duration);
+        }
+      }
+      expense1Annual = state.expenses.expense1 * expense1MonthsThisYear;
+    }
+
+    let expense2Annual = 0;
+    if (state.expenses.expense2 > 0) {
+      const expense2StartMonthOffset = (state.expenses.expense2StartYear - 1) * 12 + (state.expenses.expense2StartMonth - 1);
+      const expense2MonthsElapsed = monthsElapsed - expense2StartMonthOffset;
+      let expense2MonthsThisYear = 0;
+      if (expense2MonthsElapsed >= 0 && expense2MonthsElapsed < state.expenses.expense2Duration) {
+        const expense2MonthsRemaining = state.expenses.expense2Duration - expense2MonthsElapsed;
+        expense2MonthsThisYear = Math.min(12, expense2MonthsRemaining);
+      } else if (expense2MonthsElapsed < 0) {
+        const monthsUntilStart = -expense2MonthsElapsed;
+        if (monthsUntilStart < 12) {
+          expense2MonthsThisYear = Math.min(12 - monthsUntilStart, state.expenses.expense2Duration);
+        }
+      }
+      expense2Annual = state.expenses.expense2 * expense2MonthsThisYear;
+    }
+
+    let expense3Annual = 0;
+    if (state.expenses.expense3 > 0) {
+      const expense3StartMonthOffset = (state.expenses.expense3StartYear - 1) * 12 + (state.expenses.expense3StartMonth - 1);
+      const expense3MonthsElapsed = monthsElapsed - expense3StartMonthOffset;
+      let expense3MonthsThisYear = 0;
+      if (expense3MonthsElapsed >= 0 && expense3MonthsElapsed < state.expenses.expense3Duration) {
+        const expense3MonthsRemaining = state.expenses.expense3Duration - expense3MonthsElapsed;
+        expense3MonthsThisYear = Math.min(12, expense3MonthsRemaining);
+      } else if (expense3MonthsElapsed < 0) {
+        const monthsUntilStart = -expense3MonthsElapsed;
+        if (monthsUntilStart < 12) {
+          expense3MonthsThisYear = Math.min(12 - monthsUntilStart, state.expenses.expense3Duration);
+        }
+      }
+      expense3Annual = state.expenses.expense3 * expense3MonthsThisYear;
+    }
+    
     // Calculate mortgage payments
     const extraPayment = state.housing.acceleratePayoff ? calculateExtraPayment(
       state.housing.mortgageBalance, 
@@ -698,7 +774,7 @@ export function calculateAnnualProjections(state: CalculatorState): AnnualData[]
     const mortgageActive = mortgageMonthsElapsed < payoffMonths;
     const mortgageAnnual = mortgageActive ? totalMortgagePayment : 0;
     
-    const netCashFlow = afterTaxIncome - livingExpAnnual - insuranceAnnual - mortgageAnnual;
+    const netCashFlow = afterTaxIncome - livingExpAnnual - insuranceAnnual - mortgageAnnual - expense1Annual - expense2Annual - expense3Annual;
     
     // Calculate investment returns
     const beginningBalance = currentSavingsBalance;

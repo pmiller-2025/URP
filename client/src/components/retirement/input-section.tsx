@@ -1243,6 +1243,275 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                 <p className="text-xs text-gray-500 mt-1">{state.expenses.inflationRate}% annual increase</p>
               </div>
             </div>
+            
+            {/* Optional Expenses Section */}
+            <div className="border-t pt-6 mt-6 space-y-4">
+              <h3 className="text-base font-semibold text-gray-900 mb-4">Optional Expenses</h3>
+              
+              {/* Additional Expense 1 */}
+              {state.expenses.expense1 > 0 && (
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <Label className="text-sm font-medium text-gray-700">Additional Expense 1</Label>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => onUpdate('expenses', { 
+                        expense1: 0, 
+                        expense1Duration: 12, 
+                        expense1StartMonth: 1, 
+                        expense1StartYear: 1 
+                      })}
+                      className="h-6 w-6 p-0 text-gray-400 hover:text-red-500"
+                    >
+                      <Trash2 className="h-3 w-3" />
+                    </Button>
+                  </div>
+                  <div className="relative">
+                    <span className="absolute left-3 top-2 text-gray-500">$</span>
+                    <Input 
+                      type="text" 
+                      value={formatCurrency(state.expenses.expense1)}
+                      onChange={(e) => onUpdate('expenses', { expense1: parseCurrency(e.target.value) })}
+                      className="pl-8 focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                    />
+                  </div>
+                  <div className="grid grid-cols-3 gap-2 mt-2">
+                    <div>
+                      <Label className="block text-xs text-gray-600 mb-1">Start Month</Label>
+                      <Select 
+                        value={state.expenses.expense1StartMonth.toString()}
+                        onValueChange={(value) => onUpdate('expenses', { expense1StartMonth: parseInt(value) })}
+                      >
+                        <SelectTrigger className="text-xs focus:ring-2 focus:ring-finance-blue focus:border-transparent">
+                          <SelectValue placeholder="Month" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {Array.from({ length: 12 }, (_, i) => (
+                            <SelectItem key={i + 1} value={(i + 1).toString()}>
+                              {String(i + 1).padStart(2, '0')}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label className="block text-xs text-gray-600 mb-1">Start Year</Label>
+                      <Select 
+                        value={state.expenses.expense1StartYear.toString()}
+                        onValueChange={(value) => onUpdate('expenses', { expense1StartYear: parseInt(value) })}
+                      >
+                        <SelectTrigger className="text-xs focus:ring-2 focus:ring-finance-blue focus:border-transparent">
+                          <SelectValue placeholder="Year" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {Array.from({ length: 20 }, (_, i) => (
+                            <SelectItem key={i + 1} value={(i + 1).toString()}>
+                              {2024 + i + 1}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label className="block text-xs text-gray-600 mb-1">Duration (months)</Label>
+                      <Input 
+                        type="number" 
+                        min="1"
+                        value={state.expenses.expense1Duration}
+                        onChange={(e) => onUpdate('expenses', { expense1Duration: parseInt(e.target.value) || 12 })}
+                        className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              {/* Additional Expense 2 */}
+              {state.expenses.expense2 > 0 && (
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <Label className="text-sm font-medium text-gray-700">Additional Expense 2</Label>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => onUpdate('expenses', { 
+                        expense2: 0, 
+                        expense2Duration: 12, 
+                        expense2StartMonth: 1, 
+                        expense2StartYear: 1 
+                      })}
+                      className="h-6 w-6 p-0 text-gray-400 hover:text-red-500"
+                    >
+                      <Trash2 className="h-3 w-3" />
+                    </Button>
+                  </div>
+                  <div className="relative">
+                    <span className="absolute left-3 top-2 text-gray-500">$</span>
+                    <Input 
+                      type="text" 
+                      value={formatCurrency(state.expenses.expense2)}
+                      onChange={(e) => onUpdate('expenses', { expense2: parseCurrency(e.target.value) })}
+                      className="pl-8 focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                    />
+                  </div>
+                  <div className="grid grid-cols-3 gap-2 mt-2">
+                    <div>
+                      <Label className="block text-xs text-gray-600 mb-1">Start Month</Label>
+                      <Select 
+                        value={state.expenses.expense2StartMonth.toString()}
+                        onValueChange={(value) => onUpdate('expenses', { expense2StartMonth: parseInt(value) })}
+                      >
+                        <SelectTrigger className="text-xs focus:ring-2 focus:ring-finance-blue focus:border-transparent">
+                          <SelectValue placeholder="Month" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {Array.from({ length: 12 }, (_, i) => (
+                            <SelectItem key={i + 1} value={(i + 1).toString()}>
+                              {String(i + 1).padStart(2, '0')}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label className="block text-xs text-gray-600 mb-1">Start Year</Label>
+                      <Select 
+                        value={state.expenses.expense2StartYear.toString()}
+                        onValueChange={(value) => onUpdate('expenses', { expense2StartYear: parseInt(value) })}
+                      >
+                        <SelectTrigger className="text-xs focus:ring-2 focus:ring-finance-blue focus:border-transparent">
+                          <SelectValue placeholder="Year" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {Array.from({ length: 20 }, (_, i) => (
+                            <SelectItem key={i + 1} value={(i + 1).toString()}>
+                              {2024 + i + 1}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label className="block text-xs text-gray-600 mb-1">Duration (months)</Label>
+                      <Input 
+                        type="number" 
+                        min="1"
+                        value={state.expenses.expense2Duration}
+                        onChange={(e) => onUpdate('expenses', { expense2Duration: parseInt(e.target.value) || 12 })}
+                        className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              {/* Additional Expense 3 */}
+              {state.expenses.expense3 > 0 && (
+                <div>
+                  <Label className="block text-sm font-medium text-gray-700 mb-1">Additional Expense 3</Label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-2 text-gray-500">$</span>
+                    <Input 
+                      type="text" 
+                      value={formatCurrency(state.expenses.expense3)}
+                      onChange={(e) => onUpdate('expenses', { expense3: parseCurrency(e.target.value) })}
+                      className="pl-8 focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                    />
+                  </div>
+                  <div className="grid grid-cols-3 gap-2 mt-2">
+                    <div>
+                      <Label className="block text-xs text-gray-600 mb-1">Start Month</Label>
+                      <Select 
+                        value={state.expenses.expense3StartMonth.toString()}
+                        onValueChange={(value) => onUpdate('expenses', { expense3StartMonth: parseInt(value) })}
+                      >
+                        <SelectTrigger className="text-xs focus:ring-2 focus:ring-finance-blue focus:border-transparent">
+                          <SelectValue placeholder="Month" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {Array.from({ length: 12 }, (_, i) => (
+                            <SelectItem key={i + 1} value={(i + 1).toString()}>
+                              {String(i + 1).padStart(2, '0')}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label className="block text-xs text-gray-600 mb-1">Start Year</Label>
+                      <Select 
+                        value={state.expenses.expense3StartYear.toString()}
+                        onValueChange={(value) => onUpdate('expenses', { expense3StartYear: parseInt(value) })}
+                      >
+                        <SelectTrigger className="text-xs focus:ring-2 focus:ring-finance-blue focus:border-transparent">
+                          <SelectValue placeholder="Year" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {Array.from({ length: 20 }, (_, i) => (
+                            <SelectItem key={i + 1} value={(i + 1).toString()}>
+                              {2024 + i + 1}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label className="block text-xs text-gray-600 mb-1">Duration (months)</Label>
+                      <Input 
+                        type="number" 
+                        min="1"
+                        value={state.expenses.expense3Duration}
+                        onChange={(e) => onUpdate('expenses', { expense3Duration: parseInt(e.target.value) || 12 })}
+                        className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              {/* Add Expense Button */}
+              <div className="flex flex-wrap gap-2">
+                {state.expenses.expense1 === 0 && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => onUpdate('expenses', { expense1: 100 })}
+                    className="border-dashed"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Expense 1
+                  </Button>
+                )}
+                {state.expenses.expense2 === 0 && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => onUpdate('expenses', { expense2: 100 })}
+                    className="border-dashed"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Expense 2
+                  </Button>
+                )}
+                {state.expenses.expense3 === 0 && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => onUpdate('expenses', { expense3: 100 })}
+                    className="border-dashed"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Expense 3
+                  </Button>
+                )}
+              </div>
+            </div>
           </CardContent>
         </Card>
       </div>
