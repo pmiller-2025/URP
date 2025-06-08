@@ -240,7 +240,7 @@ export function ResultsTable({
                   <div className="space-y-4">
                     <h4 className="font-medium">Show/Hide Columns</h4>
                     <div className="grid grid-cols-2 gap-2 max-h-60 overflow-y-auto">
-                      {currentColumns.map((column) => (
+                      {currentColumns.map((column: any) => (
                         <div key={column.key} className="flex items-center space-x-2">
                           <Checkbox
                             id={column.key}
@@ -284,7 +284,7 @@ export function ResultsTable({
             <table className="w-full">
               <thead className="bg-gray-50">
                 <tr className="text-left">
-                  {filteredColumns.map((column, index) => (
+                  {filteredColumns.map((column: any, index: number) => (
                     <th 
                       key={column.key}
                       className={`px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[100px] ${
@@ -299,7 +299,7 @@ export function ResultsTable({
               <tbody className="bg-white divide-y divide-gray-200">
                 {annualData.map((year, index) => (
                   <tr key={year.year} className="hover:bg-gray-50 transition-colors">
-                    {filteredColumns.map((column) => (
+                    {filteredColumns.map((column: any) => (
                       <td 
                         key={column.key}
                         className={getCellStyle(column.key, year)}
@@ -317,7 +317,7 @@ export function ResultsTable({
             <table className="w-full">
               <thead className="bg-gray-50">
                 <tr className="text-left">
-                  {filteredColumns.map((column, index) => (
+                  {filteredColumns.map((column: any, index: number) => (
                     <th 
                       key={column.key}
                       className={`px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[100px] ${
@@ -332,7 +332,7 @@ export function ResultsTable({
               <tbody className="bg-white divide-y divide-gray-200">
                 {monthlyData.map((month, index) => (
                   <tr key={`${month.month}-${index}`} className="hover:bg-gray-50 transition-colors">
-                    {filteredColumns.map((column) => (
+                    {filteredColumns.map((column: any) => (
                       <td 
                         key={column.key}
                         className={getCellStyle(column.key, month)}
