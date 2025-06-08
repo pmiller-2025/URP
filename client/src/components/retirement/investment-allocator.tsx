@@ -1,8 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { investmentStrategies, InvestmentAllocation } from "@/lib/calculator";
-import { TrendingUp, Shield, Target, Zap } from "lucide-react";
+import { TrendingUp, Shield, Target, Zap, Info } from "lucide-react";
 
 interface InvestmentAllocatorProps {
   selectedStrategy: string;
@@ -31,98 +32,114 @@ export function InvestmentAllocator({ selectedStrategy, currentReturn, onStrateg
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-2 mb-4">
-        <TrendingUp className="h-5 w-5 text-blue-600" />
-        <h3 className="text-lg font-semibold">AI-Generated Investment Strategies</h3>
+      <div className="flex items-center gap-2 mb-3">
+        <TrendingUp className="h-4 w-4 text-blue-600" />
+        <h3 className="text-sm font-semibold">Investment Strategy</h3>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-3 gap-2">
         {investmentStrategies.map((allocation) => (
-          <Card 
-            key={allocation.strategy}
-            className={`cursor-pointer transition-all hover:shadow-md ${
-              selectedStrategy === allocation.strategy 
-                ? 'ring-2 ring-blue-500 bg-blue-50' 
-                : 'hover:bg-gray-50'
-            }`}
-            onClick={() => onStrategySelect(allocation.strategy, allocation.expectedReturn)}
-          >
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  {getStrategyIcon(allocation.strategy)}
-                  <CardTitle className="text-sm capitalize">{allocation.strategy}</CardTitle>
-                </div>
-                <Badge className={getStrategyColor(allocation.strategy)}>
-                  {allocation.expectedReturn}% Return
-                </Badge>
-              </div>
-            </CardHeader>
+          <div key={allocation.strategy} className="flex flex-col gap-1">
+            <Button
+              variant={selectedStrategy === allocation.strategy ? "default" : "outline"}
+              size="sm"
+              onClick={() => onStrategySelect(allocation.strategy, allocation.expectedReturn)}
+              className={`h-auto p-3 flex flex-col items-center gap-1 ${
+                selectedStrategy === allocation.strategy 
+                  ? 'bg-blue-600 text-white' 
+                  : 'hover:bg-gray-50'
+              }`}
+            >
+              {getStrategyIcon(allocation.strategy)}
+              <span className="text-xs font-medium capitalize">{allocation.strategy}</span>
+              <span className="text-xs opacity-80">{allocation.expectedReturn}%</span>
+            </Button>
             
-            <CardContent className="space-y-3">
-              <p className="text-xs text-gray-600">{allocation.description}</p>
-              
-              <div className="space-y-2">
-                <div className="text-xs">
-                  <span className="font-medium">Allocation:</span>
-                  <div className="grid grid-cols-2 gap-1 mt-1">
-                    <div className="flex justify-between">
-                      <span>Stocks:</span>
-                      <span>{allocation.allocation.stocks}%</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Bonds:</span>
-                      <span>{allocation.allocation.bonds}%</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Cash:</span>
-                      <span>{allocation.allocation.cash}%</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>International:</span>
-                      <span>{allocation.allocation.international}%</span>
-                    </div>
-                  </div>
-                </div>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="ghost" size="sm" className="h-6 p-1 text-xs text-gray-500 hover:text-gray-700">
+                  <Info className="h-3 w-3 mr-1" />
+                  Details
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-md">
+                <DialogHeader>
+                  <DialogTitle className="flex items-center gap-2">
+                    {getStrategyIcon(allocation.strategy)}
+                    {allocation.strategy.charAt(0).toUpperCase() + allocation.strategy.slice(1)} Strategy
+                  </DialogTitle>
+                </DialogHeader>
                 
-                <div className="text-xs">
-                  <div className="flex justify-between">
-                    <span className="font-medium">Risk Level:</span>
-                    <span>{allocation.riskLevel}</span>
+                <div className="space-y-4">
+                  <p className="text-sm text-gray-600">{allocation.description}</p>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <h4 className="text-sm font-medium mb-2">Asset Allocation</h4>
+                      <div className="space-y-1 text-xs">
+                        <div className="flex justify-between">
+                          <span>Stocks:</span>
+                          <span className="font-medium">{allocation.allocation.stocks}%</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>Bonds:</span>
+                          <span className="font-medium">{allocation.allocation.bonds}%</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>Cash:</span>
+                          <span className="font-medium">{allocation.allocation.cash}%</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>International:</span>
+                          <span className="font-medium">{allocation.allocation.international}%</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <h4 className="text-sm font-medium mb-2">Risk Profile</h4>
+                      <div className="space-y-1 text-xs">
+                        <div className="flex justify-between">
+                          <span>Expected Return:</span>
+                          <span className="font-medium">{allocation.expectedReturn}%</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>Risk Level:</span>
+                          <span className="font-medium">{allocation.riskLevel}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>Volatility:</span>
+                          <span className="font-medium">{allocation.volatility}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>Time Horizon:</span>
+                          <span className="font-medium">{allocation.timeHorizon}</span>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="font-medium">Volatility:</span>
-                    <span>{allocation.volatility}</span>
+                  
+                  <div>
+                    <h4 className="text-sm font-medium mb-2">Best Suited For</h4>
+                    <ul className="text-xs space-y-1">
+                      {allocation.suitableFor.map((item, index) => (
+                        <li key={index} className="flex items-start gap-2">
+                          <span className="text-blue-600 mt-1">•</span>
+                          <span className="text-gray-600">{item}</span>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
                 </div>
-                
-                <div className="text-xs">
-                  <span className="font-medium">Best For:</span>
-                  <ul className="list-disc list-inside mt-1 space-y-0.5">
-                    {allocation.suitableFor.slice(0, 2).map((item, index) => (
-                      <li key={index} className="text-gray-600">{item}</li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+              </DialogContent>
+            </Dialog>
+          </div>
         ))}
       </div>
       
-      <div className="mt-4 p-4 bg-amber-50 border border-amber-200 rounded-lg">
-        <div className="flex items-start gap-2">
-          <TrendingUp className="h-4 w-4 text-amber-600 mt-0.5" />
-          <div className="text-sm">
-            <p className="font-medium text-amber-800">Current Selection</p>
-            <p className="text-amber-700">
-              {selectedStrategy === 'custom' 
-                ? `Custom strategy with ${currentReturn}% expected return`
-                : `${selectedStrategy.charAt(0).toUpperCase() + selectedStrategy.slice(1)} strategy with ${currentReturn}% expected return`
-              }
-            </p>
-          </div>
-        </div>
+      <div className="text-xs text-gray-600 bg-blue-50 p-2 rounded">
+        Current: {selectedStrategy.charAt(0).toUpperCase() + selectedStrategy.slice(1)} 
+        strategy ({currentReturn}% expected return)
       </div>
     </div>
   );
