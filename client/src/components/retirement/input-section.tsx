@@ -24,6 +24,16 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
     ? Math.max(0, state.housing.mortgageBalance - state.housing.lumpSumAmount)
     : state.housing.mortgageBalance;
   
+  // Format currency for display
+  const formatCurrency = (value: number): string => {
+    return value.toLocaleString();
+  };
+  
+  // Parse formatted currency back to number
+  const parseCurrency = (value: string): number => {
+    return parseFloat(value.replace(/,/g, '')) || 0;
+  };
+  
   const handleBirthdayUpdate = (person: 'paul' | 'jessica' | 'luke', month: number, year: number) => {
     const age = calculateAge(month, year, currentDate.month, currentDate.year);
     if (person === 'paul') {
@@ -183,9 +193,9 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                 <div className="relative">
                   <span className="absolute left-3 top-2 text-gray-500">$</span>
                   <Input 
-                    type="number" 
-                    value={state.otherIncome.vaDisability}
-                    onChange={(e) => onUpdate('otherIncome', { vaDisability: parseFloat(e.target.value) || 0 })}
+                    type="text" 
+                    value={formatCurrency(state.otherIncome.vaDisability)}
+                    onChange={(e) => onUpdate('otherIncome', { vaDisability: parseCurrency(e.target.value) })}
                     className="pl-8 focus:ring-2 focus:ring-finance-blue focus:border-transparent"
                   />
                 </div>
@@ -293,9 +303,9 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                 <div className="relative">
                   <span className="absolute left-3 top-2 text-gray-500">$</span>
                   <Input 
-                    type="number" 
-                    value={state.otherIncome.chapter35}
-                    onChange={(e) => onUpdate('otherIncome', { chapter35: parseFloat(e.target.value) || 0 })}
+                    type="text" 
+                    value={formatCurrency(state.otherIncome.chapter35)}
+                    onChange={(e) => onUpdate('otherIncome', { chapter35: parseCurrency(e.target.value) })}
                     className="pl-8 focus:ring-2 focus:ring-finance-blue focus:border-transparent"
                   />
                 </div>
@@ -353,9 +363,9 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                 <div className="relative">
                   <span className="absolute left-3 top-2 text-gray-500">$</span>
                   <Input 
-                    type="number" 
-                    value={state.otherIncome.businessIncome}
-                    onChange={(e) => onUpdate('otherIncome', { businessIncome: parseFloat(e.target.value) || 0 })}
+                    type="text" 
+                    value={formatCurrency(state.otherIncome.businessIncome)}
+                    onChange={(e) => onUpdate('otherIncome', { businessIncome: parseCurrency(e.target.value) })}
                     className="pl-8 focus:ring-2 focus:ring-finance-blue focus:border-transparent"
                   />
                 </div>
@@ -408,9 +418,9 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                 <div className="relative">
                   <span className="absolute left-3 top-2 text-gray-500">$</span>
                   <Input 
-                    type="number" 
-                    value={state.otherIncome.jessicaIncome}
-                    onChange={(e) => onUpdate('otherIncome', { jessicaIncome: parseFloat(e.target.value) || 0 })}
+                    type="text" 
+                    value={formatCurrency(state.otherIncome.jessicaIncome)}
+                    onChange={(e) => onUpdate('otherIncome', { jessicaIncome: parseCurrency(e.target.value) })}
                     className="pl-8 focus:ring-2 focus:ring-finance-blue focus:border-transparent"
                   />
                 </div>
@@ -674,9 +684,9 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                 <div className="relative">
                   <span className="absolute left-3 top-2 text-gray-500">$</span>
                   <Input 
-                    type="number" 
-                    value={state.housing.homeValue}
-                    onChange={(e) => onUpdate('housing', { homeValue: parseFloat(e.target.value) || 0 })}
+                    type="text" 
+                    value={formatCurrency(state.housing.homeValue)}
+                    onChange={(e) => onUpdate('housing', { homeValue: parseCurrency(e.target.value) })}
                     className="pl-8 focus:ring-2 focus:ring-finance-blue focus:border-transparent"
                   />
                 </div>
@@ -687,9 +697,9 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                 <div className="relative">
                   <span className="absolute left-3 top-2 text-gray-500">$</span>
                   <Input 
-                    type="number" 
-                    value={state.housing.mortgageBalance}
-                    onChange={(e) => onUpdate('housing', { mortgageBalance: parseFloat(e.target.value) || 0 })}
+                    type="text" 
+                    value={formatCurrency(state.housing.mortgageBalance)}
+                    onChange={(e) => onUpdate('housing', { mortgageBalance: parseCurrency(e.target.value) })}
                     className="pl-8 focus:ring-2 focus:ring-finance-blue focus:border-transparent"
                   />
                 </div>
