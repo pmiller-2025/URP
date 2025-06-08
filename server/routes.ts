@@ -3,6 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertScenarioSchema } from "@shared/schema";
 import { compareScenarios } from "./openai";
+import { analyzeFinancialScenario, AIAnalysisRequest } from "./ai";
 import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
