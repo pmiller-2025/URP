@@ -14,6 +14,24 @@ export interface SocialSecurity {
   jessicaStartAge: number;
 }
 
+export interface SSBenefitOption {
+  age: number;
+  amount: number;
+  description: string;
+}
+
+export const ssBenefitOptions: SSBenefitOption[] = [
+  { age: 62, amount: 2211, description: "69% of full benefit - Early Retirement" },
+  { age: 63, amount: 2336, description: "73% of full benefit" },
+  { age: 64, amount: 2528, description: "79% of full benefit" },
+  { age: 65, amount: 2748, description: "86% of full benefit" },
+  { age: 66, amount: 2968, description: "93% of full benefit" },
+  { age: 67, amount: 3188, description: "100% of full benefit - Full Retirement Age" },
+  { age: 68, amount: 3324, description: "104% of full benefit - Delayed 1 year" },
+  { age: 69, amount: 3589, description: "113% of full benefit" },
+  { age: 70, amount: 3984, description: "125% of full benefit - Maximum Delayed" }
+];
+
 export interface OtherIncome {
   vaDisability: number;
   businessIncome: number;
@@ -122,8 +140,8 @@ export function getDefaultState(): CalculatorState {
       projectionYears: 20
     },
     socialSecurity: {
-      paulAmount: 3500,
-      jessicaAmount: 1750,
+      paulAmount: 3324,
+      jessicaAmount: 1662,
       cola: 3.0,
       paulTaxable: true,
       jessicaTaxable: true,

@@ -2,7 +2,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { CalculatorState } from "@/lib/calculator";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { CalculatorState, ssBenefitOptions } from "@/lib/calculator";
 
 interface InputSectionProps {
   state: CalculatorState;
@@ -65,15 +66,35 @@ export function InputSection({ state, onUpdate, extraPayment }: InputSectionProp
             
             <div className="space-y-4">
               <div>
-                <Label className="block text-sm font-medium text-gray-700 mb-1">Paul's SS (Monthly)</Label>
-                <div className="relative">
-                  <span className="absolute left-3 top-2 text-gray-500">$</span>
-                  <Input 
-                    type="number" 
-                    value={state.socialSecurity.paulAmount}
-                    onChange={(e) => onUpdate('socialSecurity', { paulAmount: parseFloat(e.target.value) || 0 })}
-                    className="pl-8 focus:ring-2 focus:ring-finance-blue focus:border-transparent"
-                  />
+                <Label className="block text-sm font-medium text-gray-700 mb-1">Paul's SS Claiming Age</Label>
+                <Select 
+                  value={state.socialSecurity.paulStartAge.toString()} 
+                  onValueChange={(value) => {
+                    const age = parseInt(value);
+                    const benefit = ssBenefitOptions.find(opt => opt.age === age);
+                    if (benefit) {
+                      onUpdate('socialSecurity', { 
+                        paulStartAge: age,
+                        paulAmount: benefit.amount 
+                      });
+                    }
+                  }}
+                >
+                  <SelectTrigger className="focus:ring-2 focus:ring-finance-blue focus:border-transparent">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {ssBenefitOptions.map(option => (
+                      <SelectItem key={option.age} value={option.age.toString()}>
+                        Age {option.age}: ${option.amount.toLocaleString()}/mo ({option.description.split(' - ')[0]})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <div className="mt-2 p-2 bg-blue-50 rounded-lg">
+                  <p className="text-xs text-finance-blue">
+                    {ssBenefitOptions.find(opt => opt.age === state.socialSecurity.paulStartAge)?.description}
+                  </p>
                 </div>
                 <div className="flex items-center mt-2">
                   <Checkbox 
@@ -86,15 +107,35 @@ export function InputSection({ state, onUpdate, extraPayment }: InputSectionProp
                 </div>
               </div>
               <div>
-                <Label className="block text-sm font-medium text-gray-700 mb-1">Jessica's SS (Auto: 50%)</Label>
-                <div className="relative">
-                  <span className="absolute left-3 top-2 text-gray-500">$</span>
-                  <Input 
-                    type="number" 
-                    value={state.socialSecurity.jessicaAmount}
-                    disabled
-                    className="pl-8 bg-gray-50 text-gray-500"
-                  />
+                <Label className="block text-sm font-medium text-gray-700 mb-1">Jessica's SS Claiming Age</Label>
+                <Select 
+                  value={state.socialSecurity.jessicaStartAge.toString()} 
+                  onValueChange={(value) => {
+                    const age = parseInt(value);
+                    const benefit = ssBenefitOptions.find(opt => opt.age === age);
+                    if (benefit) {
+                      onUpdate('socialSecurity', { 
+                        jessicaStartAge: age,
+                        jessicaAmount: benefit.amount * 0.5 
+                      });
+                    }
+                  }}
+                >
+                  <SelectTrigger className="focus:ring-2 focus:ring-finance-blue focus:border-transparent">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {ssBenefitOptions.map(option => (
+                      <SelectItem key={option.age} value={option.age.toString()}>
+                        Age {option.age}: ${Math.round(option.amount * 0.5).toLocaleString()}/mo (50% of Paul's)
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <div className="mt-2 p-2 bg-green-50 rounded-lg">
+                  <p className="text-xs text-finance-green">
+                    Spousal benefit: 50% of Paul's amount at selected age
+                  </p>
                 </div>
                 <div className="flex items-center mt-2">
                   <Checkbox 

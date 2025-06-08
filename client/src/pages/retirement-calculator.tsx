@@ -33,16 +33,7 @@ export default function RetirementCalculator() {
     state.housing.targetPayoffMonths
   );
 
-  // Update Jessica's SS amount automatically (50% of Paul's)
-  useEffect(() => {
-    setState(prev => ({
-      ...prev,
-      socialSecurity: {
-        ...prev.socialSecurity,
-        jessicaAmount: prev.socialSecurity.paulAmount * 0.5
-      }
-    }));
-  }, [state.socialSecurity.paulAmount]);
+  // No automatic updates needed - SS amounts are now set by age selection
 
   const handleStateUpdate = (section: keyof CalculatorState, updates: any) => {
     setState(prev => ({
