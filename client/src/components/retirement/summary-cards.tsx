@@ -56,7 +56,7 @@ export function SummaryCards({ metrics }: SummaryCardsProps) {
       </div>
 
       {/* Enhanced Mortgage Analysis */}
-      <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl shadow-lg border-2 border-blue-200">
+      <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl shadow-lg border-2 border-blue-200 transition-all duration-500" data-mortgage-summary>
         <CardContent className="p-8">
           <div className="flex items-center mb-6">
             <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-4">

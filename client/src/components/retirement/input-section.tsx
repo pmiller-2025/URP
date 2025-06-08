@@ -1012,7 +1012,23 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                       </div>
                       <div className="flex justify-between">
                         <span className="text-gray-600">Interest Saved:</span>
-                        <span className="font-medium text-green-600">View Summary ↓</span>
+                        <button 
+                          onClick={() => {
+                            const summaryElement = document.querySelector('[data-mortgage-summary]');
+                            if (summaryElement) {
+                              summaryElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                              // Add a subtle highlight effect
+                              summaryElement.classList.add('ring-4', 'ring-blue-300', 'ring-opacity-50');
+                              setTimeout(() => {
+                                summaryElement.classList.remove('ring-4', 'ring-blue-300', 'ring-opacity-50');
+                              }, 2000);
+                            }
+                          }}
+                          className="flex items-center font-medium text-green-600 hover:text-green-700 hover:underline cursor-pointer transition-all duration-200 hover:scale-105"
+                        >
+                          <span>View Summary</span>
+                          <i className="fas fa-arrow-down ml-1 text-xs animate-bounce"></i>
+                        </button>
                       </div>
                     </div>
                   </div>
