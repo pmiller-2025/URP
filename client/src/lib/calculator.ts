@@ -577,6 +577,56 @@ export function calculateInterestSaved(targetPayoffMonths: number): number {
   return Math.max(0, standardInterest - earlyPayoffInterest);
 }
 
+export function calculateLumpSumInterestSavings(lumpSumAmount: number, lumpSumMonth: number, lumpSumYear: number): number {
+  if (lumpSumAmount <= 0) return 0;
+  
+  // Calculate when the lump sum payment occurs (months from start)
+  const lumpSumMonthOffset = (lumpSumYear - 1) * 12 + (lumpSumMonth - 1);
+  
+  // Find the payment that corresponds to this month
+  const paymentIndex = lumpSumMonthOffset - 1; // Adjust for 0-based index
+  
+  if (paymentIndex < 0 || paymentIndex >= mortgageAmortizationSchedule.length) {
+    return 0; // Lump sum outside valid range
+  }
+  
+  // Get the balance at the time of lump sum payment
+  const currentPayment = mortgageAmortizationSchedule[paymentIndex];
+  const remainingBalance = currentPayment.startingBalance;
+  
+  // Calculate remaining interest without lump sum
+  let totalInterestWithoutLumpSum = 0;
+  for (let i = paymentIndex; i < mortgageAmortizationSchedule.length; i++) {
+    totalInterestWithoutLumpSum += mortgageAmortizationSchedule[i].interestPayment;
+  }
+  
+  // Calculate new balance after lump sum
+  const newBalance = Math.max(0, remainingBalance - lumpSumAmount);
+  
+  if (newBalance <= 0) {
+    // Lump sum pays off entire mortgage
+    return totalInterestWithoutLumpSum;
+  }
+  
+  // Estimate interest savings using remaining balance and average interest rate
+  const monthlyRate = 0.0458 / 12; // 4.58% annual rate
+  const remainingMonths = mortgageAmortizationSchedule.length - paymentIndex;
+  
+  // Calculate interest with lump sum reduction
+  let estimatedInterestWithLumpSum = 0;
+  let balance = newBalance;
+  const monthlyPayment = 1816.92; // Regular payment amount
+  
+  for (let month = 0; month < remainingMonths && balance > 0; month++) {
+    const interestPayment = balance * monthlyRate;
+    const principalPayment = Math.min(monthlyPayment - interestPayment, balance);
+    estimatedInterestWithLumpSum += interestPayment;
+    balance -= principalPayment;
+  }
+  
+  return Math.max(0, totalInterestWithoutLumpSum - estimatedInterestWithLumpSum);
+}
+
 export function getMortgagePayoffDate(targetMonths?: number): string {
   const monthsToUse = targetMonths || mortgageAmortizationSchedule.length;
   if (monthsToUse < mortgageAmortizationSchedule.length) {
@@ -1049,8 +1099,18 @@ export function calculateSummaryMetrics(annualData: AnnualData[], state: Calcula
   const actualPayoffMonths = state.housing.acceleratePayoff ? state.housing.targetPayoffMonths : 87;
   const totalInterestPaid = calculateTotalInterestFromSchedule(actualPayoffMonths);
   const standardInterestTotal = calculateTotalInterestFromSchedule(87); // Always calculate standard 87-month total
-  const interestSaved = state.housing.acceleratePayoff ? 
+  
+  // Calculate interest savings from acceleration
+  const accelerationSavings = state.housing.acceleratePayoff ? 
     calculateInterestSaved(state.housing.targetPayoffMonths) : 0;
+  
+  // Calculate interest savings from lump sum payment
+  const lumpSumSavings = state.housing.lumpSumAmount > 0 ? 
+    calculateLumpSumInterestSavings(state.housing.lumpSumAmount, state.housing.lumpSumMonth, state.housing.lumpSumYear) : 0;
+  
+  // Total interest saved combines both acceleration and lump sum savings
+  const interestSaved = accelerationSavings + lumpSumSavings;
+  
   const mortgagePayoffDate = state.housing.acceleratePayoff ? 
     getMortgagePayoffDate(state.housing.targetPayoffMonths) : getMortgagePayoffDate();
   const standardPayoffDate = getMortgagePayoffDate(); // Standard 87-month payoff date

@@ -240,7 +240,7 @@ const ChartTooltipContent = React.forwardRef<
                       </div>
                       {item.value && (
                         <span className="font-mono font-medium tabular-nums text-foreground">
-                          {Math.round(item.value).toLocaleString()}
+                          {typeof item.value === 'number' ? Math.round(item.value).toLocaleString() : item.value}
                         </span>
                       )}
                     </div>
