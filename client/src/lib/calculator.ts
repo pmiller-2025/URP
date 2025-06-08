@@ -791,10 +791,15 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
       calculateTaxes(jessicaWorkMonthly, state.taxRates.jessica, true);
     
     const netIncome = grossIncome - taxes;
-    const netCashFlow = netIncome - livingExpMonthly - insuranceMonthly - expense1Monthly - expense2Monthly - expense3Monthly - currentMortgageMonthly - lumpSumPayment;
+    const netCashFlow = netIncome - livingExpMonthly - insuranceMonthly - expense1Monthly - expense2Monthly - expense3Monthly - currentMortgageMonthly;
     
     // All positive cash flow goes to savings, negative cash flow comes from savings
     runningBalance += netCashFlow;
+    
+    // Apply lump sum payment from savings if it occurs this month
+    if (lumpSumPayment > 0) {
+      runningBalance -= lumpSumPayment;
+    }
     
     monthlyData.push({
       month: monthName,
