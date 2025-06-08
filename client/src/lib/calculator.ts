@@ -249,7 +249,7 @@ export function getDefaultState(): CalculatorState {
       businessStartMonth: 6,
       businessStartYear: 1,
       jessicaDuration: 24,
-      jessicaStartMonth: 1,
+      jessicaStartMonth: 6,
       jessicaStartYear: 1,
       chapter35Duration: 24,
       chapter35StartMonth: 1,
