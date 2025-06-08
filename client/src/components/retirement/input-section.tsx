@@ -739,28 +739,39 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                     </div>
                   </div>
                   {state.housing.lumpSumAmount > 0 && (
-                    <div className="grid grid-cols-2 gap-2">
-                      <div>
-                        <Label className="block text-xs text-gray-600 mb-1">Payment Month</Label>
-                        <Input 
-                          type="number" 
-                          min="1"
-                          max="12"
-                          value={state.housing.lumpSumMonth}
-                          onChange={(e) => onUpdate('housing', { lumpSumMonth: parseInt(e.target.value) || 1 })}
-                          className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
-                        />
-                      </div>
-                      <div>
-                        <Label className="block text-xs text-gray-600 mb-1">Payment Year</Label>
-                        <Input 
-                          type="number" 
-                          min="1"
-                          max="20"
-                          value={state.housing.lumpSumYear}
-                          onChange={(e) => onUpdate('housing', { lumpSumYear: parseInt(e.target.value) || 1 })}
-                          className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
-                        />
+                    <div>
+                      <Label className="block text-xs text-gray-600 mb-1">Payment Month/Year</Label>
+                      <div className="grid grid-cols-2 gap-1">
+                        <Select 
+                          value={state.housing.lumpSumMonth.toString()}
+                          onValueChange={(value) => onUpdate('housing', { lumpSumMonth: parseInt(value) })}
+                        >
+                          <SelectTrigger className="text-xs focus:ring-2 focus:ring-finance-blue focus:border-transparent">
+                            <SelectValue placeholder="Mo" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {Array.from({ length: 12 }, (_, i) => (
+                              <SelectItem key={i + 1} value={(i + 1).toString()}>
+                                {new Date(2024, i).toLocaleDateString('en-US', { month: 'short' })}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <Select 
+                          value={state.housing.lumpSumYear.toString()}
+                          onValueChange={(value) => onUpdate('housing', { lumpSumYear: parseInt(value) })}
+                        >
+                          <SelectTrigger className="text-xs focus:ring-2 focus:ring-finance-blue focus:border-transparent">
+                            <SelectValue placeholder="Yr" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {Array.from({ length: 20 }, (_, i) => (
+                              <SelectItem key={i + 1} value={(i + 1).toString()}>
+                                Year {i + 1}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </div>
                     </div>
                   )}
