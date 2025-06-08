@@ -40,6 +40,7 @@ export function ScenarioComparison() {
   // Compare scenarios mutation
   const compareMutation = useMutation({
     mutationFn: async ({ scenario1Id, scenario2Id }: { scenario1Id: string; scenario2Id: string }) => {
+      console.log("Comparing scenarios:", scenario1Id, scenario2Id);
       const response = await fetch("/api/scenarios/compare", {
         method: "POST",
         headers: {
@@ -47,10 +48,19 @@ export function ScenarioComparison() {
         },
         body: JSON.stringify({ scenario1Id, scenario2Id })
       });
-      if (!response.ok) throw new Error("Failed to compare scenarios");
-      return response.json();
+      
+      console.log("Response status:", response.status);
+      const responseText = await response.text();
+      console.log("Response text:", responseText);
+      
+      if (!response.ok) {
+        throw new Error(`Failed to compare scenarios: ${responseText}`);
+      }
+      
+      return JSON.parse(responseText);
     },
     onSuccess: (result) => {
+      console.log("Comparison result:", result);
       setComparisonResult(result);
       toast({
         title: "Comparison Complete",
@@ -58,9 +68,10 @@ export function ScenarioComparison() {
       });
     },
     onError: (error) => {
+      console.error("Comparison error:", error);
       toast({
         title: "Comparison Failed",
-        description: "Failed to analyze scenarios. Please try again.",
+        description: `Failed to analyze scenarios: ${error.message}`,
         variant: "destructive"
       });
     }
