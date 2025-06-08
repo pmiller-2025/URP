@@ -1183,24 +1183,36 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                   <div>
                     <Label className="block text-xs text-gray-600 mb-1">End Month/Year</Label>
                     <div className="grid grid-cols-2 gap-1">
-                      <Input 
-                        type="number" 
-                        min="1"
-                        max="12"
-                        value={state.expenses.lifeInsuranceEndMonth}
-                        onChange={(e) => onUpdate('expenses', { lifeInsuranceEndMonth: parseInt(e.target.value) || 12 })}
-                        className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
-                        placeholder="Mo"
-                      />
-                      <Input 
-                        type="number" 
-                        min="1"
-                        max="20"
-                        value={state.expenses.lifeInsuranceEndYear}
-                        onChange={(e) => onUpdate('expenses', { lifeInsuranceEndYear: parseInt(e.target.value) || 1 })}
-                        className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
-                        placeholder="Yr"
-                      />
+                      <Select 
+                        value={state.expenses.lifeInsuranceEndMonth.toString()}
+                        onValueChange={(value) => onUpdate('expenses', { lifeInsuranceEndMonth: parseInt(value) })}
+                      >
+                        <SelectTrigger className="text-xs focus:ring-2 focus:ring-finance-blue focus:border-transparent">
+                          <SelectValue placeholder="Mo" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {Array.from({ length: 12 }, (_, i) => (
+                            <SelectItem key={i + 1} value={(i + 1).toString()}>
+                              {String(i + 1).padStart(2, '0')}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <Select 
+                        value={state.expenses.lifeInsuranceEndYear.toString()}
+                        onValueChange={(value) => onUpdate('expenses', { lifeInsuranceEndYear: parseInt(value) })}
+                      >
+                        <SelectTrigger className="text-xs focus:ring-2 focus:ring-finance-blue focus:border-transparent">
+                          <SelectValue placeholder="Yr" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {Array.from({ length: 20 }, (_, i) => (
+                            <SelectItem key={i + 1} value={(i + 1).toString()}>
+                              {2024 + i + 1}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
                   </div>
                 </div>
