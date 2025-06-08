@@ -710,9 +710,9 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                 <div className="relative">
                   <span className="absolute left-3 top-2 text-gray-500">$</span>
                   <Input 
-                    type="number" 
-                    value={state.housing.monthlyPayment}
-                    onChange={(e) => onUpdate('housing', { monthlyPayment: parseFloat(e.target.value) || 0 })}
+                    type="text" 
+                    value={formatCurrency(state.housing.monthlyPayment)}
+                    onChange={(e) => onUpdate('housing', { monthlyPayment: parseCurrency(e.target.value) })}
                     className="pl-8 focus:ring-2 focus:ring-finance-blue focus:border-transparent"
                   />
                 </div>
@@ -745,9 +745,9 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                     <div className="relative">
                       <span className="absolute left-3 top-2 text-gray-500">$</span>
                       <Input 
-                        type="number" 
-                        value={state.housing.lumpSumAmount}
-                        onChange={(e) => onUpdate('housing', { lumpSumAmount: parseFloat(e.target.value) || 0 })}
+                        type="text" 
+                        value={formatCurrency(state.housing.lumpSumAmount)}
+                        onChange={(e) => onUpdate('housing', { lumpSumAmount: parseCurrency(e.target.value) })}
                         className="pl-8 focus:ring-2 focus:ring-finance-blue focus:border-transparent"
                         placeholder="0"
                       />
@@ -889,9 +889,9 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                 <div className="relative">
                   <span className="absolute left-3 top-2 text-gray-500">$</span>
                   <Input 
-                    type="number" 
-                    value={state.savings.initialAmount}
-                    onChange={(e) => onUpdate('savings', { initialAmount: parseFloat(e.target.value) || 0 })}
+                    type="text" 
+                    value={formatCurrency(state.savings.initialAmount)}
+                    onChange={(e) => onUpdate('savings', { initialAmount: parseCurrency(e.target.value) })}
                     className="pl-8 focus:ring-2 focus:ring-finance-blue focus:border-transparent"
                   />
                 </div>
@@ -923,9 +923,9 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                 <div className="relative">
                   <span className="absolute left-3 top-2 text-gray-500">$</span>
                   <Input 
-                    type="number" 
-                    value={state.savings.additionalAnnual}
-                    onChange={(e) => onUpdate('savings', { additionalAnnual: parseFloat(e.target.value) || 0 })}
+                    type="text" 
+                    value={formatCurrency(state.savings.additionalAnnual)}
+                    onChange={(e) => onUpdate('savings', { additionalAnnual: parseCurrency(e.target.value) })}
                     className="pl-8 focus:ring-2 focus:ring-finance-blue focus:border-transparent"
                   />
                 </div>
@@ -958,9 +958,9 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                   <div className="relative">
                     <span className="absolute left-3 top-2 text-gray-500">$</span>
                     <Input 
-                      type="number" 
-                      value={state.expenses.basicLiving}
-                      onChange={(e) => onUpdate('expenses', { basicLiving: parseFloat(e.target.value) || 0 })}
+                      type="text" 
+                      value={formatCurrency(state.expenses.basicLiving)}
+                      onChange={(e) => onUpdate('expenses', { basicLiving: parseCurrency(e.target.value) })}
                       className="pl-8 focus:ring-2 focus:ring-finance-blue focus:border-transparent"
                     />
                   </div>
@@ -996,11 +996,11 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                         <div className="relative">
                           <span className="absolute left-2 top-2 text-gray-500 text-xs">$</span>
                           <Input 
-                            type="number"
-                            value={category.amount}
+                            type="text"
+                            value={formatCurrency(category.amount)}
                             onChange={(e) => {
                               const updated = [...state.expenses.detailedBudget];
-                              updated[index] = { ...category, amount: parseFloat(e.target.value) || 0 };
+                              updated[index] = { ...category, amount: parseCurrency(e.target.value) };
                               onUpdate('expenses', { detailedBudget: updated });
                             }}
                             className="pl-6 text-sm"
