@@ -737,7 +737,8 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
   let currentMortgageBalance = yearIndex > 0 ? annualData[yearIndex - 1].mortgageBalance : state.housing.mortgageBalance;
   
   // Check if lump sum payment applies this year
-  const lumpSumMonthOffset = (state.housing.lumpSumYear - 1) * 12 + (state.housing.lumpSumMonth - 1);
+  // Adjust for June 2025 start (month 6 = offset 0)
+  const lumpSumMonthOffset = (state.housing.lumpSumYear - 1) * 12 + (state.housing.lumpSumMonth - 6);
   const yearStartMonthOffset = yearIndex * 12;
   const yearEndMonthOffset = (yearIndex + 1) * 12;
   
