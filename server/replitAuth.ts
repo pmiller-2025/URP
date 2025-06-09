@@ -123,6 +123,8 @@ export async function setupAuth(app: Express) {
       const user = {};
       updateUserSession(user, tokens);
       const inviteCode = req.session?.inviteCode;
+      console.log("Auth debug - invite code from session:", inviteCode);
+      console.log("Auth debug - user email:", tokens.claims()?.email);
       await upsertUser(tokens.claims(), inviteCode);
       // Clear invite code from session after use
       if (req.session?.inviteCode) {
@@ -156,8 +158,10 @@ export async function setupAuth(app: Express) {
   app.get("/api/login", (req, res, next) => {
     // Store invite code in session if provided
     const inviteCode = req.query.invite as string;
+    console.log("Login endpoint - invite code from query:", inviteCode);
     if (inviteCode) {
       (req.session as any).inviteCode = inviteCode;
+      console.log("Login endpoint - stored invite code in session");
     }
     
     passport.authenticate(`replitauth:${req.hostname}`, {

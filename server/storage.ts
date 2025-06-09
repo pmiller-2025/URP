@@ -179,6 +179,8 @@ export class DatabaseStorage implements IStorage {
   }
 
   async isUserAuthorized(email: string, inviteCode?: string): Promise<boolean> {
+    console.log("Auth check - email:", email, "inviteCode:", inviteCode);
+    
     // Check if user already exists (existing users are always authorized)
     const existingUser = await db
       .select()
@@ -186,11 +188,13 @@ export class DatabaseStorage implements IStorage {
       .where(eq(users.email, email));
     
     if (existingUser.length > 0) {
+      console.log("Auth check - existing user found");
       return true;
     }
 
     // Check for valid invitation
     if (inviteCode) {
+      console.log("Auth check - checking invite code:", inviteCode);
       const invitation = await db
         .select()
         .from(invitations)
@@ -199,29 +203,39 @@ export class DatabaseStorage implements IStorage {
           eq(invitations.isUsed, false)
         ));
       
+      console.log("Auth check - found invitations:", invitation);
       if (invitation.length > 0) {
         const inv = invitation[0];
+        console.log("Auth check - invitation details:", inv);
         // Check if invitation is expired
         if (inv.expiresAt && new Date() > inv.expiresAt) {
+          console.log("Auth check - invitation expired");
           return false;
         }
         // Check if invitation is for this email or is generic
         if (inv.email === null || inv.email === email) {
+          console.log("Auth check - invitation valid for email");
           return true;
+        } else {
+          console.log("Auth check - invitation email mismatch, inv.email:", inv.email, "user email:", email);
         }
       }
     }
 
     // Check for email-specific invitation
     const emailInvitation = await this.getInvitationByEmail(email);
+    console.log("Auth check - email invitation:", emailInvitation);
     if (emailInvitation) {
       // Check if invitation is expired
       if (emailInvitation.expiresAt && new Date() > emailInvitation.expiresAt) {
+        console.log("Auth check - email invitation expired");
         return false;
       }
+      console.log("Auth check - email invitation valid");
       return true;
     }
 
+    console.log("Auth check - no valid authorization found");
     return false;
   }
 }
