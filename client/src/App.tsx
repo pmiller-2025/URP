@@ -7,6 +7,7 @@ import { useAuth } from "@/hooks/useAuth";
 import RetirementCalculator from "@/pages/retirement-calculator";
 import Landing from "@/pages/landing";
 import Home from "@/pages/home";
+import InvitationsPage from "@/pages/invitations";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -20,6 +21,7 @@ function Router() {
         <>
           <Route path="/" component={Home} />
           <Route path="/calculator" component={RetirementCalculator} />
+          <Route path="/invitations" component={InvitationsPage} />
         </>
       )}
       <Route component={NotFound} />
