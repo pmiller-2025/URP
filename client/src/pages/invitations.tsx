@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { queryClient } from "@/lib/queryClient";
+import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -8,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { Copy, Plus, Calendar, Mail, Link, Home } from "lucide-react";
+import { Copy, Plus, Calendar, Mail, LinkIcon, Home } from "lucide-react";
 import { format } from "date-fns";
 import { apiRequest } from "@/lib/queryClient";
 import { isUnauthorizedError } from "@/lib/authUtils";
@@ -238,7 +239,7 @@ export default function InvitationsPage() {
                             </>
                           ) : (
                             <>
-                              <Link className="h-4 w-4 text-green-600" />
+                              <LinkIcon className="h-4 w-4 text-green-600" />
                               <span className="text-sm">Generic</span>
                             </>
                           )}
