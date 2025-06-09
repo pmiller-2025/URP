@@ -61,9 +61,12 @@ async function upsertUser(
   const email = claims["email"];
   const userId = claims["sub"];
   
+  console.log("upsertUser called - email:", email, "userId:", userId, "inviteCode:", inviteCode);
+  
   // Check if user already exists (existing users can always log in)
   const existingUser = await storage.getUser(userId);
   if (existingUser) {
+    console.log("Existing user found, updating info");
     // Update existing user info
     await storage.upsertUser({
       id: userId,
@@ -77,21 +80,28 @@ async function upsertUser(
 
   // For new users, check admin bypass or invitation requirement
   const isAdmin = await storage.isAdminUser(email);
+  console.log("Is admin user:", isAdmin);
   const isAuthorized = isAdmin || await storage.isUserAuthorized(email, inviteCode);
+  console.log("Is authorized:", isAuthorized);
   
   if (!isAuthorized) {
+    console.log("Access denied - no valid authorization");
     throw new Error("Access denied: Valid invitation required");
   }
+
+  console.log("User authorized, creating account");
 
   // Check for email-specific invitation and mark as used (if not admin)
   if (!isAdmin) {
     const emailInvitation = await storage.getInvitationByEmail(email);
     if (emailInvitation && !emailInvitation.isUsed) {
+      console.log("Marking email invitation as used");
       await storage.markInvitationUsed(emailInvitation.id, userId);
     } else if (inviteCode) {
       // Check for generic invitation by code
       const codeInvitation = await storage.getInvitationByCode(inviteCode);
       if (codeInvitation && !codeInvitation.isUsed) {
+        console.log("Marking code invitation as used");
         await storage.markInvitationUsed(codeInvitation.id, userId);
       }
     }
@@ -104,6 +114,7 @@ async function upsertUser(
     lastName: claims["last_name"],
     profileImageUrl: claims["profile_image_url"],
   });
+  console.log("User account created successfully");
 }
 
 export async function setupAuth(app: Express) {
@@ -156,6 +167,8 @@ export async function setupAuth(app: Express) {
   passport.deserializeUser((user: Express.User, cb) => cb(null, user));
 
   app.get("/api/login", (req, res, next) => {
+    console.log("LOGIN ENDPOINT HIT - query params:", req.query);
+    
     // Store invite code in session if provided
     const inviteCode = req.query.invite as string;
     console.log("Login endpoint - invite code from query:", inviteCode);
@@ -171,6 +184,7 @@ export async function setupAuth(app: Express) {
   });
 
   app.get("/api/callback", (req, res, next) => {
+    console.log("CALLBACK ENDPOINT HIT");
     passport.authenticate(`replitauth:${req.hostname}`, {
       successReturnToOrRedirect: "/",
       failureRedirect: "/api/login",
