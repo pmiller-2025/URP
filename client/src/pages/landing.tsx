@@ -29,11 +29,11 @@ export default function Landing() {
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6">
-            Meet URP: Your Whimsical Retirement Robot
+            Meet URP: Your Friendly Retirement Robot
           </h1>
           <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
             URP is your friendly robotic assistant that makes retirement planning delightful! With AI-powered insights, 
-            mortgage acceleration strategies, and comprehensive projections, this charming robot guides you to financial freedom.
+            mortgage acceleration strategies, and comprehensive projections, this helpful robot guides you to financial freedom.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button 
@@ -77,12 +77,12 @@ export default function Landing() {
             <Card>
               <CardHeader>
                 <Zap className="h-10 w-10 text-green-600 mb-2" />
-                <CardTitle>Whimsical Robot Wisdom</CardTitle>
+                <CardTitle>Friendly Robot Wisdom</CardTitle>
               </CardHeader>
               <CardContent>
                 <CardDescription>
-                  URP shares delightfully clever insights and playful recommendations 
-                  with all the charm of your favorite helpful robot companion.
+                  URP shares delightfully clever insights and helpful recommendations 
+                  with all the charm of your favorite friendly robot companion.
                 </CardDescription>
               </CardContent>
             </Card>

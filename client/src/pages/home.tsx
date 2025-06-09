@@ -56,7 +56,7 @@ export default function Home() {
             Welcome back, {typedUser?.firstName || 'there'}!
           </h1>
           <p className="text-lg text-gray-600">
-            Your friendly robot URP is ready to help you plan your retirement with whimsical wisdom
+            Your friendly robot URP is ready to help you plan your retirement with helpful wisdom
           </p>
         </div>
 
@@ -88,7 +88,7 @@ export default function Home() {
                 Robot Friends
               </CardTitle>
               <CardDescription>
-                Help URP make new friends by inviting others to meet your whimsical robot.
+                Help URP make new friends by inviting others to meet your friendly robot.
               </CardDescription>
             </CardHeader>
             <CardContent>

@@ -129,7 +129,7 @@ export default function InvitationsPage() {
         <div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">URP's Robot Friends</h1>
           <p className="text-gray-600 dark:text-gray-400 mt-2">
-            Help URP make new robot friends! Create invitations for others to meet your whimsical retirement robot.
+            Help URP make new robot friends! Create invitations for others to meet your friendly retirement robot.
           </p>
         </div>
       </div>
