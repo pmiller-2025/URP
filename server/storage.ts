@@ -1,92 +1,106 @@
-import { users, retirementScenarios, type User, type InsertUser, type RetirementScenario, type InsertScenario } from "@shared/schema";
+import {
+  users,
+  retirementScenarios,
+  type User,
+  type UpsertUser,
+  type RetirementScenario,
+  type InsertScenario,
+} from "@shared/schema";
+import { db } from "./db";
+import { eq, and, desc } from "drizzle-orm";
 
-// modify the interface with any CRUD methods
-// you might need
-
+// Interface for storage operations
 export interface IStorage {
-  getUser(id: number): Promise<User | undefined>;
-  getUserByUsername(username: string): Promise<User | undefined>;
-  createUser(user: InsertUser): Promise<User>;
+  // User operations
+  // (IMPORTANT) these user operations are mandatory for Replit Auth.
+  getUser(id: string): Promise<User | undefined>;
+  upsertUser(user: UpsertUser): Promise<User>;
   
   // Scenario management
-  getAllScenarios(): Promise<RetirementScenario[]>;
-  getScenario(id: number): Promise<RetirementScenario | undefined>;
-  createScenario(scenario: InsertScenario): Promise<RetirementScenario>;
-  updateScenario(id: number, updates: Partial<InsertScenario>): Promise<RetirementScenario | undefined>;
-  deleteScenario(id: number): Promise<boolean>;
+  getUserScenarios(userId: string): Promise<RetirementScenario[]>;
+  getScenario(id: number, userId: string): Promise<RetirementScenario | undefined>;
+  createScenario(scenario: InsertScenario, userId: string): Promise<RetirementScenario>;
+  updateScenario(id: number, updates: Partial<InsertScenario>, userId: string): Promise<RetirementScenario | undefined>;
+  deleteScenario(id: number, userId: string): Promise<boolean>;
 }
 
 export class DatabaseStorage implements IStorage {
-  async getUser(id: number): Promise<User | undefined> {
-    const { getDb } = await import("./db");
-    const { eq } = await import("drizzle-orm");
-    const db = getDb();
+  // User operations
+  // (IMPORTANT) these user operations are mandatory for Replit Auth.
+
+  async getUser(id: string): Promise<User | undefined> {
     const [user] = await db.select().from(users).where(eq(users.id, id));
-    return user || undefined;
+    return user;
   }
 
-  async getUserByUsername(username: string): Promise<User | undefined> {
-    const { getDb } = await import("./db");
-    const { eq } = await import("drizzle-orm");
-    const db = getDb();
-    const [user] = await db.select().from(users).where(eq(users.username, username));
-    return user || undefined;
-  }
-
-  async createUser(insertUser: InsertUser): Promise<User> {
-    const { getDb } = await import("./db");
-    const db = getDb();
+  async upsertUser(userData: UpsertUser): Promise<User> {
     const [user] = await db
       .insert(users)
-      .values(insertUser)
+      .values(userData)
+      .onConflictDoUpdate({
+        target: users.id,
+        set: {
+          ...userData,
+          updatedAt: new Date(),
+        },
+      })
       .returning();
     return user;
   }
 
-  async getAllScenarios(): Promise<RetirementScenario[]> {
-    const { getDb } = await import("./db");
-    const { desc } = await import("drizzle-orm");
-    const db = getDb();
-    return await db.select().from(retirementScenarios).orderBy(desc(retirementScenarios.updatedAt));
+  // Scenario operations
+  async getUserScenarios(userId: string): Promise<RetirementScenario[]> {
+    return await db
+      .select()
+      .from(retirementScenarios)
+      .where(eq(retirementScenarios.userId, userId))
+      .orderBy(desc(retirementScenarios.updatedAt));
   }
 
-  async getScenario(id: number): Promise<RetirementScenario | undefined> {
-    const { getDb } = await import("./db");
-    const db = getDb();
-    const { eq } = await import("drizzle-orm");
-    const [scenario] = await db.select().from(retirementScenarios).where(eq(retirementScenarios.id, id));
-    return scenario || undefined;
+  async getScenario(id: number, userId: string): Promise<RetirementScenario | undefined> {
+    const [scenario] = await db
+      .select()
+      .from(retirementScenarios)
+      .where(and(
+        eq(retirementScenarios.id, id),
+        eq(retirementScenarios.userId, userId)
+      ));
+    return scenario;
   }
 
-  async createScenario(scenario: InsertScenario): Promise<RetirementScenario> {
-    const { getDb } = await import("./db");
-    const db = getDb();
-    const [created] = await db
+  async createScenario(scenario: InsertScenario, userId: string): Promise<RetirementScenario> {
+    const [newScenario] = await db
       .insert(retirementScenarios)
-      .values(scenario)
+      .values({
+        ...scenario,
+        userId,
+      })
       .returning();
-    return created;
+    return newScenario;
   }
 
-  async updateScenario(id: number, updates: Partial<InsertScenario>): Promise<RetirementScenario | undefined> {
-    const { getDb } = await import("./db");
-    const { eq } = await import("drizzle-orm");
-    const db = getDb();
-    const [updated] = await db
+  async updateScenario(id: number, updates: Partial<InsertScenario>, userId: string): Promise<RetirementScenario | undefined> {
+    const [updatedScenario] = await db
       .update(retirementScenarios)
-      .set({ ...updates, updatedAt: new Date() })
-      .where(eq(retirementScenarios.id, id))
+      .set({
+        ...updates,
+        updatedAt: new Date(),
+      })
+      .where(and(
+        eq(retirementScenarios.id, id),
+        eq(retirementScenarios.userId, userId)
+      ))
       .returning();
-    return updated || undefined;
+    return updatedScenario;
   }
 
-  async deleteScenario(id: number): Promise<boolean> {
-    const { getDb } = await import("./db");
-    const { eq } = await import("drizzle-orm");
-    const db = getDb();
+  async deleteScenario(id: number, userId: string): Promise<boolean> {
     const result = await db
       .delete(retirementScenarios)
-      .where(eq(retirementScenarios.id, id));
+      .where(and(
+        eq(retirementScenarios.id, id),
+        eq(retirementScenarios.userId, userId)
+      ));
     return (result.rowCount || 0) > 0;
   }
 }
