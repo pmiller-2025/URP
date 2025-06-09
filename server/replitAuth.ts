@@ -56,6 +56,7 @@ function updateUserSession(
 
 async function upsertUser(
   claims: any,
+  inviteCode?: string,
 ) {
   const email = claims["email"];
   const userId = claims["sub"];
@@ -76,7 +77,7 @@ async function upsertUser(
 
   // For new users, check admin bypass or invitation requirement
   const isAdmin = await storage.isAdminUser(email);
-  const isAuthorized = isAdmin || await storage.isUserAuthorized(email);
+  const isAuthorized = isAdmin || await storage.isUserAuthorized(email, inviteCode);
   
   if (!isAuthorized) {
     throw new Error("Access denied: Valid invitation required");
@@ -87,6 +88,12 @@ async function upsertUser(
     const emailInvitation = await storage.getInvitationByEmail(email);
     if (emailInvitation && !emailInvitation.isUsed) {
       await storage.markInvitationUsed(emailInvitation.id, userId);
+    } else if (inviteCode) {
+      // Check for generic invitation by code
+      const codeInvitation = await storage.getInvitationByCode(inviteCode);
+      if (codeInvitation && !codeInvitation.isUsed) {
+        await storage.markInvitationUsed(codeInvitation.id, userId);
+      }
     }
   }
 
@@ -109,12 +116,18 @@ export async function setupAuth(app: Express) {
 
   const verify: VerifyFunction = async (
     tokens: client.TokenEndpointResponse & client.TokenEndpointResponseHelpers,
-    verified: passport.AuthenticateCallback
+    verified: passport.AuthenticateCallback,
+    req?: any
   ) => {
     try {
       const user = {};
       updateUserSession(user, tokens);
-      await upsertUser(tokens.claims());
+      const inviteCode = req?.session?.inviteCode;
+      await upsertUser(tokens.claims(), inviteCode);
+      // Clear invite code from session after use
+      if (req?.session?.inviteCode) {
+        delete req.session.inviteCode;
+      }
       verified(null, user);
     } catch (error) {
       verified(error, false);
@@ -129,6 +142,7 @@ export async function setupAuth(app: Express) {
         config,
         scope: "openid email profile offline_access",
         callbackURL: `https://${domain}/api/callback`,
+        passReqToCallback: true,
       },
       verify,
     );
