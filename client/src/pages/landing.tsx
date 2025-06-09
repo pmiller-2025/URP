@@ -29,11 +29,11 @@ export default function Landing() {
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6">
-            Meet URP: Your AI Retirement Planner
+            Meet URP: Your Whimsical Retirement Robot
           </h1>
           <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-            URP is your intelligent retirement planning assistant with AI-powered insights, mortgage acceleration strategies, 
-            and comprehensive financial projections. Plan your future with artificial intelligence.
+            URP is your friendly robotic assistant that makes retirement planning delightful! With AI-powered insights, 
+            mortgage acceleration strategies, and comprehensive projections, this charming robot guides you to financial freedom.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button 
@@ -58,18 +58,18 @@ export default function Landing() {
       <section className="py-16 px-4 sm:px-6 lg:px-8 bg-white/50">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
-            Powerful Features for Smart Planning
+            URP's Super Robot Powers
           </h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             <Card>
               <CardHeader>
                 <Calculator className="h-10 w-10 text-green-600 mb-2" />
-                <CardTitle>Advanced Calculations</CardTitle>
+                <CardTitle>Robot Brain Calculations</CardTitle>
               </CardHeader>
               <CardContent>
                 <CardDescription>
-                  Comprehensive mortgage acceleration, Social Security optimization, 
-                  and investment projections with real-time calculations.
+                  URP's robotic brain crunches mortgage acceleration, Social Security optimization, 
+                  and investment projections faster than you can say "beep boop!"
                 </CardDescription>
               </CardContent>
             </Card>
@@ -77,12 +77,12 @@ export default function Landing() {
             <Card>
               <CardHeader>
                 <Zap className="h-10 w-10 text-green-600 mb-2" />
-                <CardTitle>AI-Powered Insights</CardTitle>
+                <CardTitle>Whimsical Robot Wisdom</CardTitle>
               </CardHeader>
               <CardContent>
                 <CardDescription>
-                  Get personalized recommendations and scenario analysis 
-                  powered by advanced AI technology.
+                  URP shares delightfully clever insights and playful recommendations 
+                  with all the charm of your favorite helpful robot companion.
                 </CardDescription>
               </CardContent>
             </Card>

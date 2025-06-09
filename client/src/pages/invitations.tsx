@@ -127,9 +127,9 @@ export default function InvitationsPage() {
     <div className="max-w-6xl mx-auto p-6 space-y-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">URP Invitation Management</h1>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">URP's Robot Friends</h1>
           <p className="text-gray-600 dark:text-gray-400 mt-2">
-            Create and manage invitations for new users to access URP - your AI retirement planner.
+            Help URP make new robot friends! Create invitations for others to meet your whimsical retirement robot.
           </p>
         </div>
       </div>

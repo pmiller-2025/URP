@@ -56,7 +56,7 @@ export default function Home() {
             Welcome back, {typedUser?.firstName || 'there'}!
           </h1>
           <p className="text-lg text-gray-600">
-            URP is ready to help you plan your retirement with advanced AI insights
+            Your friendly robot URP is ready to help you plan your retirement with whimsical wisdom
           </p>
         </div>
 
@@ -85,16 +85,16 @@ export default function Home() {
             <CardHeader>
               <CardTitle className="flex items-center">
                 <Users className="h-6 w-6 text-purple-600 mr-2" />
-                Invite Management
+                Robot Friends
               </CardTitle>
               <CardDescription>
-                Create and manage invitations for new users to access URP.
+                Help URP make new friends by inviting others to meet your whimsical robot.
               </CardDescription>
             </CardHeader>
             <CardContent>
               <Link href="/invitations">
                 <Button className="w-full bg-purple-600 hover:bg-purple-700">
-                  Manage Invites
+                  Invite Friends
                 </Button>
               </Link>
             </CardContent>
@@ -126,7 +126,7 @@ export default function Home() {
 
         <div className="mt-12 text-center">
           <p className="text-sm text-gray-500">
-            Your data is private and secure. Only you can access your retirement scenarios.
+            URP keeps your data safe in its robot vault. Your retirement dreams are for your circuits only!
           </p>
         </div>
       </main>
