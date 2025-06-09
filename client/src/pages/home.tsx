@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/hooks/useAuth";
-import { Calculator, User, LogOut } from "lucide-react";
+import { Calculator, User, LogOut, Users } from "lucide-react";
 import { Link } from "wouter";
 import { User as UserType } from "@shared/schema";
 
@@ -19,7 +19,7 @@ export default function Home() {
               <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center mr-3">
                 <Calculator className="h-5 w-5 text-white" />
               </div>
-              <h1 className="text-xl font-bold text-gray-900">Retirement Calculator</h1>
+              <h1 className="text-xl font-bold text-gray-900">Ultimate Retirement Planner</h1>
             </div>
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
@@ -60,7 +60,7 @@ export default function Home() {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8">
+        <div className="grid md:grid-cols-3 gap-8">
           <Card className="hover:shadow-lg transition-shadow">
             <CardHeader>
               <CardTitle className="flex items-center">
@@ -84,11 +84,30 @@ export default function Home() {
           <Card className="hover:shadow-lg transition-shadow">
             <CardHeader>
               <CardTitle className="flex items-center">
+                <Users className="h-6 w-6 text-purple-600 mr-2" />
+                Invite Management
+              </CardTitle>
+              <CardDescription>
+                Create and manage invitations for new users to access URP.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Link href="/invitations">
+                <Button className="w-full bg-purple-600 hover:bg-purple-700">
+                  Manage Invites
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
+
+          <Card className="hover:shadow-lg transition-shadow">
+            <CardHeader>
+              <CardTitle className="flex items-center">
                 <User className="h-6 w-6 text-blue-600 mr-2" />
                 Your Profile
               </CardTitle>
               <CardDescription>
-                Manage your account settings and view your saved scenarios.
+                Account settings and saved scenarios.
               </CardDescription>
             </CardHeader>
             <CardContent>

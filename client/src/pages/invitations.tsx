@@ -221,7 +221,7 @@ export default function InvitationsPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {invitations.map((invitation: Invitation) => (
+                  {invitations.map((invitation) => (
                     <TableRow key={invitation.id}>
                       <TableCell>
                         <div className="flex items-center gap-2">

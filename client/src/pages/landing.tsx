@@ -13,7 +13,7 @@ export default function Landing() {
               <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center mr-3">
                 <Shield className="h-5 w-5 text-white" />
               </div>
-              <h1 className="text-xl font-bold text-gray-900">Retirement Calculator</h1>
+              <h1 className="text-xl font-bold text-gray-900">Ultimate Retirement Planner</h1>
             </div>
             <Button 
               onClick={() => window.location.href = '/api/login'}
@@ -29,11 +29,11 @@ export default function Landing() {
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6">
-            Plan Your Perfect Retirement
+            Ultimate Retirement Planner
           </h1>
           <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-            Advanced retirement planning with AI-powered insights, mortgage acceleration strategies, 
-            and comprehensive financial projections. Secure your financial future today.
+            The complete retirement planning solution with AI-powered insights, mortgage acceleration strategies, 
+            and comprehensive financial projections. Plan your future with URP.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button 
