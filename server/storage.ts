@@ -10,7 +10,7 @@ import {
   type InsertInvitation,
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, and, desc, or } from "drizzle-orm";
+import { eq, and, desc, or, isNull } from "drizzle-orm";
 
 // Interface for storage operations
 export interface IStorage {
@@ -183,11 +183,7 @@ export class DatabaseStorage implements IStorage {
         .from(invitations)
         .where(and(
           eq(invitations.inviteCode, inviteCode),
-          eq(invitations.isUsed, false),
-          or(
-            eq(invitations.email, email),
-            eq(invitations.email, null) // Generic invite codes
-          )
+          eq(invitations.isUsed, false)
         ));
       
       if (invitation.length > 0) {
@@ -196,7 +192,10 @@ export class DatabaseStorage implements IStorage {
         if (inv.expiresAt && new Date() > inv.expiresAt) {
           return false;
         }
-        return true;
+        // Check if invitation is for this email or is generic
+        if (inv.email === null || inv.email === email) {
+          return true;
+        }
       }
     }
 

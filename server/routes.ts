@@ -174,6 +174,75 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Invitation management routes
+  app.post("/api/invitations", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { email, expiresInDays } = req.body;
+
+      // Generate unique invite code
+      const inviteCode = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+      
+      // Set expiration date if provided
+      let expiresAt = null;
+      if (expiresInDays && expiresInDays > 0) {
+        expiresAt = new Date();
+        expiresAt.setDate(expiresAt.getDate() + expiresInDays);
+      }
+
+      const invitation = await storage.createInvitation({
+        email: email || null,
+        inviteCode,
+        expiresAt,
+      }, userId);
+
+      res.status(201).json(invitation);
+    } catch (error) {
+      console.error("Error creating invitation:", error);
+      res.status(500).json({ error: "Failed to create invitation" });
+    }
+  });
+
+  app.get("/api/invitations", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const invitations = await storage.getUserInvitations(userId);
+      res.json(invitations);
+    } catch (error) {
+      console.error("Error fetching invitations:", error);
+      res.status(500).json({ error: "Failed to fetch invitations" });
+    }
+  });
+
+  // Public route to check invitation validity
+  app.get("/api/invitations/check/:code", async (req, res) => {
+    try {
+      const { code } = req.params;
+      const invitation = await storage.getInvitationByCode(code);
+      
+      if (!invitation) {
+        return res.status(404).json({ error: "Invitation not found" });
+      }
+
+      if (invitation.isUsed) {
+        return res.status(410).json({ error: "Invitation already used" });
+      }
+
+      if (invitation.expiresAt && new Date() > invitation.expiresAt) {
+        return res.status(410).json({ error: "Invitation expired" });
+      }
+
+      res.json({ 
+        valid: true, 
+        email: invitation.email,
+        expiresAt: invitation.expiresAt 
+      });
+    } catch (error) {
+      console.error("Error checking invitation:", error);
+      res.status(500).json({ error: "Failed to check invitation" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

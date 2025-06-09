@@ -56,29 +56,20 @@ function updateUserSession(
 
 async function upsertUser(
   claims: any,
-  inviteCode?: string,
 ) {
   const email = claims["email"];
   
   // Check if user is authorized (existing user or has valid invitation)
-  const isAuthorized = await storage.isUserAuthorized(email, inviteCode);
+  const isAuthorized = await storage.isUserAuthorized(email);
   
   if (!isAuthorized) {
     throw new Error("Access denied: Valid invitation required");
   }
 
-  // Mark invitation as used if this is a new user
-  if (inviteCode) {
-    const invitation = await storage.getInvitationByCode(inviteCode);
-    if (invitation && !invitation.isUsed) {
-      await storage.markInvitationUsed(invitation.id, claims["sub"]);
-    }
-  } else {
-    // Check for email-specific invitation
-    const emailInvitation = await storage.getInvitationByEmail(email);
-    if (emailInvitation && !emailInvitation.isUsed) {
-      await storage.markInvitationUsed(emailInvitation.id, claims["sub"]);
-    }
+  // Check for email-specific invitation and mark as used
+  const emailInvitation = await storage.getInvitationByEmail(email);
+  if (emailInvitation && !emailInvitation.isUsed) {
+    await storage.markInvitationUsed(emailInvitation.id, claims["sub"]);
   }
 
   await storage.upsertUser({
@@ -102,10 +93,14 @@ export async function setupAuth(app: Express) {
     tokens: client.TokenEndpointResponse & client.TokenEndpointResponseHelpers,
     verified: passport.AuthenticateCallback
   ) => {
-    const user = {};
-    updateUserSession(user, tokens);
-    await upsertUser(tokens.claims());
-    verified(null, user);
+    try {
+      const user = {};
+      updateUserSession(user, tokens);
+      await upsertUser(tokens.claims());
+      verified(null, user);
+    } catch (error) {
+      verified(error, false);
+    }
   };
 
   for (const domain of process.env
@@ -126,6 +121,12 @@ export async function setupAuth(app: Express) {
   passport.deserializeUser((user: Express.User, cb) => cb(null, user));
 
   app.get("/api/login", (req, res, next) => {
+    // Store invite code in session if provided
+    const inviteCode = req.query.invite as string;
+    if (inviteCode) {
+      (req.session as any).inviteCode = inviteCode;
+    }
+    
     passport.authenticate(`replitauth:${req.hostname}`, {
       prompt: "login consent",
       scope: ["openid", "email", "profile", "offline_access"],
