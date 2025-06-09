@@ -11,6 +11,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Auth middleware
   await setupAuth(app);
 
+  // Invitation validation route
+  app.get('/api/validate-invite/:code', async (req, res) => {
+    try {
+      const inviteCode = req.params.code;
+      const invitation = await storage.getInvitationByCode(inviteCode);
+      
+      if (!invitation) {
+        return res.status(404).json({ valid: false, message: "Invitation not found" });
+      }
+      
+      if (invitation.isUsed) {
+        return res.status(400).json({ valid: false, message: "Invitation already used" });
+      }
+      
+      if (invitation.expiresAt && new Date() > invitation.expiresAt) {
+        return res.status(400).json({ valid: false, message: "Invitation expired" });
+      }
+      
+      res.json({ valid: true, invitation });
+    } catch (error) {
+      console.error("Error validating invitation:", error);
+      res.status(500).json({ valid: false, message: "Internal server error" });
+    }
+  });
+
   // Auth routes
   app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
     try {

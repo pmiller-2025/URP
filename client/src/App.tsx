@@ -8,6 +8,7 @@ import RetirementCalculator from "@/pages/retirement-calculator";
 import Landing from "@/pages/landing";
 import Home from "@/pages/home";
 import InvitationsPage from "@/pages/invitations";
+import InvitePage from "@/pages/invite";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -15,6 +16,7 @@ function Router() {
 
   return (
     <Switch>
+      <Route path="/invite/:code" component={InvitePage} />
       {isLoading || !isAuthenticated ? (
         <Route path="/" component={Landing} />
       ) : (
