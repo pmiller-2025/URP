@@ -119,7 +119,7 @@ export default function InvitePage({ params }: InvitePageProps) {
                 <div>
                   <p className="font-medium text-red-800 dark:text-red-200">Invalid Invitation</p>
                   <p className="text-sm text-red-600 dark:text-red-300">
-                    {error?.message || inviteData?.message || "This invitation is no longer valid"}
+                    {(error as any)?.message || inviteData?.message || "This invitation is no longer valid"}
                   </p>
                 </div>
               </div>
