@@ -15,12 +15,21 @@ export default function Landing() {
               </div>
               <h1 className="text-xl font-bold text-gray-900">URP - Ultimate Retirement Planner</h1>
             </div>
-            <Button 
-              onClick={() => window.location.href = '/api/login'}
-              className="bg-green-600 hover:bg-green-700"
-            >
-              Sign In
-            </Button>
+            <div className="flex gap-2">
+              <Button 
+                onClick={() => window.location.href = '/api/login'}
+                className="bg-green-600 hover:bg-green-700"
+              >
+                Sign In
+              </Button>
+              <Button 
+                onClick={() => window.location.href = '/dev-login'}
+                variant="outline"
+                className="border-purple-600 text-purple-600 hover:bg-purple-50"
+              >
+                Dev Login
+              </Button>
+            </div>
           </div>
         </div>
       </header>

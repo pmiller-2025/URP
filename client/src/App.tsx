@@ -9,15 +9,25 @@ import Landing from "@/pages/landing";
 import Home from "@/pages/home";
 import InvitationsPage from "@/pages/invitations";
 import InvitePage from "@/pages/invite";
+import DevLogin from "@/pages/DevLogin";
 import NotFound from "@/pages/not-found";
 
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-lg">Loading...</div>
+      </div>
+    );
+  }
+
   return (
     <Switch>
       <Route path="/invite/:code" component={InvitePage} />
-      {isLoading || !isAuthenticated ? (
+      <Route path="/dev-login" component={DevLogin} />
+      {!isAuthenticated ? (
         <Route path="/" component={Landing} />
       ) : (
         <>
