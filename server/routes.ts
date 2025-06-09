@@ -1,15 +1,66 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertScenarioSchema } from "@shared/schema";
+import { insertScenarioSchema, users } from "@shared/schema";
 import { compareScenarios } from "./openai";
 import { analyzeFinancialScenario, AIAnalysisRequest } from "./ai";
 import { setupAuth, isAuthenticated } from "./replitAuth";
+import { db } from "./db";
+import { eq } from "drizzle-orm";
 import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Auth middleware
   await setupAuth(app);
+
+  // Manual user creation route (for development/admin)
+  app.post('/api/admin/create-user', async (req, res) => {
+    try {
+      const { email, firstName, lastName, inviteCode } = req.body;
+      
+      if (!email) {
+        return res.status(400).json({ error: "Email is required" });
+      }
+      
+      // Check if user already exists
+      const existingUsers = await db.select().from(users).where(eq(users.email, email));
+      if (existingUsers.length > 0) {
+        return res.status(400).json({ error: "User already exists" });
+      }
+      
+      // Generate a unique user ID
+      const userId = Date.now().toString();
+      
+      // Check authorization
+      const isAdmin = await storage.isAdminUser(email);
+      if (!isAdmin && inviteCode) {
+        const isAuthorized = await storage.isUserAuthorized(email, inviteCode);
+        if (!isAuthorized) {
+          return res.status(403).json({ error: "Valid invitation required" });
+        }
+        
+        // Mark invitation as used
+        const invitation = await storage.getInvitationByCode(inviteCode);
+        if (invitation && !invitation.isUsed) {
+          await storage.markInvitationUsed(invitation.id, userId);
+        }
+      }
+      
+      // Create user
+      const user = await storage.upsertUser({
+        id: userId,
+        email,
+        firstName: firstName || null,
+        lastName: lastName || null,
+        profileImageUrl: null,
+      });
+      
+      res.json({ success: true, user });
+    } catch (error) {
+      console.error("Error creating user:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
 
   // Invitation validation route
   app.get('/api/validate-invite/:code', async (req, res) => {
