@@ -56,7 +56,31 @@ function updateUserSession(
 
 async function upsertUser(
   claims: any,
+  inviteCode?: string,
 ) {
+  const email = claims["email"];
+  
+  // Check if user is authorized (existing user or has valid invitation)
+  const isAuthorized = await storage.isUserAuthorized(email, inviteCode);
+  
+  if (!isAuthorized) {
+    throw new Error("Access denied: Valid invitation required");
+  }
+
+  // Mark invitation as used if this is a new user
+  if (inviteCode) {
+    const invitation = await storage.getInvitationByCode(inviteCode);
+    if (invitation && !invitation.isUsed) {
+      await storage.markInvitationUsed(invitation.id, claims["sub"]);
+    }
+  } else {
+    // Check for email-specific invitation
+    const emailInvitation = await storage.getInvitationByEmail(email);
+    if (emailInvitation && !emailInvitation.isUsed) {
+      await storage.markInvitationUsed(emailInvitation.id, claims["sub"]);
+    }
+  }
+
   await storage.upsertUser({
     id: claims["sub"],
     email: claims["email"],

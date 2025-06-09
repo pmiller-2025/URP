@@ -1,13 +1,16 @@
 import {
   users,
   retirementScenarios,
+  invitations,
   type User,
   type UpsertUser,
   type RetirementScenario,
   type InsertScenario,
+  type Invitation,
+  type InsertInvitation,
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, and, desc } from "drizzle-orm";
+import { eq, and, desc, or } from "drizzle-orm";
 
 // Interface for storage operations
 export interface IStorage {
@@ -15,6 +18,14 @@ export interface IStorage {
   // (IMPORTANT) these user operations are mandatory for Replit Auth.
   getUser(id: string): Promise<User | undefined>;
   upsertUser(user: UpsertUser): Promise<User>;
+  
+  // Invitation management
+  createInvitation(invitation: InsertInvitation, createdBy: string): Promise<Invitation>;
+  getInvitationByCode(code: string): Promise<Invitation | undefined>;
+  getInvitationByEmail(email: string): Promise<Invitation | undefined>;
+  markInvitationUsed(id: number, usedBy: string): Promise<boolean>;
+  getUserInvitations(userId: string): Promise<Invitation[]>;
+  isUserAuthorized(email: string, inviteCode?: string): Promise<boolean>;
   
   // Scenario management
   getUserScenarios(userId: string): Promise<RetirementScenario[]>;
@@ -102,6 +113,104 @@ export class DatabaseStorage implements IStorage {
         eq(retirementScenarios.userId, userId)
       ));
     return (result.rowCount || 0) > 0;
+  }
+
+  // Invitation operations
+  async createInvitation(invitation: InsertInvitation, createdBy: string): Promise<Invitation> {
+    const [newInvitation] = await db
+      .insert(invitations)
+      .values({
+        ...invitation,
+        createdBy,
+      })
+      .returning();
+    return newInvitation;
+  }
+
+  async getInvitationByCode(code: string): Promise<Invitation | undefined> {
+    const [invitation] = await db
+      .select()
+      .from(invitations)
+      .where(eq(invitations.inviteCode, code));
+    return invitation;
+  }
+
+  async getInvitationByEmail(email: string): Promise<Invitation | undefined> {
+    const [invitation] = await db
+      .select()
+      .from(invitations)
+      .where(and(
+        eq(invitations.email, email),
+        eq(invitations.isUsed, false)
+      ));
+    return invitation;
+  }
+
+  async markInvitationUsed(id: number, usedBy: string): Promise<boolean> {
+    const result = await db
+      .update(invitations)
+      .set({
+        isUsed: true,
+        usedBy,
+      })
+      .where(eq(invitations.id, id));
+    return (result.rowCount || 0) > 0;
+  }
+
+  async getUserInvitations(userId: string): Promise<Invitation[]> {
+    return await db
+      .select()
+      .from(invitations)
+      .where(eq(invitations.createdBy, userId))
+      .orderBy(desc(invitations.createdAt));
+  }
+
+  async isUserAuthorized(email: string, inviteCode?: string): Promise<boolean> {
+    // Check if user already exists (existing users are always authorized)
+    const existingUser = await db
+      .select()
+      .from(users)
+      .where(eq(users.email, email));
+    
+    if (existingUser.length > 0) {
+      return true;
+    }
+
+    // Check for valid invitation
+    if (inviteCode) {
+      const invitation = await db
+        .select()
+        .from(invitations)
+        .where(and(
+          eq(invitations.inviteCode, inviteCode),
+          eq(invitations.isUsed, false),
+          or(
+            eq(invitations.email, email),
+            eq(invitations.email, null) // Generic invite codes
+          )
+        ));
+      
+      if (invitation.length > 0) {
+        const inv = invitation[0];
+        // Check if invitation is expired
+        if (inv.expiresAt && new Date() > inv.expiresAt) {
+          return false;
+        }
+        return true;
+      }
+    }
+
+    // Check for email-specific invitation
+    const emailInvitation = await this.getInvitationByEmail(email);
+    if (emailInvitation) {
+      // Check if invitation is expired
+      if (emailInvitation.expiresAt && new Date() > emailInvitation.expiresAt) {
+        return false;
+      }
+      return true;
+    }
+
+    return false;
   }
 }
 

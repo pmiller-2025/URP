@@ -5,7 +5,8 @@ import {
   timestamp,
   jsonb,
   index,
-  serial
+  serial,
+  boolean
 } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
@@ -34,6 +35,17 @@ export const users = pgTable("users", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+export const invitations = pgTable("invitations", {
+  id: serial("id").primaryKey(),
+  email: varchar("email"),
+  inviteCode: varchar("invite_code").notNull().unique(),
+  createdBy: varchar("created_by").references(() => users.id),
+  usedBy: varchar("used_by").references(() => users.id),
+  expiresAt: timestamp("expires_at"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  isUsed: boolean("is_used").default(false),
+});
+
 export const retirementScenarios = pgTable("retirement_scenarios", {
   id: serial("id").primaryKey(),
   userId: varchar("user_id").notNull().references(() => users.id),
@@ -46,11 +58,19 @@ export const retirementScenarios = pgTable("retirement_scenarios", {
 
 export type UpsertUser = typeof users.$inferInsert;
 export type User = typeof users.$inferSelect;
+export type Invitation = typeof invitations.$inferSelect;
+export type InsertInvitation = typeof invitations.$inferInsert;
 
 export const insertScenarioSchema = createInsertSchema(retirementScenarios).pick({
   name: true,
   description: true,
   scenarioData: true,
+});
+
+export const insertInvitationSchema = createInsertSchema(invitations).pick({
+  email: true,
+  inviteCode: true,
+  expiresAt: true,
 });
 
 export type InsertScenario = z.infer<typeof insertScenarioSchema>;
