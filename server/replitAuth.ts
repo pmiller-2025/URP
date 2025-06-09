@@ -1,5 +1,5 @@
 import * as client from "openid-client";
-import { Strategy, type VerifyFunction } from "openid-client/passport";
+import { Strategy, type VerifyFunction, type VerifyFunctionWithRequest } from "openid-client/passport";
 
 import passport from "passport";
 import session from "express-session";
@@ -114,22 +114,23 @@ export async function setupAuth(app: Express) {
 
   const config = await getOidcConfig();
 
-  const verify: VerifyFunction = async (
+  const verify = async (
+    req: any,
     tokens: client.TokenEndpointResponse & client.TokenEndpointResponseHelpers,
-    verified: passport.AuthenticateCallback,
-    req?: any
+    verified: passport.AuthenticateCallback
   ) => {
     try {
       const user = {};
       updateUserSession(user, tokens);
-      const inviteCode = req?.session?.inviteCode;
+      const inviteCode = req.session?.inviteCode;
       await upsertUser(tokens.claims(), inviteCode);
       // Clear invite code from session after use
-      if (req?.session?.inviteCode) {
+      if (req.session?.inviteCode) {
         delete req.session.inviteCode;
       }
       verified(null, user);
     } catch (error) {
+      console.error("Authentication error:", error);
       verified(error, false);
     }
   };
