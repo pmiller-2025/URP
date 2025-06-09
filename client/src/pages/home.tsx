@@ -3,9 +3,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useAuth } from "@/hooks/useAuth";
 import { Calculator, User, LogOut } from "lucide-react";
 import { Link } from "wouter";
+import { User as UserType } from "@shared/schema";
 
 export default function Home() {
   const { user } = useAuth();
+  const typedUser = user as UserType | undefined;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50">
@@ -21,9 +23,9 @@ export default function Home() {
             </div>
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
-                {user?.profileImageUrl ? (
+                {typedUser?.profileImageUrl ? (
                   <img 
-                    src={user.profileImageUrl} 
+                    src={typedUser.profileImageUrl} 
                     alt="Profile" 
                     className="w-8 h-8 rounded-full object-cover"
                   />
@@ -31,7 +33,7 @@ export default function Home() {
                   <User className="h-8 w-8 text-gray-600" />
                 )}
                 <span className="text-sm text-gray-700">
-                  {user?.firstName || user?.email || 'User'}
+                  {typedUser?.firstName || typedUser?.email || 'User'}
                 </span>
               </div>
               <Button 
@@ -51,7 +53,7 @@ export default function Home() {
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="text-center mb-12">
           <h1 className="text-3xl font-bold text-gray-900 mb-4">
-            Welcome back, {user?.firstName || 'there'}!
+            Welcome back, {typedUser?.firstName || 'there'}!
           </h1>
           <p className="text-lg text-gray-600">
             Plan your retirement with advanced financial modeling and AI insights
@@ -91,12 +93,12 @@ export default function Home() {
             </CardHeader>
             <CardContent>
               <div className="space-y-2 text-sm text-gray-600">
-                <p><strong>Email:</strong> {user?.email || 'Not provided'}</p>
-                <p><strong>Name:</strong> {user?.firstName && user?.lastName 
-                  ? `${user.firstName} ${user.lastName}` 
+                <p><strong>Email:</strong> {typedUser?.email || 'Not provided'}</p>
+                <p><strong>Name:</strong> {typedUser?.firstName && typedUser?.lastName 
+                  ? `${typedUser.firstName} ${typedUser.lastName}` 
                   : 'Not provided'}</p>
-                <p><strong>Member since:</strong> {user?.createdAt 
-                  ? new Date(user.createdAt).toLocaleDateString() 
+                <p><strong>Member since:</strong> {typedUser?.createdAt 
+                  ? new Date(typedUser.createdAt).toLocaleDateString() 
                   : 'Recently'}</p>
               </div>
             </CardContent>
