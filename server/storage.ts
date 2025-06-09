@@ -26,6 +26,7 @@ export interface IStorage {
   markInvitationUsed(id: number, usedBy: string): Promise<boolean>;
   getUserInvitations(userId: string): Promise<Invitation[]>;
   isUserAuthorized(email: string, inviteCode?: string): Promise<boolean>;
+  isAdminUser(email: string): Promise<boolean>;
   
   // Scenario management
   getUserScenarios(userId: string): Promise<RetirementScenario[]>;
@@ -113,6 +114,18 @@ export class DatabaseStorage implements IStorage {
         eq(retirementScenarios.userId, userId)
       ));
     return (result.rowCount || 0) > 0;
+  }
+
+  // Admin operations
+  async isAdminUser(email: string): Promise<boolean> {
+    // Define admin emails - you can modify this list as needed
+    const adminEmails = [
+      'paul@cozyphones.com',
+      'paul@hollowind.com', 
+      'paul@pccable.com'
+    ];
+    
+    return adminEmails.includes(email);
   }
 
   // Invitation operations

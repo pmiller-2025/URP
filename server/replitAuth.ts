@@ -58,22 +58,40 @@ async function upsertUser(
   claims: any,
 ) {
   const email = claims["email"];
+  const userId = claims["sub"];
   
-  // Check if user is authorized (existing user or has valid invitation)
-  const isAuthorized = await storage.isUserAuthorized(email);
+  // Check if user already exists (existing users can always log in)
+  const existingUser = await storage.getUser(userId);
+  if (existingUser) {
+    // Update existing user info
+    await storage.upsertUser({
+      id: userId,
+      email: claims["email"],
+      firstName: claims["first_name"],
+      lastName: claims["last_name"],
+      profileImageUrl: claims["profile_image_url"],
+    });
+    return;
+  }
+
+  // For new users, check admin bypass or invitation requirement
+  const isAdmin = await storage.isAdminUser(email);
+  const isAuthorized = isAdmin || await storage.isUserAuthorized(email);
   
   if (!isAuthorized) {
     throw new Error("Access denied: Valid invitation required");
   }
 
-  // Check for email-specific invitation and mark as used
-  const emailInvitation = await storage.getInvitationByEmail(email);
-  if (emailInvitation && !emailInvitation.isUsed) {
-    await storage.markInvitationUsed(emailInvitation.id, claims["sub"]);
+  // Check for email-specific invitation and mark as used (if not admin)
+  if (!isAdmin) {
+    const emailInvitation = await storage.getInvitationByEmail(email);
+    if (emailInvitation && !emailInvitation.isUsed) {
+      await storage.markInvitationUsed(emailInvitation.id, userId);
+    }
   }
 
   await storage.upsertUser({
-    id: claims["sub"],
+    id: userId,
     email: claims["email"],
     firstName: claims["first_name"],
     lastName: claims["last_name"],
