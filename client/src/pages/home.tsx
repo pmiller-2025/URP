@@ -19,7 +19,7 @@ export default function Home() {
               <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center mr-3">
                 <Calculator className="h-5 w-5 text-white" />
               </div>
-              <h1 className="text-xl font-bold text-gray-900">Ultimate Retirement Planner</h1>
+              <h1 className="text-xl font-bold text-gray-900">URP - Ultimate Retirement Planner</h1>
             </div>
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
@@ -56,7 +56,7 @@ export default function Home() {
             Welcome back, {typedUser?.firstName || 'there'}!
           </h1>
           <p className="text-lg text-gray-600">
-            Plan your retirement with advanced financial modeling and AI insights
+            URP is ready to help you plan your retirement with advanced AI insights
           </p>
         </div>
 
