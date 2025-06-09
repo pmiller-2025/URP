@@ -8,10 +8,89 @@ import { setupAuth, isAuthenticated } from "./replitAuth";
 import { db } from "./db";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
+import bcrypt from "bcryptjs";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Auth middleware
   await setupAuth(app);
+
+  // Set password for user (development only)
+  app.post('/api/admin/set-password', async (req, res) => {
+    try {
+      const { email, password } = req.body;
+      
+      if (!email || !password) {
+        return res.status(400).json({ error: "Email and password are required" });
+      }
+      
+      // Hash the password
+      const saltRounds = 10;
+      const passwordHash = await bcrypt.hash(password, saltRounds);
+      
+      // Update user with password hash
+      const result = await db
+        .update(users)
+        .set({ passwordHash })
+        .where(eq(users.email, email))
+        .returning();
+      
+      if (result.length === 0) {
+        return res.status(404).json({ error: "User not found" });
+      }
+      
+      res.json({ success: true, message: "Password set successfully" });
+    } catch (error) {
+      console.error("Error setting password:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  // Simple password login (development only)
+  app.post('/api/dev/login', async (req, res) => {
+    try {
+      const { email, password } = req.body;
+      
+      if (!email || !password) {
+        return res.status(400).json({ error: "Email and password are required" });
+      }
+      
+      // Find user
+      const userList = await db.select().from(users).where(eq(users.email, email));
+      if (userList.length === 0) {
+        return res.status(401).json({ error: "Invalid credentials" });
+      }
+      
+      const user = userList[0];
+      
+      // Check password
+      if (!user.passwordHash) {
+        return res.status(401).json({ error: "No password set for this user" });
+      }
+      
+      const passwordValid = await bcrypt.compare(password, user.passwordHash);
+      if (!passwordValid) {
+        return res.status(401).json({ error: "Invalid credentials" });
+      }
+      
+      // Create a simple session (for development)
+      (req.session as any).userId = user.id;
+      (req.session as any).user = user;
+      
+      res.json({ success: true, user: { id: user.id, email: user.email, firstName: user.firstName, lastName: user.lastName } });
+    } catch (error) {
+      console.error("Error during login:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  // Development auth check
+  app.get('/api/dev/user', (req, res) => {
+    const user = (req.session as any)?.user;
+    if (!user) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    res.json(user);
+  });
 
   // Manual user creation route (for development/admin)
   app.post('/api/admin/create-user', async (req, res) => {
