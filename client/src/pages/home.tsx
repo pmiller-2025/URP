@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/hooks/useAuth";
-import { Calculator, User, LogOut, Users } from "lucide-react";
+import { Calculator, User, LogOut, Users, Bot } from "lucide-react";
 import { Link } from "wouter";
 import { User as UserType } from "@shared/schema";
 
@@ -17,7 +17,7 @@ export default function Home() {
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center">
               <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center mr-3">
-                <Calculator className="h-5 w-5 text-white" />
+                <Bot className="h-5 w-5 text-white" />
               </div>
               <h1 className="text-xl font-bold text-gray-900">URP - Ultimate Retirement Planner</h1>
             </div>
@@ -64,18 +64,18 @@ export default function Home() {
           <Card className="hover:shadow-lg transition-shadow">
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Calculator className="h-6 w-6 text-green-600 mr-2" />
-                Retirement Calculator
+                <Bot className="h-6 w-6 text-green-600 mr-2" />
+                URP Calculator
               </CardTitle>
               <CardDescription>
-                Create detailed retirement projections with mortgage acceleration, 
+                Let URP create detailed retirement projections with mortgage acceleration, 
                 Social Security optimization, and investment strategies.
               </CardDescription>
             </CardHeader>
             <CardContent>
               <Link href="/calculator">
                 <Button className="w-full bg-green-600 hover:bg-green-700">
-                  Open Calculator
+                  Chat with URP
                 </Button>
               </Link>
             </CardContent>

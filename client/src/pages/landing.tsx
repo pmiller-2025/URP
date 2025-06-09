@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calculator, Shield, TrendingUp, Users, Zap, BarChart3 } from "lucide-react";
+import { Calculator, Shield, TrendingUp, Users, Zap, BarChart3, Bot } from "lucide-react";
 
 export default function Landing() {
   return (
@@ -11,7 +11,7 @@ export default function Landing() {
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center">
               <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center mr-3">
-                <Shield className="h-5 w-5 text-white" />
+                <Bot className="h-5 w-5 text-white" />
               </div>
               <h1 className="text-xl font-bold text-gray-900">URP - Ultimate Retirement Planner</h1>
             </div>
