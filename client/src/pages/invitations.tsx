@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { Copy, Plus, Calendar, Mail, Link } from "lucide-react";
+import { Copy, Plus, Calendar, Mail, Link, Home } from "lucide-react";
 import { format } from "date-fns";
 import { apiRequest } from "@/lib/queryClient";
 import { isUnauthorizedError } from "@/lib/authUtils";
@@ -132,6 +132,12 @@ export default function InvitationsPage() {
             Help URP make new robot friends! Create invitations for others to meet your friendly retirement robot.
           </p>
         </div>
+        <Link href="/">
+          <Button variant="outline" className="flex items-center gap-2">
+            <Home className="h-4 w-4" />
+            Back to Home
+          </Button>
+        </Link>
       </div>
 
       {/* Create Invitation Form */}
