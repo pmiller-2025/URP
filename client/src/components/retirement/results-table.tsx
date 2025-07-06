@@ -271,7 +271,7 @@ export function ResultsTable({
                   <SelectContent>
                     {yearOptions.map(year => (
                       <SelectItem key={year} value={year.toString()}>
-                        Year {year} ({2023 + year})
+                        Year {year} ({2024 + year})
                       </SelectItem>
                     ))}
                   </SelectContent>
