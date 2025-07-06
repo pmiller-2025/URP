@@ -37,6 +37,28 @@ export interface IStorage {
 }
 
 export class DatabaseStorage implements IStorage {
+  constructor() {
+    this.ensureSharedUser();
+  }
+
+  // Ensure shared user exists for shared scenarios
+  private async ensureSharedUser() {
+    try {
+      const existingUser = await this.getUser("shared");
+      if (!existingUser) {
+        await this.upsertUser({
+          id: "shared",
+          email: "shared@urp.com",
+          firstName: "Shared",
+          lastName: "User",
+          profileImageUrl: null
+        });
+      }
+    } catch (error) {
+      console.error("Error ensuring shared user:", error);
+    }
+  }
+
   // User operations
   // (IMPORTANT) these user operations are mandatory for Replit Auth.
 
