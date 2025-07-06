@@ -159,6 +159,36 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                 </div>
                 <p className="text-xs text-gray-500 mt-1">Current age: {state.personalInfo.jessicaAge}</p>
               </div>
+
+              {/* End of Life Planning Section */}
+              <div className="border-t pt-4">
+                <Label className="block text-sm font-medium text-gray-700 mb-3">End of Life Planning</Label>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <Label className="block text-xs text-gray-600 mb-1">Paul's End of Life Age</Label>
+                    <Input 
+                      type="number" 
+                      min="65"
+                      max="100"
+                      value={state.personalInfo.paulEndOfLifeAge}
+                      onChange={(e) => onUpdate('personalInfo', { paulEndOfLifeAge: parseInt(e.target.value) || 85 })}
+                      className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                    />
+                  </div>
+                  <div>
+                    <Label className="block text-xs text-gray-600 mb-1">Jessica's End of Life Age</Label>
+                    <Input 
+                      type="number" 
+                      min="65"
+                      max="100"
+                      value={state.personalInfo.jessicaEndOfLifeAge}
+                      onChange={(e) => onUpdate('personalInfo', { jessicaEndOfLifeAge: parseInt(e.target.value) || 90 })}
+                      className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                    />
+                  </div>
+                </div>
+                <p className="text-xs text-gray-500 mt-2">Used for planning scenarios when income/benefits stop</p>
+              </div>
               
               <div className="border-t pt-4">
                 <Label className="block text-sm font-medium text-gray-700 mb-2">Dependents</Label>

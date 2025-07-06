@@ -12,6 +12,8 @@ interface PersonalInfo {
   lukeBirthMonth: number;
   lukeBirthYear: number;
   projectionYears: number;
+  paulEndOfLifeAge: number;
+  jessicaEndOfLifeAge: number;
 }
 
 interface SocialSecurity {

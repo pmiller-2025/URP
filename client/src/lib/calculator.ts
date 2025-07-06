@@ -9,6 +9,8 @@ export interface PersonalInfo {
   lukeBirthMonth: number;
   lukeBirthYear: number;
   projectionYears: number;
+  paulEndOfLifeAge: number;
+  jessicaEndOfLifeAge: number;
 }
 
 export interface SocialSecurity {
@@ -208,6 +210,10 @@ export function calculateAge(birthMonth: number, birthYear: number, currentMonth
   return age;
 }
 
+export function isPersonAlive(currentAge: number, endOfLifeAge: number): boolean {
+  return currentAge < endOfLifeAge;
+}
+
 export function getCurrentDate(): { month: number; year: number } {
   return {
     month: 6, // June 2025 start
@@ -288,7 +294,9 @@ export function getDefaultState(): CalculatorState {
       lukeAge: 20,
       lukeBirthMonth: 11,
       lukeBirthYear: 2004,
-      projectionYears: 20
+      projectionYears: 20,
+      paulEndOfLifeAge: 85, // Default to age 85
+      jessicaEndOfLifeAge: 90 // Default to age 90
     },
     socialSecurity: {
       paulAmount: 5034, // Age 70 benefit with COLA adjustments
@@ -776,11 +784,15 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
     const paulAgeThisMonth = calculateAge(state.personalInfo.paulBirthMonth, state.personalInfo.paulBirthYear, actualMonth + 1, actualYear);
     const jessicaAgeThisMonth = calculateAge(state.personalInfo.jessicaBirthMonth, state.personalInfo.jessicaBirthYear, actualMonth + 1, actualYear);
     
-    // Check SS eligibility for this specific month
-    const paulSSEligibleThisMonth = paulAgeThisMonth >= state.socialSecurity.paulStartAge;
-    const jessicaSSEligibleThisMonth = jessicaAgeThisMonth >= state.socialSecurity.jessicaStartAge;
+    // Check if each person is alive and eligible for SS
+    const paulAlive = isPersonAlive(paulAgeThisMonth, state.personalInfo.paulEndOfLifeAge);
+    const jessicaAlive = isPersonAlive(jessicaAgeThisMonth, state.personalInfo.jessicaEndOfLifeAge);
+    
+    const paulSSEligibleThisMonth = paulAlive && paulAgeThisMonth >= state.socialSecurity.paulStartAge;
+    const jessicaSSEligibleThisMonth = jessicaAlive && jessicaAgeThisMonth >= state.socialSecurity.jessicaStartAge;
     
     // Calculate SS amounts with COLA adjustments
+    // If Paul dies but Jessica is alive, she continues to receive her benefit (survivor rules)
     const paulSSMonthly = paulSSEligibleThisMonth ? 
       calculateInflationAdjusted(state.socialSecurity.paulAmount, state.socialSecurity.cola, yearIndex) : 0;
     const jessicaSSMonthly = jessicaSSEligibleThisMonth ? 
@@ -880,11 +892,15 @@ export function calculateAnnualProjections(state: CalculatorState): AnnualData[]
     const paulAge = state.personalInfo.paulAge + yearIndex;
     const jessicaAge = state.personalInfo.jessicaAge + yearIndex;
     
-    // Calculate age-based SS eligibility
-    const paulSSEligible = paulAge >= state.socialSecurity.paulStartAge;
-    const jessicaSSEligible = jessicaAge >= state.socialSecurity.jessicaStartAge;
+    // Check if each person is alive and eligible for SS
+    const paulAlive = isPersonAlive(paulAge, state.personalInfo.paulEndOfLifeAge);
+    const jessicaAlive = isPersonAlive(jessicaAge, state.personalInfo.jessicaEndOfLifeAge);
+    
+    const paulSSEligible = paulAlive && paulAge >= state.socialSecurity.paulStartAge;
+    const jessicaSSEligible = jessicaAlive && jessicaAge >= state.socialSecurity.jessicaStartAge;
     
     // Calculate annual SS amounts with COLA
+    // If Paul dies but Jessica is alive, she continues to receive her benefit (survivor rules)
     const paulSSAnnual = paulSSEligible ? 
       calculateInflationAdjusted(state.socialSecurity.paulAmount * 12, state.socialSecurity.cola, yearIndex) : 0;
     const jessicaSSAnnual = jessicaSSEligible ? 
