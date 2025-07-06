@@ -661,8 +661,7 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
   
   // SS eligibility will be calculated month by month in the loop below
   
-  // Calculate VA Disability with inflation
-  const vaDisabilityMonthly = calculateInflationAdjusted(state.otherIncome.vaDisability, state.expenses.inflationRate, yearIndex);
+  // VA Disability calculation will be done month by month based on Paul's status
   
   // Calculate business income with start month/year and duration
   // Since projections start from June 2025 (month 6), adjust the offset calculation
@@ -788,15 +787,35 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
     const paulAlive = isPersonAlive(paulAgeThisMonth, state.personalInfo.paulEndOfLifeAge);
     const jessicaAlive = isPersonAlive(jessicaAgeThisMonth, state.personalInfo.jessicaEndOfLifeAge);
     
-    const paulSSEligibleThisMonth = paulAlive && paulAgeThisMonth >= state.socialSecurity.paulStartAge;
-    const jessicaSSEligibleThisMonth = jessicaAlive && jessicaAgeThisMonth >= state.socialSecurity.jessicaStartAge;
+    // Calculate SS amounts with survivor benefit rules
+    let paulSSMonthly = 0;
+    let jessicaSSMonthly = 0;
     
-    // Calculate SS amounts with COLA adjustments
-    // If Paul dies but Jessica is alive, she continues to receive her benefit (survivor rules)
-    const paulSSMonthly = paulSSEligibleThisMonth ? 
-      calculateInflationAdjusted(state.socialSecurity.paulAmount, state.socialSecurity.cola, yearIndex) : 0;
-    const jessicaSSMonthly = jessicaSSEligibleThisMonth ? 
-      calculateInflationAdjusted(state.socialSecurity.jessicaAmount, state.socialSecurity.cola, yearIndex) : 0;
+    if (paulAlive && jessicaAlive) {
+      // Both alive: each gets their own benefit if eligible
+      paulSSMonthly = (paulAgeThisMonth >= state.socialSecurity.paulStartAge) ? 
+        calculateInflationAdjusted(state.socialSecurity.paulAmount, state.socialSecurity.cola, yearIndex) : 0;
+      jessicaSSMonthly = (jessicaAgeThisMonth >= state.socialSecurity.jessicaStartAge) ? 
+        calculateInflationAdjusted(state.socialSecurity.jessicaAmount, state.socialSecurity.cola, yearIndex) : 0;
+    } else if (!paulAlive && jessicaAlive) {
+      // Paul died, Jessica alive: Jessica gets 100% of Paul's benefit, loses her own
+      paulSSMonthly = 0;
+      jessicaSSMonthly = (jessicaAgeThisMonth >= state.socialSecurity.jessicaStartAge) ? 
+        calculateInflationAdjusted(state.socialSecurity.paulAmount, state.socialSecurity.cola, yearIndex) : 0;
+    } else if (paulAlive && !jessicaAlive) {
+      // Jessica died, Paul alive: Paul keeps his benefit, Jessica's stops
+      paulSSMonthly = (paulAgeThisMonth >= state.socialSecurity.paulStartAge) ? 
+        calculateInflationAdjusted(state.socialSecurity.paulAmount, state.socialSecurity.cola, yearIndex) : 0;
+      jessicaSSMonthly = 0;
+    } else {
+      // Both died: no benefits
+      paulSSMonthly = 0;
+      jessicaSSMonthly = 0;
+    }
+    
+    // Calculate VA Disability with inflation - stops when Paul dies
+    const vaDisabilityMonthly = paulAlive ? 
+      calculateInflationAdjusted(state.otherIncome.vaDisability, state.expenses.inflationRate, yearIndex) : 0;
     
     // Apply lump sum payment if it occurs this month
     let lumpSumPayment = 0;
@@ -896,18 +915,35 @@ export function calculateAnnualProjections(state: CalculatorState): AnnualData[]
     const paulAlive = isPersonAlive(paulAge, state.personalInfo.paulEndOfLifeAge);
     const jessicaAlive = isPersonAlive(jessicaAge, state.personalInfo.jessicaEndOfLifeAge);
     
-    const paulSSEligible = paulAlive && paulAge >= state.socialSecurity.paulStartAge;
-    const jessicaSSEligible = jessicaAlive && jessicaAge >= state.socialSecurity.jessicaStartAge;
+    // Calculate SS amounts with survivor benefit rules
+    let paulSSAnnual = 0;
+    let jessicaSSAnnual = 0;
     
-    // Calculate annual SS amounts with COLA
-    // If Paul dies but Jessica is alive, she continues to receive her benefit (survivor rules)
-    const paulSSAnnual = paulSSEligible ? 
-      calculateInflationAdjusted(state.socialSecurity.paulAmount * 12, state.socialSecurity.cola, yearIndex) : 0;
-    const jessicaSSAnnual = jessicaSSEligible ? 
-      calculateInflationAdjusted(state.socialSecurity.jessicaAmount * 12, state.socialSecurity.cola, yearIndex) : 0;
+    if (paulAlive && jessicaAlive) {
+      // Both alive: each gets their own benefit if eligible
+      paulSSAnnual = (paulAge >= state.socialSecurity.paulStartAge) ? 
+        calculateInflationAdjusted(state.socialSecurity.paulAmount * 12, state.socialSecurity.cola, yearIndex) : 0;
+      jessicaSSAnnual = (jessicaAge >= state.socialSecurity.jessicaStartAge) ? 
+        calculateInflationAdjusted(state.socialSecurity.jessicaAmount * 12, state.socialSecurity.cola, yearIndex) : 0;
+    } else if (!paulAlive && jessicaAlive) {
+      // Paul died, Jessica alive: Jessica gets 100% of Paul's benefit, loses her own
+      paulSSAnnual = 0;
+      jessicaSSAnnual = (jessicaAge >= state.socialSecurity.jessicaStartAge) ? 
+        calculateInflationAdjusted(state.socialSecurity.paulAmount * 12, state.socialSecurity.cola, yearIndex) : 0;
+    } else if (paulAlive && !jessicaAlive) {
+      // Jessica died, Paul alive: Paul keeps his benefit, Jessica's stops
+      paulSSAnnual = (paulAge >= state.socialSecurity.paulStartAge) ? 
+        calculateInflationAdjusted(state.socialSecurity.paulAmount * 12, state.socialSecurity.cola, yearIndex) : 0;
+      jessicaSSAnnual = 0;
+    } else {
+      // Both died: no benefits
+      paulSSAnnual = 0;
+      jessicaSSAnnual = 0;
+    }
     
-    // Calculate VA Disability with inflation
-    const vaDisabilityAnnual = calculateInflationAdjusted(state.otherIncome.vaDisability * 12, state.expenses.inflationRate, yearIndex);
+    // Calculate VA Disability with inflation - stops when Paul dies
+    const vaDisabilityAnnual = paulAlive ? 
+      calculateInflationAdjusted(state.otherIncome.vaDisability * 12, state.expenses.inflationRate, yearIndex) : 0;
     
     // Calculate business income (limited duration with start month/year)
     const monthsElapsed = yearIndex * 12;
