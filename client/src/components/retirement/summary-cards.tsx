@@ -3,9 +3,10 @@ import { SummaryMetrics } from "@/lib/calculator";
 
 interface SummaryCardsProps {
   metrics: SummaryMetrics;
+  projectionYears: number;
 }
 
-export function SummaryCards({ metrics }: SummaryCardsProps) {
+export function SummaryCards({ metrics, projectionYears }: SummaryCardsProps) {
   // Enhanced mortgage summary with comprehensive interest calculations
   const formatCurrency = (amount: number) => {
     if (!isFinite(amount) || isNaN(amount)) {
@@ -33,7 +34,7 @@ export function SummaryCards({ metrics }: SummaryCardsProps) {
               {formatCurrency(metrics.finalNetWorth)}
             </div>
             <div className="text-sm text-gray-600">Final Net Worth</div>
-            <div className="text-xs text-gray-500 mt-1">After 20 years</div>
+            <div className="text-xs text-gray-500 mt-1">After {projectionYears} years</div>
           </CardContent>
         </Card>
         
@@ -43,7 +44,7 @@ export function SummaryCards({ metrics }: SummaryCardsProps) {
               {formatCurrency(metrics.totalTaxesPaid)}
             </div>
             <div className="text-sm text-gray-600">Total Taxes Paid</div>
-            <div className="text-xs text-gray-500 mt-1">20-year total</div>
+            <div className="text-xs text-gray-500 mt-1">{projectionYears}-year total</div>
           </CardContent>
         </Card>
         

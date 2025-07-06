@@ -310,7 +310,7 @@ export function getDefaultState(): CalculatorState {
     otherIncome: {
       vaDisability: 4050,
       businessIncome: 4000,
-      jessicaIncome: 1250,
+      jessicaIncome: 2000,
       chapter35: 1000,
       businessDuration: 60,
       businessStartMonth: 6,

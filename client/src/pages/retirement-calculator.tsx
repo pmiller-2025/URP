@@ -117,7 +117,7 @@ export default function RetirementCalculator() {
                 </Button>
               </div>
               <div className="flex items-center space-x-2">
-                <span className="text-sm text-gray-600">20-Year Projection</span>
+                <span className="text-sm text-gray-600">{state.personalInfo.projectionYears}-Year Projection</span>
                 <div className="w-2 h-2 bg-finance-green rounded-full animate-pulse"></div>
               </div>
             </div>
@@ -164,7 +164,7 @@ export default function RetirementCalculator() {
         />
 
         {/* Summary Cards */}
-        <SummaryCards metrics={summaryMetrics} />
+        <SummaryCards metrics={summaryMetrics} projectionYears={state.personalInfo.projectionYears} />
 
         {/* Chart */}
         <SavingsChart annualData={annualData} />
