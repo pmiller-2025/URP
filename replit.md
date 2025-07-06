@@ -104,6 +104,10 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
+- **January 06, 2025**: Implemented shared scenario storage system - all saved scenarios are now accessible by all users
+- **January 06, 2025**: Added "Set as Default" and "Reset to Default" functionality for personalized baseline settings
+- **January 06, 2025**: Fixed Social Security eligibility calculation to work month-by-month with precise birth date handling
+- **January 06, 2025**: Fixed mortgage balance calculation using correct interest rates instead of hardcoded values
 - **January 06, 2025**: Fixed monthly view year dropdown to correctly display "Year 1 (2025)" instead of "Year 1 (2024)"
 - **January 06, 2025**: Monthly projections now properly start from June 2025 as intended
 
