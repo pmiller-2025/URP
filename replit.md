@@ -102,6 +102,11 @@ URP (Ultimate Retirement Planner) is a comprehensive retirement cash flow calcul
 
 Preferred communication style: Simple, everyday language.
 
+## Recent Changes
+
+- **January 06, 2025**: Fixed monthly view year dropdown to correctly display "Year 1 (2025)" instead of "Year 1 (2024)"
+- **January 06, 2025**: Monthly projections now properly start from June 2025 as intended
+
 ## Changelog
 
 Changelog:
