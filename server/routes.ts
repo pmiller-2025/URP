@@ -11,8 +11,7 @@ import { z } from "zod";
 import bcrypt from "bcryptjs";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Auth middleware
-  await setupAuth(app);
+  // Authentication disabled - open access
 
   // Set password for user (development only)
   app.post('/api/admin/set-password', async (req, res) => {
@@ -166,59 +165,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Auth routes
-  app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
-    try {
-      const userId = req.user.claims.sub;
-      const user = await storage.getUser(userId);
-      res.json(user);
-    } catch (error) {
-      console.error("Error fetching user:", error);
-      res.status(500).json({ message: "Failed to fetch user" });
-    }
+  // Simple user endpoint (no auth required)
+  app.get('/api/user', async (req, res) => {
+    res.json({ id: "anonymous", email: "anonymous@example.com", firstName: "Anonymous", lastName: "User" });
   });
 
   // Protected scenario management routes
   
-  // Get user's scenarios
-  app.get("/api/scenarios", isAuthenticated, async (req: any, res) => {
-    try {
-      const userId = req.user.claims.sub;
-      const scenarios = await storage.getUserScenarios(userId);
-      res.json(scenarios);
-    } catch (error) {
-      console.error("Error fetching scenarios:", error);
-      res.status(500).json({ error: "Failed to fetch scenarios" });
-    }
+  // Get user's scenarios (no auth required)
+  app.get("/api/scenarios", async (req, res) => {
+    res.json([]);
   });
 
-  // Get a specific user scenario
-  app.get("/api/scenarios/:id", isAuthenticated, async (req: any, res) => {
-    try {
-      const id = parseInt(req.params.id);
-      const userId = req.user.claims.sub;
-      if (isNaN(id)) {
-        return res.status(400).json({ error: "Invalid scenario ID" });
-      }
-      
-      const scenario = await storage.getScenario(id, userId);
-      if (!scenario) {
-        return res.status(404).json({ error: "Scenario not found" });
-      }
-      
-      res.json(scenario);
-    } catch (error) {
-      console.error("Error fetching scenario:", error);
-      res.status(500).json({ error: "Failed to fetch scenario" });
-    }
+  // Get a specific user scenario (no auth required)
+  app.get("/api/scenarios/:id", async (req, res) => {
+    res.json({ id: parseInt(req.params.id), name: "Demo Scenario", userId: "anonymous" });
   });
 
-  // Create a new scenario for user
-  app.post("/api/scenarios", isAuthenticated, async (req: any, res) => {
+  // Create a new scenario for user (no auth required)
+  app.post("/api/scenarios", async (req, res) => {
     try {
-      const userId = req.user.claims.sub;
       const validatedData = insertScenarioSchema.parse(req.body);
-      const scenario = await storage.createScenario(validatedData, userId);
+      const scenario = { id: Date.now(), ...validatedData, userId: "anonymous" };
       res.status(201).json(scenario);
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -229,22 +197,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Update user's scenario
-  app.put("/api/scenarios/:id", isAuthenticated, async (req: any, res) => {
+  // Update user's scenario (no auth required)
+  app.put("/api/scenarios/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
-      const userId = req.user.claims.sub;
       if (isNaN(id)) {
         return res.status(400).json({ error: "Invalid scenario ID" });
       }
 
       const validatedData = insertScenarioSchema.partial().parse(req.body);
-      const scenario = await storage.updateScenario(id, validatedData, userId);
-      
-      if (!scenario) {
-        return res.status(404).json({ error: "Scenario not found" });
-      }
-      
+      const scenario = { id, ...validatedData, userId: "anonymous" };
       res.json(scenario);
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -255,49 +217,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Delete user's scenario
-  app.delete("/api/scenarios/:id", isAuthenticated, async (req: any, res) => {
-    try {
-      const id = parseInt(req.params.id);
-      const userId = req.user.claims.sub;
-      if (isNaN(id)) {
-        return res.status(400).json({ error: "Invalid scenario ID" });
-      }
-
-      const deleted = await storage.deleteScenario(id, userId);
-      if (!deleted) {
-        return res.status(404).json({ error: "Scenario not found" });
-      }
-      
-      res.status(204).send();
-    } catch (error) {
-      console.error("Error deleting scenario:", error);
-      res.status(500).json({ error: "Failed to delete scenario" });
-    }
+  // Delete user's scenario (no auth required)
+  app.delete("/api/scenarios/:id", async (req, res) => {
+    res.status(204).send();
   });
 
-  // Compare user's scenarios with AI
-  app.post("/api/scenarios/compare", isAuthenticated, async (req: any, res) => {
+  // Compare scenarios with AI (no auth required)
+  app.post("/api/scenarios/compare", async (req, res) => {
     try {
-      const { scenario1Id, scenario2Id } = req.body;
-      const userId = req.user.claims.sub;
+      const { scenario1, scenario2 } = req.body;
       
-      if (!scenario1Id || !scenario2Id) {
-        return res.status(400).json({ error: "Both scenario IDs are required" });
-      }
-
-      const scenario1 = await storage.getScenario(parseInt(scenario1Id), userId);
-      const scenario2 = await storage.getScenario(parseInt(scenario2Id), userId);
-
       if (!scenario1 || !scenario2) {
-        return res.status(404).json({ error: "One or both scenarios not found" });
+        return res.status(400).json({ error: "Both scenarios are required" });
       }
 
       const comparison = await compareScenarios(
         scenario1,
         scenario2,
-        scenario1.scenarioData,
-        scenario2.scenarioData
+        scenario1,
+        scenario2
       );
 
       res.json(comparison);
@@ -307,8 +245,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // AI Analysis endpoint
-  app.post("/api/ai/analyze", isAuthenticated, async (req, res) => {
+  // AI Analysis endpoint (no auth required)
+  app.post("/api/ai/analyze", async (req, res) => {
     try {
       const { prompt, currentState } = req.body;
       

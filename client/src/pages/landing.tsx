@@ -15,21 +15,12 @@ export default function Landing() {
               </div>
               <h1 className="text-xl font-bold text-gray-900">URP - Ultimate Retirement Planner</h1>
             </div>
-            <div className="flex gap-2">
-              <Button 
-                onClick={() => window.location.href = '/api/login'}
-                className="bg-green-600 hover:bg-green-700"
-              >
-                Sign In
-              </Button>
-              <Button 
-                onClick={() => window.location.href = '/dev-login'}
-                variant="outline"
-                className="border-purple-600 text-purple-600 hover:bg-purple-50"
-              >
-                Dev Login
-              </Button>
-            </div>
+            <Button 
+              onClick={() => window.location.href = '/calculator'}
+              className="bg-green-600 hover:bg-green-700"
+            >
+              Start Planning
+            </Button>
           </div>
         </div>
       </header>
@@ -47,10 +38,10 @@ export default function Landing() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button 
               size="lg" 
-              onClick={() => window.location.href = '/api/login'}
+              onClick={() => window.location.href = '/calculator'}
               className="bg-green-600 hover:bg-green-700 text-white px-8 py-3"
             >
-              Get Started Free
+              Start Planning Now
             </Button>
             <Button 
               size="lg" 
