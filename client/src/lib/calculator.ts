@@ -295,8 +295,8 @@ export function getDefaultState(): CalculatorState {
       lukeBirthMonth: 11,
       lukeBirthYear: 2004,
       projectionYears: 20,
-      paulEndOfLifeAge: 85, // Default to age 85
-      jessicaEndOfLifeAge: 90 // Default to age 90
+      paulEndOfLifeAge: 100, // Default to age 100
+      jessicaEndOfLifeAge: 100 // Default to age 100
     },
     socialSecurity: {
       paulAmount: 5034, // Age 70 benefit with COLA adjustments
@@ -959,7 +959,7 @@ export function calculateAnnualProjections(state: CalculatorState): AnnualData[]
     } else if (!paulAlive && jessicaAlive) {
       // Paul died, Jessica alive: check if Paul died after March 2035
       const currentYear = 2025 + yearIndex;
-      const paulDiedAfterMarch2035 = currentYear > 2035 || (currentYear === 2035 && 3 <= 12); // Assumes Paul dies at start of year for simplicity
+      const paulDiedAfterMarch2035 = currentYear > 2035 || (currentYear === 2035); // If Paul dies in 2035 or later, Jessica gets survivor benefit
       if (paulDiedAfterMarch2035) {
         // Jessica gets 50% of Paul's VA Disability
         vaDisabilityAnnual = calculateInflationAdjusted(state.otherIncome.vaDisability * 12 * 0.5, state.expenses.inflationRate, yearIndex);

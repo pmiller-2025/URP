@@ -171,7 +171,7 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                       min="65"
                       max="100"
                       value={state.personalInfo.paulEndOfLifeAge}
-                      onChange={(e) => onUpdate('personalInfo', { paulEndOfLifeAge: parseInt(e.target.value) || 85 })}
+                      onChange={(e) => onUpdate('personalInfo', { paulEndOfLifeAge: parseInt(e.target.value) || 100 })}
                       className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
                     />
                   </div>
@@ -182,7 +182,7 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                       min="65"
                       max="100"
                       value={state.personalInfo.jessicaEndOfLifeAge}
-                      onChange={(e) => onUpdate('personalInfo', { jessicaEndOfLifeAge: parseInt(e.target.value) || 90 })}
+                      onChange={(e) => onUpdate('personalInfo', { jessicaEndOfLifeAge: parseInt(e.target.value) || 100 })}
                       className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
                     />
                   </div>
