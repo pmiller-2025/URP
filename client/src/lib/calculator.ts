@@ -819,10 +819,10 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
       // Paul alive: gets full VA Disability
       vaDisabilityMonthly = calculateInflationAdjusted(state.otherIncome.vaDisability, state.expenses.inflationRate, yearIndex);
     } else if (!paulAlive && jessicaAlive) {
-      // Paul died, Jessica alive: check if Paul died after March 2035
+      // Paul died, Jessica alive: check if we're in March 2035 or later
       const paulDiedAfterMarch2035 = actualYear > 2035 || (actualYear === 2035 && actualMonth >= 2); // March is month 2 (0-indexed)
       if (paulDiedAfterMarch2035) {
-        // Jessica gets 50% of Paul's VA Disability
+        // Jessica gets 50% of Paul's VA Disability, but only from March 2035 onwards
         vaDisabilityMonthly = calculateInflationAdjusted(state.otherIncome.vaDisability * 0.5, state.expenses.inflationRate, yearIndex);
       }
     }
@@ -957,9 +957,9 @@ export function calculateAnnualProjections(state: CalculatorState): AnnualData[]
       // Paul alive: gets full VA Disability
       vaDisabilityAnnual = calculateInflationAdjusted(state.otherIncome.vaDisability * 12, state.expenses.inflationRate, yearIndex);
     } else if (!paulAlive && jessicaAlive) {
-      // Paul died, Jessica alive: check if Paul died after March 2035
+      // Paul died, Jessica alive: check if we're in March 2035 or later
       const currentYear = 2025 + yearIndex;
-      const paulDiedAfterMarch2035 = currentYear > 2035 || (currentYear === 2035); // If Paul dies in 2035 or later, Jessica gets survivor benefit
+      const paulDiedAfterMarch2035 = currentYear >= 2035; // Only gets benefit from March 2035 onwards
       if (paulDiedAfterMarch2035) {
         // Jessica gets 50% of Paul's VA Disability
         vaDisabilityAnnual = calculateInflationAdjusted(state.otherIncome.vaDisability * 12 * 0.5, state.expenses.inflationRate, yearIndex);
