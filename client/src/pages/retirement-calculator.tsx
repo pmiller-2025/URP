@@ -20,7 +20,11 @@ import {
 type ViewMode = 'annual' | 'monthly';
 
 export default function RetirementCalculator() {
-  const [state, setState] = useState<CalculatorState>(getDefaultState());
+  const [state, setState] = useState<CalculatorState>(() => {
+    // Load saved defaults from localStorage if they exist
+    const savedDefaults = localStorage.getItem('urp-default-state');
+    return savedDefaults ? JSON.parse(savedDefaults) : getDefaultState();
+  });
   const [viewMode, setViewMode] = useState<ViewMode>('annual');
   const [selectedYear, setSelectedYear] = useState(1);
   
@@ -58,9 +62,23 @@ export default function RetirementCalculator() {
     }));
   };
 
+  const handleSetAsDefault = () => {
+    if (window.confirm('Set current values as new defaults? This will save your current settings as the default configuration.')) {
+      // Save current state to localStorage as new defaults
+      localStorage.setItem('urp-default-state', JSON.stringify(state));
+      alert('Current values have been saved as your new defaults!');
+    }
+  };
+
   const handleResetToDefault = () => {
-    if (window.confirm('Are you sure you want to reset all values to their defaults? This will clear all your current changes.')) {
-      setState(getDefaultState());
+    if (window.confirm('Reset to your saved defaults? This will restore your personalized default values.')) {
+      // Try to load custom defaults from localStorage, fall back to original defaults
+      const savedDefaults = localStorage.getItem('urp-default-state');
+      if (savedDefaults) {
+        setState(JSON.parse(savedDefaults));
+      } else {
+        setState(getDefaultState());
+      }
       setSelectedYear(1);
     }
   };
@@ -80,14 +98,24 @@ export default function RetirementCalculator() {
                 currentState={state} 
                 onLoadScenario={setState}
               />
-              <Button
-                variant="outline"
-                onClick={handleResetToDefault}
-                className="text-gray-600 hover:text-gray-900 border-gray-300 hover:border-gray-400"
-              >
-                <i className="fas fa-undo-alt mr-2"></i>
-                Reset to Default
-              </Button>
+              <div className="flex items-center space-x-2">
+                <Button
+                  variant="outline"
+                  onClick={handleSetAsDefault}
+                  className="text-blue-600 hover:text-blue-700 border-blue-300 hover:border-blue-400"
+                >
+                  <i className="fas fa-save mr-2"></i>
+                  Set as Default
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={handleResetToDefault}
+                  className="text-gray-600 hover:text-gray-900 border-gray-300 hover:border-gray-400"
+                >
+                  <i className="fas fa-undo-alt mr-2"></i>
+                  Reset to Default
+                </Button>
+              </div>
               <div className="flex items-center space-x-2">
                 <span className="text-sm text-gray-600">20-Year Projection</span>
                 <div className="w-2 h-2 bg-finance-green rounded-full animate-pulse"></div>
