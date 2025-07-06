@@ -813,9 +813,19 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
       jessicaSSMonthly = 0;
     }
     
-    // Calculate VA Disability with inflation - stops when Paul dies
-    const vaDisabilityMonthly = paulAlive ? 
-      calculateInflationAdjusted(state.otherIncome.vaDisability, state.expenses.inflationRate, yearIndex) : 0;
+    // Calculate VA Disability with inflation and survivor benefits
+    let vaDisabilityMonthly = 0;
+    if (paulAlive) {
+      // Paul alive: gets full VA Disability
+      vaDisabilityMonthly = calculateInflationAdjusted(state.otherIncome.vaDisability, state.expenses.inflationRate, yearIndex);
+    } else if (!paulAlive && jessicaAlive) {
+      // Paul died, Jessica alive: check if Paul died after March 2035
+      const paulDiedAfterMarch2035 = actualYear > 2035 || (actualYear === 2035 && actualMonth >= 2); // March is month 2 (0-indexed)
+      if (paulDiedAfterMarch2035) {
+        // Jessica gets 50% of Paul's VA Disability
+        vaDisabilityMonthly = calculateInflationAdjusted(state.otherIncome.vaDisability * 0.5, state.expenses.inflationRate, yearIndex);
+      }
+    }
     
     // Apply lump sum payment if it occurs this month
     let lumpSumPayment = 0;
@@ -941,9 +951,20 @@ export function calculateAnnualProjections(state: CalculatorState): AnnualData[]
       jessicaSSAnnual = 0;
     }
     
-    // Calculate VA Disability with inflation - stops when Paul dies
-    const vaDisabilityAnnual = paulAlive ? 
-      calculateInflationAdjusted(state.otherIncome.vaDisability * 12, state.expenses.inflationRate, yearIndex) : 0;
+    // Calculate VA Disability with inflation and survivor benefits
+    let vaDisabilityAnnual = 0;
+    if (paulAlive) {
+      // Paul alive: gets full VA Disability
+      vaDisabilityAnnual = calculateInflationAdjusted(state.otherIncome.vaDisability * 12, state.expenses.inflationRate, yearIndex);
+    } else if (!paulAlive && jessicaAlive) {
+      // Paul died, Jessica alive: check if Paul died after March 2035
+      const currentYear = 2025 + yearIndex;
+      const paulDiedAfterMarch2035 = currentYear > 2035 || (currentYear === 2035 && 3 <= 12); // Assumes Paul dies at start of year for simplicity
+      if (paulDiedAfterMarch2035) {
+        // Jessica gets 50% of Paul's VA Disability
+        vaDisabilityAnnual = calculateInflationAdjusted(state.otherIncome.vaDisability * 12 * 0.5, state.expenses.inflationRate, yearIndex);
+      }
+    }
     
     // Calculate business income (limited duration with start month/year)
     const monthsElapsed = yearIndex * 12;

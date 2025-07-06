@@ -113,6 +113,12 @@ Preferred communication style: Simple, everyday language.
 - **January 06, 2025**: Fixed Social Security eligibility calculation to work month-by-month with precise birth date handling
 - **January 06, 2025**: Fixed monthly view year dropdown to correctly display "Year 1 (2025)" instead of "Year 1 (2024)"
 - **January 06, 2025**: Monthly projections now properly start from June 2025 as intended
+- **January 06, 2025**: Changed Jessica's default monthly income from $1,250 to $2,000
+- **January 06, 2025**: Updated End of Life calculations with correct Social Security survivor benefit rules
+- **January 06, 2025**: When Paul dies, Jessica receives 100% of Paul's SS benefit but loses her own
+- **January 06, 2025**: When Jessica dies, only her SS stops (Paul keeps his benefit)
+- **January 06, 2025**: VA Disability stops when Paul dies, with survivor benefit rules
+- **January 06, 2025**: VA Disability survivor benefit: Jessica gets 50% only if Paul dies after March 2035
 
 ## Changelog
 
