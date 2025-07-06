@@ -119,6 +119,9 @@ Preferred communication style: Simple, everyday language.
 - **January 06, 2025**: When Jessica dies, only her SS stops (Paul keeps his benefit)
 - **January 06, 2025**: VA Disability stops when Paul dies, with survivor benefit rules
 - **January 06, 2025**: VA Disability survivor benefit: Jessica gets 50% only if Paul dies in March 2035 or later (zero benefits for all years if Paul dies before March 2035)
+- **January 06, 2025**: Added chart selection dropdown with multiple visualization options
+- **January 06, 2025**: Implemented Cash Flow Analysis chart showing monthly income vs expenses trends
+- **January 06, 2025**: Charts now include: Savings & Net Worth projection, Cash Flow Analysis with income/expense breakdown
 
 ## Changelog
 

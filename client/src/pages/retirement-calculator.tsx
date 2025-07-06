@@ -3,9 +3,11 @@ import { InputSection } from "@/components/retirement/input-section";
 import { SummaryCards } from "@/components/retirement/summary-cards";
 import { ResultsTable } from "@/components/retirement/results-table";
 import { SavingsChart } from "@/components/retirement/savings-chart";
+import { CashFlowChart } from "@/components/retirement/cash-flow-chart";
 import { ScenarioManager } from "@/components/retirement/scenario-manager";
 import { AIDialogue } from "@/components/retirement/ai-dialogue";
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { 
   CalculatorState, 
   getDefaultState, 
@@ -18,6 +20,7 @@ import {
 } from "@/lib/calculator";
 
 type ViewMode = 'annual' | 'monthly';
+type ChartType = 'savings' | 'cashflow';
 
 export default function RetirementCalculator() {
   const [state, setState] = useState<CalculatorState>(() => {
@@ -54,6 +57,7 @@ export default function RetirementCalculator() {
   });
   const [viewMode, setViewMode] = useState<ViewMode>('annual');
   const [selectedYear, setSelectedYear] = useState(1);
+  const [chartType, setChartType] = useState<ChartType>('savings');
   
   // Force update end of life ages to new defaults if they're still using old values
   useEffect(() => {
@@ -207,8 +211,29 @@ export default function RetirementCalculator() {
         {/* Summary Cards */}
         <SummaryCards metrics={summaryMetrics} projectionYears={state.personalInfo.projectionYears} />
 
-        {/* Chart */}
-        <SavingsChart annualData={annualData} />
+        {/* Chart Selection */}
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-semibold text-gray-900">
+            <i className="fas fa-chart-area text-finance-blue mr-2"></i>
+            Financial Analysis Charts
+          </h2>
+          <div className="flex items-center space-x-2">
+            <span className="text-sm text-gray-600">Chart Type:</span>
+            <Select value={chartType} onValueChange={(value) => setChartType(value as ChartType)}>
+              <SelectTrigger className="w-48">
+                <SelectValue placeholder="Select chart type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="savings">Savings & Net Worth</SelectItem>
+                <SelectItem value="cashflow">Cash Flow Analysis</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+        
+        {/* Render selected chart */}
+        {chartType === 'savings' && <SavingsChart annualData={annualData} />}
+        {chartType === 'cashflow' && <CashFlowChart monthlyData={monthlyData} />}
 
         {/* Results Table */}
         <ResultsTable 
