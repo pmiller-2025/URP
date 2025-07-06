@@ -172,21 +172,43 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Protected scenario management routes
   
-  // Get user's scenarios (no auth required)
+  // Get all shared scenarios (no auth required)
   app.get("/api/scenarios", async (req, res) => {
-    res.json([]);
+    try {
+      // Get all scenarios from all users for shared access
+      const scenarios = await storage.getUserScenarios("shared");
+      res.json(scenarios);
+    } catch (error) {
+      console.error("Error fetching scenarios:", error);
+      res.status(500).json({ error: "Failed to fetch scenarios" });
+    }
   });
 
-  // Get a specific user scenario (no auth required)
+  // Get a specific scenario (no auth required)
   app.get("/api/scenarios/:id", async (req, res) => {
-    res.json({ id: parseInt(req.params.id), name: "Demo Scenario", userId: "anonymous" });
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ error: "Invalid scenario ID" });
+      }
+      
+      const scenario = await storage.getScenario(id, "shared");
+      if (!scenario) {
+        return res.status(404).json({ error: "Scenario not found" });
+      }
+      
+      res.json(scenario);
+    } catch (error) {
+      console.error("Error fetching scenario:", error);
+      res.status(500).json({ error: "Failed to fetch scenario" });
+    }
   });
 
-  // Create a new scenario for user (no auth required)
+  // Create a new shared scenario (no auth required)
   app.post("/api/scenarios", async (req, res) => {
     try {
       const validatedData = insertScenarioSchema.parse(req.body);
-      const scenario = { id: Date.now(), ...validatedData, userId: "anonymous" };
+      const scenario = await storage.createScenario(validatedData, "shared");
       res.status(201).json(scenario);
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -217,9 +239,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Delete user's scenario (no auth required)
+  // Delete shared scenario (no auth required)
   app.delete("/api/scenarios/:id", async (req, res) => {
-    res.status(204).send();
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ error: "Invalid scenario ID" });
+      }
+      
+      const deleted = await storage.deleteScenario(id, "shared");
+      if (!deleted) {
+        return res.status(404).json({ error: "Scenario not found" });
+      }
+      
+      res.status(204).send();
+    } catch (error) {
+      console.error("Error deleting scenario:", error);
+      res.status(500).json({ error: "Failed to delete scenario" });
+    }
   });
 
   // Compare scenarios with AI (no auth required)

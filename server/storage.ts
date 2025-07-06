@@ -62,6 +62,14 @@ export class DatabaseStorage implements IStorage {
 
   // Scenario operations
   async getUserScenarios(userId: string): Promise<RetirementScenario[]> {
+    if (userId === "shared") {
+      // Return all scenarios for shared access
+      return await db
+        .select()
+        .from(retirementScenarios)
+        .orderBy(desc(retirementScenarios.updatedAt));
+    }
+    
     return await db
       .select()
       .from(retirementScenarios)
@@ -70,6 +78,15 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getScenario(id: number, userId: string): Promise<RetirementScenario | undefined> {
+    if (userId === "shared") {
+      // Return scenario regardless of userId for shared access
+      const [scenario] = await db
+        .select()
+        .from(retirementScenarios)
+        .where(eq(retirementScenarios.id, id));
+      return scenario;
+    }
+    
     const [scenario] = await db
       .select()
       .from(retirementScenarios)
@@ -107,6 +124,14 @@ export class DatabaseStorage implements IStorage {
   }
 
   async deleteScenario(id: number, userId: string): Promise<boolean> {
+    if (userId === "shared") {
+      // Delete scenario regardless of userId for shared access
+      const result = await db
+        .delete(retirementScenarios)
+        .where(eq(retirementScenarios.id, id));
+      return (result.rowCount || 0) > 0;
+    }
+    
     const result = await db
       .delete(retirementScenarios)
       .where(and(
