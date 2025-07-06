@@ -819,12 +819,25 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
       // Paul alive: gets full VA Disability
       vaDisabilityMonthly = calculateInflationAdjusted(state.otherIncome.vaDisability, state.expenses.inflationRate, yearIndex);
     } else if (!paulAlive && jessicaAlive) {
-      // Paul died, Jessica alive: check if we're in March 2035 or later
-      const paulDiedAfterMarch2035 = actualYear > 2035 || (actualYear === 2035 && actualMonth >= 2); // March is month 2 (0-indexed)
-      if (paulDiedAfterMarch2035) {
-        // Jessica gets 50% of Paul's VA Disability, but only from March 2035 onwards
+      // Paul died, Jessica alive: check if Paul died in March 2035 or later
+      
+      // Find the year Paul died (first year he's not alive)
+      let paulDeathYear = null;
+      for (let checkYear = 1; checkYear <= state.personalInfo.projectionYears; checkYear++) {
+        const checkYearIndex = checkYear - 1;
+        const paulAgeInCheckYear = state.personalInfo.paulAge + checkYearIndex;
+        if (!isPersonAlive(paulAgeInCheckYear, state.personalInfo.paulEndOfLifeAge)) {
+          paulDeathYear = 2025 + checkYearIndex;
+          break;
+        }
+      }
+      
+      // Jessica only gets VA survivor benefit if Paul died in March 2035 or later
+      if (paulDeathYear && paulDeathYear >= 2035) {
+        // Jessica gets 50% of Paul's VA Disability
         vaDisabilityMonthly = calculateInflationAdjusted(state.otherIncome.vaDisability * 0.5, state.expenses.inflationRate, yearIndex);
       }
+      // If Paul died before March 2035, Jessica gets zero VA benefits for all subsequent years
     }
     
     // Apply lump sum payment if it occurs this month
@@ -957,13 +970,26 @@ export function calculateAnnualProjections(state: CalculatorState): AnnualData[]
       // Paul alive: gets full VA Disability
       vaDisabilityAnnual = calculateInflationAdjusted(state.otherIncome.vaDisability * 12, state.expenses.inflationRate, yearIndex);
     } else if (!paulAlive && jessicaAlive) {
-      // Paul died, Jessica alive: check if we're in March 2035 or later
+      // Paul died, Jessica alive: check if Paul died in March 2035 or later
       const currentYear = 2025 + yearIndex;
-      const paulDiedAfterMarch2035 = currentYear >= 2035; // Only gets benefit from March 2035 onwards
-      if (paulDiedAfterMarch2035) {
+      
+      // Find the year Paul died (first year he's not alive)
+      let paulDeathYear = null;
+      for (let checkYear = 1; checkYear <= state.personalInfo.projectionYears; checkYear++) {
+        const checkYearIndex = checkYear - 1;
+        const paulAgeInCheckYear = state.personalInfo.paulAge + checkYearIndex;
+        if (!isPersonAlive(paulAgeInCheckYear, state.personalInfo.paulEndOfLifeAge)) {
+          paulDeathYear = 2025 + checkYearIndex;
+          break;
+        }
+      }
+      
+      // Jessica only gets VA survivor benefit if Paul died in March 2035 or later
+      if (paulDeathYear && paulDeathYear >= 2035) {
         // Jessica gets 50% of Paul's VA Disability
         vaDisabilityAnnual = calculateInflationAdjusted(state.otherIncome.vaDisability * 12 * 0.5, state.expenses.inflationRate, yearIndex);
       }
+      // If Paul died before March 2035, Jessica gets zero VA benefits for all subsequent years
     }
     
     // Calculate business income (limited duration with start month/year)

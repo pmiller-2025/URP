@@ -118,7 +118,7 @@ Preferred communication style: Simple, everyday language.
 - **January 06, 2025**: When Paul dies, Jessica receives 100% of Paul's SS benefit but loses her own
 - **January 06, 2025**: When Jessica dies, only her SS stops (Paul keeps his benefit)
 - **January 06, 2025**: VA Disability stops when Paul dies, with survivor benefit rules
-- **January 06, 2025**: VA Disability survivor benefit: Jessica gets 50% only if we're in March 2035 or later (no benefit if Paul dies before March 2035)
+- **January 06, 2025**: VA Disability survivor benefit: Jessica gets 50% only if Paul dies in March 2035 or later (zero benefits for all years if Paul dies before March 2035)
 
 ## Changelog
 
