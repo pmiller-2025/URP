@@ -744,10 +744,10 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
       if (yearStartMortgageBalance > 0) {
         const remainingMonths = state.housing.targetPayoffMonths - prevMonthOffset;
         if (remainingMonths > 0) {
-          const monthlyRate = 0.0458 / 12;
+          const monthlyRate = state.housing.interestRate / 100 / 12;
           const monthlyInterest = yearStartMortgageBalance * monthlyRate;
           const monthlyPrincipal = Math.min(
-            calculateMortgagePayment(yearStartMortgageBalance, 4.58, remainingMonths) - monthlyInterest,
+            calculateMortgagePayment(yearStartMortgageBalance, state.housing.interestRate, remainingMonths) - monthlyInterest,
             yearStartMortgageBalance
           );
           yearStartMortgageBalance = Math.max(0, yearStartMortgageBalance - monthlyPrincipal);
@@ -800,10 +800,10 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
       const remainingMonths = state.housing.targetPayoffMonths - currentMonthOffset;
       if (remainingMonths > 0) {
         // Calculate payment for remaining balance over remaining months
-        const monthlyRate = 0.0458 / 12; // Use 4.58% rate from amortization
+        const monthlyRate = state.housing.interestRate / 100 / 12; // Use actual interest rate
         const monthlyInterest = currentMortgageBalance * monthlyRate;
         const monthlyPrincipal = Math.min(
-          calculateMortgagePayment(currentMortgageBalance, 4.58, remainingMonths) - monthlyInterest,
+          calculateMortgagePayment(currentMortgageBalance, state.housing.interestRate, remainingMonths) - monthlyInterest,
           currentMortgageBalance
         );
         currentMortgageMonthly = monthlyInterest + monthlyPrincipal;
@@ -1090,8 +1090,8 @@ export function calculateAnnualProjections(state: CalculatorState): AnnualData[]
       const monthOffset = monthsElapsed + month;
       const mortgagePayment = getMortgagePaymentByMonth(monthOffset, state);
       if (mortgagePayment && workingMortgageBalance > 0) {
-        // Calculate monthly payment on the adjusted balance using 4.58% rate
-        const monthlyInterest = workingMortgageBalance * (0.0458 / 12);
+        // Calculate monthly payment on the adjusted balance using actual interest rate
+        const monthlyInterest = workingMortgageBalance * (state.housing.interestRate / 100 / 12);
         const monthlyPrincipal = Math.min(state.housing.monthlyPayment - monthlyInterest, workingMortgageBalance);
         
         mortgageAnnual += monthlyInterest + monthlyPrincipal;
