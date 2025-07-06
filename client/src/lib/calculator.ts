@@ -803,8 +803,11 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
         const monthlyRate = state.housing.interestRate / 100 / 12; // Use actual interest rate
         const monthlyInterest = currentMortgageBalance * monthlyRate;
         const requiredPayment = calculateMortgagePayment(currentMortgageBalance, state.housing.interestRate, remainingMonths);
-        // Use the higher of the required payment or regular payment, but cap at reasonable amount
-        const targetPayment = Math.max(requiredPayment, state.housing.monthlyPayment);
+        // For accelerated payoff, we need to be more conservative to spread payments over target period
+        // Calculate what the extra payment should be to reach target, but don't be too aggressive
+        const regularPayment = state.housing.monthlyPayment;
+        const maxExtraPayment = Math.min(requiredPayment - regularPayment, currentMortgageBalance * 0.1); // Cap extra at 10% of balance
+        const targetPayment = regularPayment + Math.max(0, maxExtraPayment);
         const monthlyPrincipal = Math.min(targetPayment - monthlyInterest, currentMortgageBalance);
         currentMortgageMonthly = monthlyInterest + monthlyPrincipal;
         currentMortgageBalance = Math.max(0, currentMortgageBalance - monthlyPrincipal);
@@ -1106,8 +1109,10 @@ export function calculateAnnualProjections(state: CalculatorState): AnnualData[]
           // For accelerated payoff, calculate payment to meet target
           const remainingMonths = Math.max(1, state.housing.targetPayoffMonths - monthOffset);
           const requiredPayment = calculateMortgagePayment(workingMortgageBalance, state.housing.interestRate, remainingMonths);
-          // Use the higher of the required payment or regular payment
-          const targetPayment = Math.max(requiredPayment, state.housing.monthlyPayment);
+          // For accelerated payoff, be conservative to spread payments over target period
+          const regularPayment = state.housing.monthlyPayment;
+          const maxExtraPayment = Math.min(requiredPayment - regularPayment, workingMortgageBalance * 0.1); // Cap extra at 10% of balance
+          const targetPayment = regularPayment + Math.max(0, maxExtraPayment);
           monthlyPrincipal = Math.min(targetPayment - monthlyInterest, workingMortgageBalance);
         } else {
           // Use regular monthly payment (either no acceleration or past target period)
