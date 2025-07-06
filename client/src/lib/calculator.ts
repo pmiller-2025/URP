@@ -651,18 +651,7 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
   const monthlyData: MonthlyData[] = [];
   const yearIndex = year - 1;
   
-  // Calculate age-based SS eligibility
-  const paulCurrentAge = state.personalInfo.paulAge + yearIndex;
-  const jessicaCurrentAge = state.personalInfo.jessicaAge + yearIndex;
-  
-  const paulSSEligible = paulCurrentAge >= state.socialSecurity.paulStartAge;
-  const jessicaSSEligible = jessicaCurrentAge >= state.socialSecurity.jessicaStartAge;
-  
-  // Calculate SS amounts with COLA adjustments
-  const paulSSMonthly = paulSSEligible ? 
-    calculateInflationAdjusted(state.socialSecurity.paulAmount, state.socialSecurity.cola, yearIndex) : 0;
-  const jessicaSSMonthly = jessicaSSEligible ? 
-    calculateInflationAdjusted(state.socialSecurity.jessicaAmount, state.socialSecurity.cola, yearIndex) : 0;
+  // SS eligibility will be calculated month by month in the loop below
   
   // Calculate VA Disability with inflation
   const vaDisabilityMonthly = calculateInflationAdjusted(state.otherIncome.vaDisability, state.expenses.inflationRate, yearIndex);
@@ -782,6 +771,20 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
     const actualMonth = (month + 5) % 12; // Start from June (month 5)
     const actualYear = 2025 + yearIndex + Math.floor((month + 5) / 12);
     const monthName = new Date(actualYear, actualMonth).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+    
+    // Calculate precise age for this specific month
+    const paulAgeThisMonth = calculateAge(state.personalInfo.paulBirthMonth, state.personalInfo.paulBirthYear, actualMonth + 1, actualYear);
+    const jessicaAgeThisMonth = calculateAge(state.personalInfo.jessicaBirthMonth, state.personalInfo.jessicaBirthYear, actualMonth + 1, actualYear);
+    
+    // Check SS eligibility for this specific month
+    const paulSSEligibleThisMonth = paulAgeThisMonth >= state.socialSecurity.paulStartAge;
+    const jessicaSSEligibleThisMonth = jessicaAgeThisMonth >= state.socialSecurity.jessicaStartAge;
+    
+    // Calculate SS amounts with COLA adjustments
+    const paulSSMonthly = paulSSEligibleThisMonth ? 
+      calculateInflationAdjusted(state.socialSecurity.paulAmount, state.socialSecurity.cola, yearIndex) : 0;
+    const jessicaSSMonthly = jessicaSSEligibleThisMonth ? 
+      calculateInflationAdjusted(state.socialSecurity.jessicaAmount, state.socialSecurity.cola, yearIndex) : 0;
     
     // Apply lump sum payment if it occurs this month
     let lumpSumPayment = 0;
