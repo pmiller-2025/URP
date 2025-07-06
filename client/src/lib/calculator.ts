@@ -216,7 +216,7 @@ export function isPersonAlive(currentAge: number, endOfLifeAge: number): boolean
 
 export function getCurrentDate(): { month: number; year: number } {
   return {
-    month: 6, // June 2025 start
+    month: 1, // January 2025 start
     year: 2025
   };
 }
@@ -343,7 +343,7 @@ export function getDefaultState(): CalculatorState {
       homeAppreciation: 2.5,
       acceleratePayoff: true,
       lumpSumAmount: 50000,
-      lumpSumMonth: 6,
+      lumpSumMonth: 1,
       lumpSumYear: 1
     },
     savings: {
@@ -664,42 +664,42 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
   // VA Disability calculation will be done month by month based on Paul's status
   
   // Calculate business income with start month/year and duration
-  // Since projections start from June 2025 (month 6), adjust the offset calculation
+  // Since projections start from January 2025 (month 1), adjust the offset calculation
   const totalMonthsElapsed = yearIndex * 12;
-  const businessStartMonthOffset = (state.otherIncome.businessStartYear - 1) * 12 + (state.otherIncome.businessStartMonth - 6); // Adjust for June start
+  const businessStartMonthOffset = (state.otherIncome.businessStartYear - 1) * 12 + (state.otherIncome.businessStartMonth - 1); // Adjust for January start
   const businessMonthsElapsed = totalMonthsElapsed - businessStartMonthOffset;
   const businessMonthly = (businessMonthsElapsed >= 0 && businessMonthsElapsed < state.otherIncome.businessDuration) 
     ? state.otherIncome.businessIncome 
     : 0;
   
   // Calculate Jessica's income with start month/year and duration
-  const jessicaStartMonthOffset = (state.otherIncome.jessicaStartYear - 1) * 12 + (state.otherIncome.jessicaStartMonth - 6); // Adjust for June start
+  const jessicaStartMonthOffset = (state.otherIncome.jessicaStartYear - 1) * 12 + (state.otherIncome.jessicaStartMonth - 1); // Adjust for January start
   const jessicaMonthsElapsed = totalMonthsElapsed - jessicaStartMonthOffset;
   const jessicaWorkMonthly = (jessicaMonthsElapsed >= 0 && jessicaMonthsElapsed < state.otherIncome.jessicaDuration) 
     ? state.otherIncome.jessicaIncome 
     : 0;
   
   // Calculate Chapter 35 with start month/year and duration
-  const chapter35StartMonthOffset = (state.otherIncome.chapter35StartYear - 1) * 12 + (state.otherIncome.chapter35StartMonth - 6); // Adjust for June start
+  const chapter35StartMonthOffset = (state.otherIncome.chapter35StartYear - 1) * 12 + (state.otherIncome.chapter35StartMonth - 1); // Adjust for January start
   const chapter35MonthsElapsed = totalMonthsElapsed - chapter35StartMonthOffset;
   const chapter35Monthly = (chapter35MonthsElapsed >= 0 && chapter35MonthsElapsed < state.otherIncome.chapter35Duration) 
     ? state.otherIncome.chapter35 
     : 0;
 
   // Calculate Additional Income streams (only if amount > 0)
-  const income1StartMonthOffset = (state.otherIncome.income1StartYear - 1) * 12 + (state.otherIncome.income1StartMonth - 6); // Adjust for June start
+  const income1StartMonthOffset = (state.otherIncome.income1StartYear - 1) * 12 + (state.otherIncome.income1StartMonth - 1); // Adjust for January start
   const income1MonthsElapsed = totalMonthsElapsed - income1StartMonthOffset;
   const income1Monthly = (state.otherIncome.income1 > 0 && income1MonthsElapsed >= 0 && income1MonthsElapsed < state.otherIncome.income1Duration) 
     ? state.otherIncome.income1 
     : 0;
 
-  const income2StartMonthOffset = (state.otherIncome.income2StartYear - 1) * 12 + (state.otherIncome.income2StartMonth - 6); // Adjust for June start
+  const income2StartMonthOffset = (state.otherIncome.income2StartYear - 1) * 12 + (state.otherIncome.income2StartMonth - 1); // Adjust for January start
   const income2MonthsElapsed = totalMonthsElapsed - income2StartMonthOffset;
   const income2Monthly = (state.otherIncome.income2 > 0 && income2MonthsElapsed >= 0 && income2MonthsElapsed < state.otherIncome.income2Duration) 
     ? state.otherIncome.income2 
     : 0;
 
-  const income3StartMonthOffset = (state.otherIncome.income3StartYear - 1) * 12 + (state.otherIncome.income3StartMonth - 6); // Adjust for June start
+  const income3StartMonthOffset = (state.otherIncome.income3StartYear - 1) * 12 + (state.otherIncome.income3StartMonth - 1); // Adjust for January start
   const income3MonthsElapsed = totalMonthsElapsed - income3StartMonthOffset;
   const income3Monthly = (state.otherIncome.income3 > 0 && income3MonthsElapsed >= 0 && income3MonthsElapsed < state.otherIncome.income3Duration) 
     ? state.otherIncome.income3 
@@ -738,8 +738,8 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
   // Initialize mortgage balance tracking
   let yearStartMortgageBalance = state.housing.mortgageBalance;
   
-  // Get lump sum payment offset (June 2025 start = month 6 = offset 0)
-  const lumpSumMonthOffset = (state.housing.lumpSumYear - 1) * 12 + (state.housing.lumpSumMonth - 6);
+  // Get lump sum payment offset (January 2025 start = month 1 = offset 0)
+  const lumpSumMonthOffset = (state.housing.lumpSumYear - 1) * 12 + (state.housing.lumpSumMonth - 1);
   const yearStartMonthOffset = yearIndex * 12;
   
   // If lump sum was applied in previous years, account for it
@@ -774,10 +774,13 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
   
   for (let month = 0; month < 12; month++) {
     const currentMonthOffset = yearIndex * 12 + month;
-    // Start from June 2025 (month 5 in 0-indexed system)
-    const actualMonth = (month + 5) % 12; // Start from June (month 5)
-    const actualYear = 2025 + yearIndex + Math.floor((month + 5) / 12);
+    // Start from January 2025 (month 0 in 0-indexed system)
+    const actualMonth = month; // Start from January (month 0)
+    const actualYear = 2025 + yearIndex;
     const monthName = new Date(actualYear, actualMonth).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+    
+    // For months January-May 2025 (first year), use zero values for income/expenses
+    const isBeforeJune2025 = yearIndex === 0 && month < 5; // January-May are months 0-4
     
     // Calculate precise age for this specific month
     const paulAgeThisMonth = calculateAge(state.personalInfo.paulBirthMonth, state.personalInfo.paulBirthYear, actualMonth + 1, actualYear);
@@ -791,53 +794,57 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
     let paulSSMonthly = 0;
     let jessicaSSMonthly = 0;
     
-    if (paulAlive && jessicaAlive) {
-      // Both alive: each gets their own benefit if eligible
-      paulSSMonthly = (paulAgeThisMonth >= state.socialSecurity.paulStartAge) ? 
-        calculateInflationAdjusted(state.socialSecurity.paulAmount, state.socialSecurity.cola, yearIndex) : 0;
-      jessicaSSMonthly = (jessicaAgeThisMonth >= state.socialSecurity.jessicaStartAge) ? 
-        calculateInflationAdjusted(state.socialSecurity.jessicaAmount, state.socialSecurity.cola, yearIndex) : 0;
-    } else if (!paulAlive && jessicaAlive) {
-      // Paul died, Jessica alive: Jessica gets 100% of Paul's benefit, loses her own
-      paulSSMonthly = 0;
-      jessicaSSMonthly = (jessicaAgeThisMonth >= state.socialSecurity.jessicaStartAge) ? 
-        calculateInflationAdjusted(state.socialSecurity.paulAmount, state.socialSecurity.cola, yearIndex) : 0;
-    } else if (paulAlive && !jessicaAlive) {
-      // Jessica died, Paul alive: Paul keeps his benefit, Jessica's stops
-      paulSSMonthly = (paulAgeThisMonth >= state.socialSecurity.paulStartAge) ? 
-        calculateInflationAdjusted(state.socialSecurity.paulAmount, state.socialSecurity.cola, yearIndex) : 0;
-      jessicaSSMonthly = 0;
-    } else {
-      // Both died: no benefits
-      paulSSMonthly = 0;
-      jessicaSSMonthly = 0;
+    if (!isBeforeJune2025) {
+      if (paulAlive && jessicaAlive) {
+        // Both alive: each gets their own benefit if eligible
+        paulSSMonthly = (paulAgeThisMonth >= state.socialSecurity.paulStartAge) ? 
+          calculateInflationAdjusted(state.socialSecurity.paulAmount, state.socialSecurity.cola, yearIndex) : 0;
+        jessicaSSMonthly = (jessicaAgeThisMonth >= state.socialSecurity.jessicaStartAge) ? 
+          calculateInflationAdjusted(state.socialSecurity.jessicaAmount, state.socialSecurity.cola, yearIndex) : 0;
+      } else if (!paulAlive && jessicaAlive) {
+        // Paul died, Jessica alive: Jessica gets 100% of Paul's benefit, loses her own
+        paulSSMonthly = 0;
+        jessicaSSMonthly = (jessicaAgeThisMonth >= state.socialSecurity.jessicaStartAge) ? 
+          calculateInflationAdjusted(state.socialSecurity.paulAmount, state.socialSecurity.cola, yearIndex) : 0;
+      } else if (paulAlive && !jessicaAlive) {
+        // Jessica died, Paul alive: Paul keeps his benefit, Jessica's stops
+        paulSSMonthly = (paulAgeThisMonth >= state.socialSecurity.paulStartAge) ? 
+          calculateInflationAdjusted(state.socialSecurity.paulAmount, state.socialSecurity.cola, yearIndex) : 0;
+        jessicaSSMonthly = 0;
+      } else {
+        // Both died: no benefits
+        paulSSMonthly = 0;
+        jessicaSSMonthly = 0;
+      }
     }
     
     // Calculate VA Disability with inflation and survivor benefits
     let vaDisabilityMonthly = 0;
-    if (paulAlive) {
-      // Paul alive: gets full VA Disability
-      vaDisabilityMonthly = calculateInflationAdjusted(state.otherIncome.vaDisability, state.expenses.inflationRate, yearIndex);
-    } else if (!paulAlive && jessicaAlive) {
-      // Paul died, Jessica alive: check if Paul died in March 2035 or later
-      
-      // Find the year Paul died (first year he's not alive)
-      let paulDeathYear = null;
-      for (let checkYear = 1; checkYear <= state.personalInfo.projectionYears; checkYear++) {
-        const checkYearIndex = checkYear - 1;
-        const paulAgeInCheckYear = state.personalInfo.paulAge + checkYearIndex;
-        if (!isPersonAlive(paulAgeInCheckYear, state.personalInfo.paulEndOfLifeAge)) {
-          paulDeathYear = 2025 + checkYearIndex;
-          break;
+    if (!isBeforeJune2025) {
+      if (paulAlive) {
+        // Paul alive: gets full VA Disability
+        vaDisabilityMonthly = calculateInflationAdjusted(state.otherIncome.vaDisability, state.expenses.inflationRate, yearIndex);
+      } else if (!paulAlive && jessicaAlive) {
+        // Paul died, Jessica alive: check if Paul died in March 2035 or later
+        
+        // Find the year Paul died (first year he's not alive)
+        let paulDeathYear = null;
+        for (let checkYear = 1; checkYear <= state.personalInfo.projectionYears; checkYear++) {
+          const checkYearIndex = checkYear - 1;
+          const paulAgeInCheckYear = state.personalInfo.paulAge + checkYearIndex;
+          if (!isPersonAlive(paulAgeInCheckYear, state.personalInfo.paulEndOfLifeAge)) {
+            paulDeathYear = 2025 + checkYearIndex;
+            break;
+          }
         }
+        
+        // Jessica only gets VA survivor benefit if Paul died in March 2035 or later
+        if (paulDeathYear && paulDeathYear >= 2035) {
+          // Jessica gets 50% of Paul's VA Disability
+          vaDisabilityMonthly = calculateInflationAdjusted(state.otherIncome.vaDisability * 0.5, state.expenses.inflationRate, yearIndex);
+        }
+        // If Paul died before March 2035, Jessica gets zero VA benefits for all subsequent years
       }
-      
-      // Jessica only gets VA survivor benefit if Paul died in March 2035 or later
-      if (paulDeathYear && paulDeathYear >= 2035) {
-        // Jessica gets 50% of Paul's VA Disability
-        vaDisabilityMonthly = calculateInflationAdjusted(state.otherIncome.vaDisability * 0.5, state.expenses.inflationRate, yearIndex);
-      }
-      // If Paul died before March 2035, Jessica gets zero VA benefits for all subsequent years
     }
     
     // Apply lump sum payment if it occurs this month
@@ -879,16 +886,30 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
       }
     }
     
-    const grossIncome = paulSSMonthly + jessicaSSMonthly + vaDisabilityMonthly + businessMonthly + jessicaWorkMonthly + chapter35Monthly + income1Monthly + income2Monthly + income3Monthly;
+    // Apply zero values for months before June 2025, or use calculated values
+    const actualBusinessMonthly = isBeforeJune2025 ? 0 : businessMonthly;
+    const actualJessicaWorkMonthly = isBeforeJune2025 ? 0 : jessicaWorkMonthly;
+    const actualChapter35Monthly = isBeforeJune2025 ? 0 : chapter35Monthly;
+    const actualIncome1Monthly = isBeforeJune2025 ? 0 : income1Monthly;
+    const actualIncome2Monthly = isBeforeJune2025 ? 0 : income2Monthly;
+    const actualIncome3Monthly = isBeforeJune2025 ? 0 : income3Monthly;
+    const actualLivingExpMonthly = isBeforeJune2025 ? 0 : livingExpMonthly;
+    const actualInsuranceMonthly = isBeforeJune2025 ? 0 : insuranceMonthly;
+    const actualExpense1Monthly = isBeforeJune2025 ? 0 : expense1Monthly;
+    const actualExpense2Monthly = isBeforeJune2025 ? 0 : expense2Monthly;
+    const actualExpense3Monthly = isBeforeJune2025 ? 0 : expense3Monthly;
+    const actualMortgageMonthly = isBeforeJune2025 ? 0 : currentMortgageMonthly;
+    
+    const grossIncome = paulSSMonthly + jessicaSSMonthly + vaDisabilityMonthly + actualBusinessMonthly + actualJessicaWorkMonthly + actualChapter35Monthly + actualIncome1Monthly + actualIncome2Monthly + actualIncome3Monthly;
     
     const taxes = 
       calculateTaxes(paulSSMonthly, state.taxRates.socialSecurity, state.socialSecurity.paulTaxable) +
       calculateTaxes(jessicaSSMonthly, state.taxRates.socialSecurity, state.socialSecurity.jessicaTaxable) +
-      calculateTaxes(businessMonthly, state.taxRates.business, true) +
-      calculateTaxes(jessicaWorkMonthly, state.taxRates.jessica, true);
+      calculateTaxes(actualBusinessMonthly, state.taxRates.business, true) +
+      calculateTaxes(actualJessicaWorkMonthly, state.taxRates.jessica, true);
     
     const netIncome = grossIncome - taxes;
-    const netCashFlow = netIncome - livingExpMonthly - insuranceMonthly - expense1Monthly - expense2Monthly - expense3Monthly - currentMortgageMonthly;
+    const netCashFlow = netIncome - actualLivingExpMonthly - actualInsuranceMonthly - actualExpense1Monthly - actualExpense2Monthly - actualExpense3Monthly - actualMortgageMonthly;
     
     // All positive cash flow goes to savings, negative cash flow comes from savings
     runningBalance += netCashFlow;
@@ -903,18 +924,18 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
       paulSS: paulSSMonthly,
       jessicaSS: jessicaSSMonthly,
       vaDisability: vaDisabilityMonthly,
-      business: businessMonthly,
-      jessicaWork: jessicaWorkMonthly,
-      chapter35: chapter35Monthly,
+      business: actualBusinessMonthly,
+      jessicaWork: actualJessicaWorkMonthly,
+      chapter35: actualChapter35Monthly,
       grossIncome,
       taxes,
       netIncome,
-      livingExp: livingExpMonthly,
-      insurance: insuranceMonthly,
-      expense1: expense1Monthly,
-      expense2: expense2Monthly,
-      expense3: expense3Monthly,
-      mortgage: currentMortgageMonthly,
+      livingExp: actualLivingExpMonthly,
+      insurance: actualInsuranceMonthly,
+      expense1: actualExpense1Monthly,
+      expense2: actualExpense2Monthly,
+      expense3: actualExpense3Monthly,
+      mortgage: actualMortgageMonthly,
       mortgageBalance: currentMortgageBalance,
       netCashFlow,
       savingsBalance: runningBalance

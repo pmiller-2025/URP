@@ -122,6 +122,9 @@ Preferred communication style: Simple, everyday language.
 - **January 06, 2025**: Added chart selection dropdown with multiple visualization options
 - **January 06, 2025**: Implemented Cash Flow Analysis chart showing monthly income vs expenses trends
 - **January 06, 2025**: Charts now include: Savings & Net Worth projection, Cash Flow Analysis with income/expense breakdown
+- **January 06, 2025**: Changed projections to start from January 2025 instead of June 2025
+- **January 06, 2025**: First 5 months (Jan-May 2025) show zero values for income and expenses
+- **January 06, 2025**: Actual retirement calculations begin from June 2025 as originally planned
 
 ## Changelog
 
