@@ -58,6 +58,13 @@ export default function RetirementCalculator() {
     }));
   };
 
+  const handleResetToDefault = () => {
+    if (window.confirm('Are you sure you want to reset all values to their defaults? This will clear all your current changes.')) {
+      setState(getDefaultState());
+      setSelectedYear(1);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -73,6 +80,14 @@ export default function RetirementCalculator() {
                 currentState={state} 
                 onLoadScenario={setState}
               />
+              <Button
+                variant="outline"
+                onClick={handleResetToDefault}
+                className="text-gray-600 hover:text-gray-900 border-gray-300 hover:border-gray-400"
+              >
+                <i className="fas fa-undo-alt mr-2"></i>
+                Reset to Default
+              </Button>
               <div className="flex items-center space-x-2">
                 <span className="text-sm text-gray-600">20-Year Projection</span>
                 <div className="w-2 h-2 bg-finance-green rounded-full animate-pulse"></div>
