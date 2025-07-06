@@ -798,14 +798,21 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
     let currentMortgageMonthly = 0;
     if (currentMortgageBalance > 0) {
       const remainingMonths = state.housing.targetPayoffMonths - currentMonthOffset;
-      if (remainingMonths > 0) {
-        // Calculate payment for remaining balance over remaining months
+      if (remainingMonths > 0 && state.housing.acceleratePayoff) {
+        // Calculate payment for remaining balance over remaining months, but be conservative
         const monthlyRate = state.housing.interestRate / 100 / 12; // Use actual interest rate
         const monthlyInterest = currentMortgageBalance * monthlyRate;
-        const monthlyPrincipal = Math.min(
-          calculateMortgagePayment(currentMortgageBalance, state.housing.interestRate, remainingMonths) - monthlyInterest,
-          currentMortgageBalance
-        );
+        const requiredPayment = calculateMortgagePayment(currentMortgageBalance, state.housing.interestRate, remainingMonths);
+        // Use the higher of the required payment or regular payment, but cap at reasonable amount
+        const targetPayment = Math.max(requiredPayment, state.housing.monthlyPayment);
+        const monthlyPrincipal = Math.min(targetPayment - monthlyInterest, currentMortgageBalance);
+        currentMortgageMonthly = monthlyInterest + monthlyPrincipal;
+        currentMortgageBalance = Math.max(0, currentMortgageBalance - monthlyPrincipal);
+      } else if (remainingMonths > 0) {
+        // Use regular payment schedule
+        const monthlyRate = state.housing.interestRate / 100 / 12;
+        const monthlyInterest = currentMortgageBalance * monthlyRate;
+        const monthlyPrincipal = Math.min(state.housing.monthlyPayment - monthlyInterest, currentMortgageBalance);
         currentMortgageMonthly = monthlyInterest + monthlyPrincipal;
         currentMortgageBalance = Math.max(0, currentMortgageBalance - monthlyPrincipal);
       } else {
@@ -1095,13 +1102,15 @@ export function calculateAnnualProjections(state: CalculatorState): AnnualData[]
         const monthlyInterest = workingMortgageBalance * (state.housing.interestRate / 100 / 12);
         let monthlyPrincipal;
         
-        if (state.housing.acceleratePayoff) {
+        if (state.housing.acceleratePayoff && monthOffset < state.housing.targetPayoffMonths) {
           // For accelerated payoff, calculate payment to meet target
           const remainingMonths = Math.max(1, state.housing.targetPayoffMonths - monthOffset);
           const requiredPayment = calculateMortgagePayment(workingMortgageBalance, state.housing.interestRate, remainingMonths);
-          monthlyPrincipal = Math.min(requiredPayment - monthlyInterest, workingMortgageBalance);
+          // Use the higher of the required payment or regular payment
+          const targetPayment = Math.max(requiredPayment, state.housing.monthlyPayment);
+          monthlyPrincipal = Math.min(targetPayment - monthlyInterest, workingMortgageBalance);
         } else {
-          // Use regular monthly payment
+          // Use regular monthly payment (either no acceleration or past target period)
           monthlyPrincipal = Math.min(state.housing.monthlyPayment - monthlyInterest, workingMortgageBalance);
         }
         
