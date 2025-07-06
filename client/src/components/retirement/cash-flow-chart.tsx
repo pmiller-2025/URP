@@ -9,6 +9,7 @@ interface CashFlowChartProps {
 
 export function CashFlowChart({ monthlyData }: CashFlowChartProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [timeFrameYears, setTimeFrameYears] = useState(5);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -32,8 +33,9 @@ export function CashFlowChart({ monthlyData }: CashFlowChartProps) {
     // Clear canvas
     ctx.clearRect(0, 0, width, height);
 
-    // Sample data for first 5 years (60 months) for readability
-    const sampleData = monthlyData.slice(0, 60);
+    // Sample data based on selected time frame
+    const monthsToShow = timeFrameYears * 12;
+    const sampleData = monthlyData.slice(0, monthsToShow);
     
     // Extract data
     const totalIncomeData = sampleData.map(d => d.netIncome);
@@ -53,9 +55,10 @@ export function CashFlowChart({ monthlyData }: CashFlowChartProps) {
     ctx.strokeStyle = '#e5e7eb';
     ctx.lineWidth = 1;
 
-    // Vertical grid lines (every 12 months)
-    for (let i = 0; i <= 5; i++) {
-      const x = padding + (i * chartWidth) / 5;
+    // Vertical grid lines (every year)
+    const gridLines = timeFrameYears;
+    for (let i = 0; i <= gridLines; i++) {
+      const x = padding + (i * chartWidth) / gridLines;
       ctx.beginPath();
       ctx.moveTo(x, padding);
       ctx.lineTo(x, height - padding);
@@ -172,8 +175,8 @@ export function CashFlowChart({ monthlyData }: CashFlowChartProps) {
     ctx.textAlign = 'center';
 
     // X-axis labels (years)
-    for (let i = 0; i <= 5; i++) {
-      const x = padding + (i * chartWidth) / 5;
+    for (let i = 0; i <= timeFrameYears; i++) {
+      const x = padding + (i * chartWidth) / timeFrameYears;
       const year = 2025 + i;
       ctx.fillText(year.toString(), x, height - padding + 20);
     }
@@ -201,7 +204,7 @@ export function CashFlowChart({ monthlyData }: CashFlowChartProps) {
       }
     });
 
-  }, [monthlyData]);
+  }, [monthlyData, timeFrameYears]);
 
   return (
     <Card className="bg-white rounded-xl shadow-sm border border-gray-200 mb-8">
@@ -209,9 +212,25 @@ export function CashFlowChart({ monthlyData }: CashFlowChartProps) {
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold text-gray-900">
             <i className="fas fa-chart-line text-finance-blue mr-2"></i>
-            Cash Flow Analysis (First 5 Years)
+            Cash Flow Analysis ({timeFrameYears} Years)
           </h2>
           <div className="flex items-center space-x-4 text-sm">
+            <div className="flex items-center space-x-2">
+              <span className="text-gray-600">Time Frame:</span>
+              <Select value={timeFrameYears.toString()} onValueChange={(value) => setTimeFrameYears(Number(value))}>
+                <SelectTrigger className="w-24">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="5">5 Years</SelectItem>
+                  <SelectItem value="10">10 Years</SelectItem>
+                  <SelectItem value="15">15 Years</SelectItem>
+                  <SelectItem value="20">20 Years</SelectItem>
+                  <SelectItem value="25">25 Years</SelectItem>
+                  <SelectItem value="30">30 Years</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
             <div className="flex items-center">
               <div className="w-3 h-3 bg-green-500 rounded mr-2"></div>
               <span className="text-gray-600">Net Income</span>
@@ -234,7 +253,7 @@ export function CashFlowChart({ monthlyData }: CashFlowChartProps) {
           />
         </div>
         <div className="mt-4 text-sm text-gray-600">
-          <p>This chart shows your monthly cash flow patterns over the first 5 years. Green areas represent income, red areas represent expenses, and the blue line shows your net cash flow (surplus or deficit).</p>
+          <p>This chart shows your monthly cash flow patterns over {timeFrameYears} years. Green areas represent income, red areas represent expenses, and the blue line shows your net cash flow (surplus or deficit).</p>
         </div>
       </CardContent>
     </Card>
