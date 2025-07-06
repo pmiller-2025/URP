@@ -21,12 +21,53 @@ type ViewMode = 'annual' | 'monthly';
 
 export default function RetirementCalculator() {
   const [state, setState] = useState<CalculatorState>(() => {
-    // Load saved defaults from localStorage if they exist
+    // Load saved defaults from localStorage if they exist, but check if they need updating
     const savedDefaults = localStorage.getItem('urp-default-state');
-    return savedDefaults ? JSON.parse(savedDefaults) : getDefaultState();
+    if (savedDefaults) {
+      const parsed = JSON.parse(savedDefaults);
+      let needsUpdate = false;
+      
+      // Check if the saved defaults have the old end of life values and update them
+      if (parsed.personalInfo?.paulEndOfLifeAge === 85) {
+        parsed.personalInfo.paulEndOfLifeAge = 100;
+        needsUpdate = true;
+      }
+      if (parsed.personalInfo?.jessicaEndOfLifeAge === 90) {
+        parsed.personalInfo.jessicaEndOfLifeAge = 100;
+        needsUpdate = true;
+      }
+      
+      // Update Jessica's income to new default if it's still the old value
+      if (parsed.otherIncome?.jessicaIncome === 1250) {
+        parsed.otherIncome.jessicaIncome = 2000;
+        needsUpdate = true;
+      }
+      
+      // Save the updated defaults back if any changes were made
+      if (needsUpdate) {
+        localStorage.setItem('urp-default-state', JSON.stringify(parsed));
+      }
+      
+      return parsed;
+    }
+    return getDefaultState();
   });
   const [viewMode, setViewMode] = useState<ViewMode>('annual');
   const [selectedYear, setSelectedYear] = useState(1);
+  
+  // Force update end of life ages to new defaults if they're still using old values
+  useEffect(() => {
+    if (state.personalInfo.paulEndOfLifeAge === 85 || state.personalInfo.jessicaEndOfLifeAge === 90) {
+      setState(prev => ({
+        ...prev,
+        personalInfo: {
+          ...prev.personalInfo,
+          paulEndOfLifeAge: 100,
+          jessicaEndOfLifeAge: 100
+        }
+      }));
+    }
+  }, [state.personalInfo.paulEndOfLifeAge, state.personalInfo.jessicaEndOfLifeAge]);
   
   // Calculate projections whenever state changes
   const annualData = calculateAnnualProjections(state);
