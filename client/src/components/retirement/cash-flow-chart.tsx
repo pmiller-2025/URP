@@ -41,6 +41,14 @@ export function CashFlowChart({ monthlyData }: CashFlowChartProps) {
     const totalIncomeData = sampleData.map(d => d.netIncome);
     const totalExpensesData = sampleData.map(d => d.livingExp + d.insurance + d.expense1 + d.expense2 + d.expense3 + d.mortgage);
     const netCashFlowData = sampleData.map(d => d.netCashFlow);
+    
+    // Extract income source data
+    const paulSSData = sampleData.map(d => d.paulSS);
+    const jessicaSSData = sampleData.map(d => d.jessicaSS);
+    const vaDisabilityData = sampleData.map(d => d.vaDisability);
+    const businessData = sampleData.map(d => d.business);
+    const jessicaWorkData = sampleData.map(d => d.jessicaWork);
+    const chapter35Data = sampleData.map(d => d.chapter35);
 
     // Find min/max values
     const maxIncome = Math.max(...totalIncomeData);
@@ -103,17 +111,51 @@ export function CashFlowChart({ monthlyData }: CashFlowChartProps) {
       return { x, y };
     };
 
-    // Draw income area (filled)
-    ctx.fillStyle = 'rgba(34, 197, 94, 0.2)'; // green with transparency
-    ctx.beginPath();
-    ctx.moveTo(padding, height - padding);
-    totalIncomeData.forEach((value, index) => {
-      const point = getPoint(index, value);
-      ctx.lineTo(point.x, point.y);
+    // Draw stacked income areas
+    const incomeColors = [
+      'rgba(59, 130, 246, 0.3)', // Paul SS - blue
+      'rgba(147, 51, 234, 0.3)', // Jessica SS - purple
+      'rgba(239, 68, 68, 0.3)',  // VA Disability - red
+      'rgba(34, 197, 94, 0.3)',  // Business - green
+      'rgba(245, 158, 11, 0.3)', // Jessica Work - amber
+      'rgba(168, 85, 247, 0.3)'  // Chapter 35 - violet
+    ];
+    
+    const incomeSources = [paulSSData, jessicaSSData, vaDisabilityData, businessData, jessicaWorkData, chapter35Data];
+    const sourceNames = ['Paul SS', 'Jessica SS', 'VA Disability', 'Business', 'Jessica Work', 'Chapter 35'];
+    
+    // Create cumulative data for stacking
+    const cumulativeData = sampleData.map((_, index) => {
+      let cumulative = 0;
+      return incomeSources.map(source => {
+        cumulative += source[index] || 0;
+        return cumulative;
+      });
     });
-    ctx.lineTo(padding + chartWidth, height - padding);
-    ctx.closePath();
-    ctx.fill();
+    
+    // Draw stacked areas from bottom to top
+    for (let sourceIndex = incomeSources.length - 1; sourceIndex >= 0; sourceIndex--) {
+      ctx.fillStyle = incomeColors[sourceIndex];
+      ctx.beginPath();
+      ctx.moveTo(padding, height - padding);
+      
+      // Draw top line of this income source
+      cumulativeData.forEach((cumArray, dataIndex) => {
+        const value = cumArray[sourceIndex] || 0;
+        const point = getPoint(dataIndex, value);
+        ctx.lineTo(point.x, point.y);
+      });
+      
+      // Draw bottom line (previous cumulative or zero)
+      for (let dataIndex = cumulativeData.length - 1; dataIndex >= 0; dataIndex--) {
+        const value = sourceIndex === 0 ? 0 : (cumulativeData[dataIndex][sourceIndex - 1] || 0);
+        const point = getPoint(dataIndex, value);
+        ctx.lineTo(point.x, point.y);
+      }
+      
+      ctx.closePath();
+      ctx.fill();
+    }
 
     // Draw expenses area (filled)
     ctx.fillStyle = 'rgba(239, 68, 68, 0.2)'; // red with transparency
@@ -127,8 +169,8 @@ export function CashFlowChart({ monthlyData }: CashFlowChartProps) {
     ctx.closePath();
     ctx.fill();
 
-    // Draw income line
-    ctx.strokeStyle = '#22c55e'; // green
+    // Draw total income outline
+    ctx.strokeStyle = '#059669'; // darker green for outline
     ctx.lineWidth = 2;
     ctx.beginPath();
     totalIncomeData.forEach((value, index) => {
@@ -232,12 +274,28 @@ export function CashFlowChart({ monthlyData }: CashFlowChartProps) {
               </Select>
             </div>
             <div className="flex items-center">
-              <div className="w-3 h-3 bg-green-500 rounded mr-2"></div>
-              <span className="text-gray-600">Net Income</span>
+              <div className="w-3 h-3 bg-blue-500 rounded mr-2"></div>
+              <span className="text-gray-600">Paul SS</span>
+            </div>
+            <div className="flex items-center">
+              <div className="w-3 h-3 bg-purple-600 rounded mr-2"></div>
+              <span className="text-gray-600">Jessica SS</span>
             </div>
             <div className="flex items-center">
               <div className="w-3 h-3 bg-red-500 rounded mr-2"></div>
-              <span className="text-gray-600">Total Expenses</span>
+              <span className="text-gray-600">VA Disability</span>
+            </div>
+            <div className="flex items-center">
+              <div className="w-3 h-3 bg-green-500 rounded mr-2"></div>
+              <span className="text-gray-600">Business</span>
+            </div>
+            <div className="flex items-center">
+              <div className="w-3 h-3 bg-amber-500 rounded mr-2"></div>
+              <span className="text-gray-600">Jessica Work</span>
+            </div>
+            <div className="flex items-center">
+              <div className="w-3 h-3 bg-violet-500 rounded mr-2"></div>
+              <span className="text-gray-600">Chapter 35</span>
             </div>
             <div className="flex items-center">
               <div className="w-3 h-3 bg-finance-blue rounded mr-2"></div>
@@ -253,7 +311,7 @@ export function CashFlowChart({ monthlyData }: CashFlowChartProps) {
           />
         </div>
         <div className="mt-4 text-sm text-gray-600">
-          <p>This chart shows your monthly cash flow patterns over {timeFrameYears} years. Green areas represent income, red areas represent expenses, and the blue line shows your net cash flow (surplus or deficit).</p>
+          <p>This chart shows your monthly cash flow patterns over {timeFrameYears} years. Stacked colored areas show different income sources, red areas represent total expenses, and the blue line shows your net cash flow (surplus or deficit).</p>
         </div>
       </CardContent>
     </Card>

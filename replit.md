@@ -127,6 +127,9 @@ Preferred communication style: Simple, everyday language.
 - **January 06, 2025**: Actual retirement calculations begin from June 2025 as originally planned
 - **January 06, 2025**: Added time frame selector to Cash Flow Analysis chart (5, 10, 15, 20, 25, 30 years)
 - **January 06, 2025**: Cash flow chart now dynamically adjusts grid lines and labels based on selected time frame
+- **January 06, 2025**: Added stacked income source visualization to Cash Flow Analysis chart
+- **January 06, 2025**: Individual income sources now displayed as colored stacked areas (Paul SS, Jessica SS, VA Disability, Business, Jessica Work, Chapter 35)
+- **January 06, 2025**: Updated chart legend to show all income sources with corresponding colors
 
 ## Changelog
 
