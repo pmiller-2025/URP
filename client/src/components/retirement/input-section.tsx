@@ -954,10 +954,7 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                   <Checkbox 
                     id="accelerate-payoff" 
                     checked={state.housing.acceleratePayoff}
-                    onCheckedChange={(checked) => {
-                      console.log('Accelerate payoff toggled:', checked);
-                      onUpdate('housing', { acceleratePayoff: checked });
-                    }}
+                    onCheckedChange={(checked) => onUpdate('housing', { acceleratePayoff: checked })}
                     className="rounded border-gray-300 text-finance-blue focus:ring-finance-blue"
                   />
                   <Label htmlFor="accelerate-payoff" className="text-sm font-medium text-gray-700">

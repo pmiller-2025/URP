@@ -695,13 +695,14 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
           const monthlyInterest = yearStartMortgageBalance * monthlyRate;
           let monthlyPrincipal;
           
-          if (state.housing.acceleratePayoff) {
-            // Use same logic as current month calculation
-            const requiredTotalPayment = calculateMortgagePayment(yearStartMortgageBalance, state.housing.interestRate, remainingMonths);
+          if (state.housing.acceleratePayoff && monthsSinceMortgageStart < state.housing.targetPayoffMonths) {
+            // Calculate accelerated payment using the same conservative logic
+            const remainingTargetMonths = Math.max(1, state.housing.targetPayoffMonths - monthsSinceMortgageStart);
+            const requiredPayment = calculateMortgagePayment(yearStartMortgageBalance, state.housing.interestRate, remainingTargetMonths);
             const regularPayment = state.housing.monthlyPayment;
-            const extraPayment = Math.max(0, requiredTotalPayment - regularPayment);
-            const totalPayment = regularPayment + extraPayment;
-            monthlyPrincipal = Math.min(totalPayment - monthlyInterest, yearStartMortgageBalance);
+            const maxExtraPayment = Math.min(requiredPayment - regularPayment, yearStartMortgageBalance * 0.1);
+            const targetPayment = regularPayment + Math.max(0, maxExtraPayment);
+            monthlyPrincipal = Math.min(targetPayment - monthlyInterest, yearStartMortgageBalance);
           } else {
             monthlyPrincipal = Math.min(state.housing.monthlyPayment - monthlyInterest, yearStartMortgageBalance);
           }
@@ -915,9 +916,9 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
           // Calculate what total payment is needed to pay off in remaining months
           const requiredTotalPayment = calculateMortgagePayment(currentMortgageBalance, state.housing.interestRate, remainingMonths);
           
-          // The displayed payment is regular payment + extra payment
-          const extraPayment = Math.max(0, requiredTotalPayment - regularPayment);
-          currentMortgageMonthly = regularPayment + extraPayment;
+          // Use conservative approach - cap extra payment at 10% of remaining balance
+          const extraPayment = Math.min(requiredTotalPayment - regularPayment, currentMortgageBalance * 0.1);
+          currentMortgageMonthly = regularPayment + Math.max(0, extraPayment);
           
           // Apply the payment to reduce balance
           const monthlyInterest = currentMortgageBalance * monthlyRate;
