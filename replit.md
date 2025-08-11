@@ -130,6 +130,10 @@ Preferred communication style: Simple, everyday language.
 - **January 06, 2025**: Added stacked income source visualization to Cash Flow Analysis chart
 - **January 06, 2025**: Individual income sources now displayed as colored stacked areas (Paul SS, Jessica SS, VA Disability, Business, Jessica Work, Chapter 35)
 - **January 06, 2025**: Updated chart legend to show all income sources with corresponding colors
+- **January 06, 2025**: Replaced Social Security dropdown with custom input fields for monthly amounts
+- **January 06, 2025**: Added month/year start date fields for Paul and Jessica Social Security benefits
+- **January 06, 2025**: Updated calculation logic to use specific start dates instead of age-based eligibility
+- **January 06, 2025**: Removed prefilled benefit amounts - users now have full control over SS benefit amounts and timing
 
 ## Changelog
 
