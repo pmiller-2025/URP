@@ -696,11 +696,12 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
           let monthlyPrincipal;
           
           if (state.housing.acceleratePayoff) {
-            const requiredPayment = calculateMortgagePayment(yearStartMortgageBalance, state.housing.interestRate, remainingMonths);
+            // Use same logic as current month calculation
+            const requiredTotalPayment = calculateMortgagePayment(yearStartMortgageBalance, state.housing.interestRate, remainingMonths);
             const regularPayment = state.housing.monthlyPayment;
-            const maxExtraPayment = Math.min(requiredPayment - regularPayment, yearStartMortgageBalance * 0.1);
-            const targetPayment = regularPayment + Math.max(0, maxExtraPayment);
-            monthlyPrincipal = Math.min(targetPayment - monthlyInterest, yearStartMortgageBalance);
+            const extraPayment = Math.max(0, requiredTotalPayment - regularPayment);
+            const totalPayment = regularPayment + extraPayment;
+            monthlyPrincipal = Math.min(totalPayment - monthlyInterest, yearStartMortgageBalance);
           } else {
             monthlyPrincipal = Math.min(state.housing.monthlyPayment - monthlyInterest, yearStartMortgageBalance);
           }
@@ -955,11 +956,6 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
     const actualExpense2Monthly = isBeforeJune2025 ? 0 : expense2Monthly;
     const actualExpense3Monthly = isBeforeJune2025 ? 0 : expense3Monthly;
     const actualMortgageMonthly = isBeforeJune2025 ? 0 : currentMortgageMonthly;
-    
-    // Debug mortgage payment for first few months
-    if (currentMonthOffset >= 5 && currentMonthOffset <= 7) {
-      console.log(`Month ${currentMonthOffset}: Calculated payment ${currentMortgageMonthly.toFixed(2)}, Actual payment ${actualMortgageMonthly.toFixed(2)}`);
-    }
     
     const grossIncome = paulSSMonthly + jessicaSSMonthly + vaDisabilityMonthly + actualBusinessMonthly + actualJessicaWorkMonthly + actualChapter35Monthly + actualIncome1Monthly + actualIncome2Monthly + actualIncome3Monthly;
     
