@@ -683,16 +683,26 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
     yearStartMortgageBalance = Math.max(0, yearStartMortgageBalance - state.housing.lumpSumAmount);
     
     // Also account for mortgage payments made in previous years
-    for (let prevMonthOffset = 0; prevMonthOffset < yearStartMonthOffset; prevMonthOffset++) {
+    const mortgageStartMonth = 5; // June 2025 is month 5 (0-indexed from Jan 2025)
+    for (let prevMonthOffset = mortgageStartMonth; prevMonthOffset < yearStartMonthOffset; prevMonthOffset++) {
       if (yearStartMortgageBalance > 0) {
-        const remainingMonths = state.housing.targetPayoffMonths - prevMonthOffset;
+        const monthsSinceMortgageStart = prevMonthOffset - mortgageStartMonth;
+        const remainingMonths = Math.max(0, state.housing.targetPayoffMonths - monthsSinceMortgageStart);
         if (remainingMonths > 0) {
           const monthlyRate = state.housing.interestRate / 100 / 12;
           const monthlyInterest = yearStartMortgageBalance * monthlyRate;
-          const monthlyPrincipal = Math.min(
-            calculateMortgagePayment(yearStartMortgageBalance, state.housing.interestRate, remainingMonths) - monthlyInterest,
-            yearStartMortgageBalance
-          );
+          let monthlyPrincipal;
+          
+          if (state.housing.acceleratePayoff) {
+            const requiredPayment = calculateMortgagePayment(yearStartMortgageBalance, state.housing.interestRate, remainingMonths);
+            const regularPayment = state.housing.monthlyPayment;
+            const maxExtraPayment = Math.min(requiredPayment - regularPayment, yearStartMortgageBalance * 0.1);
+            const targetPayment = regularPayment + Math.max(0, maxExtraPayment);
+            monthlyPrincipal = Math.min(targetPayment - monthlyInterest, yearStartMortgageBalance);
+          } else {
+            monthlyPrincipal = Math.min(state.housing.monthlyPayment - monthlyInterest, yearStartMortgageBalance);
+          }
+          
           yearStartMortgageBalance = Math.max(0, yearStartMortgageBalance - monthlyPrincipal);
         } else {
           yearStartMortgageBalance = 0;
@@ -856,7 +866,11 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
     // Calculate monthly mortgage payment based on current balance and remaining months
     let currentMortgageMonthly = 0;
     if (currentMortgageBalance > 0) {
-      const remainingMonths = state.housing.targetPayoffMonths - currentMonthOffset;
+      // Calculate remaining months from the start of mortgage payments (June 2025)
+      const mortgageStartMonth = 5; // June 2025 is month 5 (0-indexed from Jan 2025)
+      const monthsSinceMortgageStart = Math.max(0, currentMonthOffset - mortgageStartMonth);
+      const remainingMonths = Math.max(0, state.housing.targetPayoffMonths - monthsSinceMortgageStart);
+      
       if (remainingMonths > 0 && state.housing.acceleratePayoff) {
         // Calculate payment for remaining balance over remaining months, but be conservative
         const monthlyRate = state.housing.interestRate / 100 / 12; // Use actual interest rate
