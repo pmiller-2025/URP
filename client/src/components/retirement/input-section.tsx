@@ -248,87 +248,112 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                 <p className="text-xs text-gray-500 mt-1">Non-taxable, 3% annual increase</p>
               </div>
               
-              <div>
-                <Label className="block text-sm font-medium text-gray-700 mb-1">Paul's SS Claiming Age</Label>
-                <Select 
-                  value={state.socialSecurity.paulStartAge.toString()} 
-                  onValueChange={(value) => {
-                    const age = parseInt(value);
-                    const benefit = ssBenefitOptions.find(opt => opt.age === age);
-                    if (benefit) {
-                      onUpdate('socialSecurity', { 
-                        paulStartAge: age,
-                        paulAmount: benefit.amount,
-                        jessicaAmount: Math.round(benefit.amount * 0.5) // Jessica gets 50% of Paul's amount
-                      });
-                    }
-                  }}
-                >
-                  <SelectTrigger className="focus:ring-2 focus:ring-finance-blue focus:border-transparent">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {ssBenefitOptions.map(option => (
-                      <SelectItem key={option.age} value={option.age.toString()}>
-                        Age {option.age}: ${Math.round(option.amount).toLocaleString()}/mo ({option.description.split(' - ')[0]})
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <div className="mt-2 p-2 bg-blue-50 rounded-lg">
-                  <p className="text-xs text-finance-blue">
-                    {ssBenefitOptions.find(opt => opt.age === state.socialSecurity.paulStartAge)?.description}
-                  </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label className="block text-sm font-medium text-gray-700 mb-2">Paul's Social Security</Label>
+                  <div className="space-y-3">
+                    <div>
+                      <Label className="block text-xs text-gray-600 mb-1">Monthly Amount</Label>
+                      <div className="relative">
+                        <span className="absolute left-3 top-2 text-gray-500">$</span>
+                        <Input 
+                          type="text" 
+                          value={formatCurrency(state.socialSecurity.paulAmount)}
+                          onChange={(e) => onUpdate('socialSecurity', { paulAmount: parseCurrency(e.target.value) })}
+                          className="pl-8 focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                          placeholder="0"
+                        />
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <Label className="block text-xs text-gray-600 mb-1">Start Month</Label>
+                        <Input 
+                          type="number" 
+                          min="1"
+                          max="12"
+                          value={state.socialSecurity.paulStartMonth}
+                          onChange={(e) => onUpdate('socialSecurity', { paulStartMonth: parseInt(e.target.value) || 1 })}
+                          className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                        />
+                      </div>
+                      <div>
+                        <Label className="block text-xs text-gray-600 mb-1">Start Year</Label>
+                        <Input 
+                          type="number" 
+                          min="1"
+                          max="25"
+                          value={state.socialSecurity.paulStartYear}
+                          onChange={(e) => onUpdate('socialSecurity', { paulStartYear: parseInt(e.target.value) || 1 })}
+                          className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                        />
+                      </div>
+                    </div>
+                    <div className="flex items-center">
+                      <Checkbox 
+                        id="paul-ss-tax" 
+                        checked={state.socialSecurity.paulTaxable}
+                        onCheckedChange={(checked) => onUpdate('socialSecurity', { paulTaxable: checked })}
+                        className="rounded border-gray-300 text-finance-blue focus:ring-finance-blue"
+                      />
+                      <Label htmlFor="paul-ss-tax" className="ml-2 text-sm text-gray-600">Taxable at {state.taxRates.socialSecurity}%</Label>
+                    </div>
+                  </div>
                 </div>
-                <div className="flex items-center mt-2">
-                  <Checkbox 
-                    id="paul-ss-tax" 
-                    checked={state.socialSecurity.paulTaxable}
-                    onCheckedChange={(checked) => onUpdate('socialSecurity', { paulTaxable: checked })}
-                    className="rounded border-gray-300 text-finance-blue focus:ring-finance-blue"
-                  />
-                  <Label htmlFor="paul-ss-tax" className="ml-2 text-sm text-gray-600">Taxable at {state.taxRates.socialSecurity}%</Label>
+                
+                <div>
+                  <Label className="block text-sm font-medium text-gray-700 mb-2">Jessica's Social Security</Label>
+                  <div className="space-y-3">
+                    <div>
+                      <Label className="block text-xs text-gray-600 mb-1">Monthly Amount</Label>
+                      <div className="relative">
+                        <span className="absolute left-3 top-2 text-gray-500">$</span>
+                        <Input 
+                          type="text" 
+                          value={formatCurrency(state.socialSecurity.jessicaAmount)}
+                          onChange={(e) => onUpdate('socialSecurity', { jessicaAmount: parseCurrency(e.target.value) })}
+                          className="pl-8 focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                          placeholder="0"
+                        />
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <Label className="block text-xs text-gray-600 mb-1">Start Month</Label>
+                        <Input 
+                          type="number" 
+                          min="1"
+                          max="12"
+                          value={state.socialSecurity.jessicaStartMonth}
+                          onChange={(e) => onUpdate('socialSecurity', { jessicaStartMonth: parseInt(e.target.value) || 1 })}
+                          className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                        />
+                      </div>
+                      <div>
+                        <Label className="block text-xs text-gray-600 mb-1">Start Year</Label>
+                        <Input 
+                          type="number" 
+                          min="1"
+                          max="25"
+                          value={state.socialSecurity.jessicaStartYear}
+                          onChange={(e) => onUpdate('socialSecurity', { jessicaStartYear: parseInt(e.target.value) || 1 })}
+                          className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                        />
+                      </div>
+                    </div>
+                    <div className="flex items-center">
+                      <Checkbox 
+                        id="jessica-ss-tax" 
+                        checked={state.socialSecurity.jessicaTaxable}
+                        onCheckedChange={(checked) => onUpdate('socialSecurity', { jessicaTaxable: checked })}
+                        className="rounded border-gray-300 text-finance-blue focus:ring-finance-blue"
+                      />
+                      <Label htmlFor="jessica-ss-tax" className="ml-2 text-sm text-gray-600">Taxable at {state.taxRates.socialSecurity}%</Label>
+                    </div>
+                  </div>
                 </div>
               </div>
-              <div>
-                <Label className="block text-sm font-medium text-gray-700 mb-1">Jessica's SS Claiming Age</Label>
-                <Select 
-                  value={state.socialSecurity.jessicaStartAge.toString()} 
-                  onValueChange={(value) => {
-                    const age = parseInt(value);
-                    // Jessica always gets 50% of Paul's current amount
-                    onUpdate('socialSecurity', { 
-                      jessicaStartAge: age,
-                      jessicaAmount: Math.round(state.socialSecurity.paulAmount * 0.5)
-                    });
-                  }}
-                >
-                  <SelectTrigger className="focus:ring-2 focus:ring-finance-blue focus:border-transparent">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {ssBenefitOptions.map(option => (
-                      <SelectItem key={option.age} value={option.age.toString()}>
-                        Age {option.age}: ${Math.round(state.socialSecurity.paulAmount * 0.5).toLocaleString()}/mo (50% of Paul's)
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <div className="mt-2 p-2 bg-green-50 rounded-lg">
-                  <p className="text-xs text-finance-green">
-                    Spousal benefit: 50% of Paul's amount at selected age
-                  </p>
-                </div>
-                <div className="flex items-center mt-2">
-                  <Checkbox 
-                    id="jessica-ss-tax" 
-                    checked={state.socialSecurity.jessicaTaxable}
-                    onCheckedChange={(checked) => onUpdate('socialSecurity', { jessicaTaxable: checked })}
-                    className="rounded border-gray-300 text-finance-blue focus:ring-finance-blue"
-                  />
-                  <Label htmlFor="jessica-ss-tax" className="ml-2 text-sm text-gray-600">Taxable at {state.taxRates.socialSecurity}%</Label>
-                </div>
-              </div>
+              
               <div>
                 <Label className="block text-sm font-medium text-gray-700 mb-1">Annual COLA</Label>
                 <div className="relative">
