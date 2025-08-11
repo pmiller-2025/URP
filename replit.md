@@ -139,6 +139,8 @@ Preferred communication style: Simple, everyday language.
 - **January 06, 2025**: Jessica Tier 1: Own benefit starts at specified age in birth month (October)
 - **January 06, 2025**: Jessica Tier 2: 50% spousal benefit starts when Paul begins receiving his benefit
 - **January 06, 2025**: Added visual distinction with colored sections for both Social Security tiers
+- **January 06, 2025**: Fixed mortgage balance calculation to show beginning-of-month balance instead of end-of-month
+- **January 06, 2025**: Mortgage balance now displays proper gradual decline month by month
 
 ## Changelog
 
