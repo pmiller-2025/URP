@@ -904,18 +904,27 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
         // Before mortgage payments start, no payment and balance stays the same
         currentMortgageMonthly = 0;
       } else if (remainingMonths > 0 && state.housing.acceleratePayoff) {
-        // Calculate payment for remaining balance over remaining months, but be conservative
-        const monthlyRate = state.housing.interestRate / 100 / 12; // Use actual interest rate
-        const monthlyInterest = currentMortgageBalance * monthlyRate;
-        const requiredPayment = calculateMortgagePayment(currentMortgageBalance, state.housing.interestRate, remainingMonths);
-        // For accelerated payoff, we need to be more conservative to spread payments over target period
-        // Calculate what the extra payment should be to reach target, but don't be too aggressive
-        const regularPayment = state.housing.monthlyPayment;
-        const maxExtraPayment = Math.min(requiredPayment - regularPayment, currentMortgageBalance * 0.1); // Cap extra at 10% of balance
-        const targetPayment = regularPayment + Math.max(0, maxExtraPayment);
-        const monthlyPrincipal = Math.min(targetPayment - monthlyInterest, currentMortgageBalance);
-        currentMortgageMonthly = monthlyInterest + monthlyPrincipal;
-        currentMortgageBalance = Math.max(0, currentMortgageBalance - monthlyPrincipal);
+        // Calculate payment required to pay off mortgage in remaining months
+        const monthlyRate = state.housing.interestRate / 100 / 12;
+        
+        if (remainingMonths === 1) {
+          // Last month - pay off remaining balance plus interest
+          const monthlyInterest = currentMortgageBalance * monthlyRate;
+          currentMortgageMonthly = currentMortgageBalance + monthlyInterest;
+          currentMortgageBalance = 0;
+        } else {
+          // Calculate payment needed to amortize remaining balance over remaining months
+          const requiredPayment = calculateMortgagePayment(currentMortgageBalance, state.housing.interestRate, remainingMonths);
+          const monthlyInterest = currentMortgageBalance * monthlyRate;
+          const monthlyPrincipal = Math.min(requiredPayment - monthlyInterest, currentMortgageBalance);
+          currentMortgageMonthly = requiredPayment;
+          currentMortgageBalance = Math.max(0, currentMortgageBalance - monthlyPrincipal);
+          
+          // Debug accelerated payment calculation
+          if (currentMonthOffset >= 5 && currentMonthOffset <= 7) {
+            console.log(`Month ${currentMonthOffset}: Balance ${currentMortgageBalance.toFixed(2)}, Required Payment ${requiredPayment.toFixed(2)}, Remaining Months ${remainingMonths}`);
+          }
+        }
       } else if (remainingMonths > 0) {
         // Use regular payment schedule
         const monthlyRate = state.housing.interestRate / 100 / 12;
