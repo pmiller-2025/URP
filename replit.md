@@ -134,6 +134,11 @@ Preferred communication style: Simple, everyday language.
 - **January 06, 2025**: Added month/year start date fields for Paul and Jessica Social Security benefits
 - **January 06, 2025**: Updated calculation logic to use specific start dates instead of age-based eligibility
 - **January 06, 2025**: Removed prefilled benefit amounts - users now have full control over SS benefit amounts and timing
+- **January 06, 2025**: Changed Social Security inputs from month/year to age-based start dates with birth month timing
+- **January 06, 2025**: Implemented two-tier Social Security system for Jessica
+- **January 06, 2025**: Jessica Tier 1: Own benefit starts at specified age in birth month (October)
+- **January 06, 2025**: Jessica Tier 2: 50% spousal benefit starts when Paul begins receiving his benefit
+- **January 06, 2025**: Added visual distinction with colored sections for both Social Security tiers
 
 ## Changelog
 
