@@ -956,6 +956,11 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
     const actualExpense3Monthly = isBeforeJune2025 ? 0 : expense3Monthly;
     const actualMortgageMonthly = isBeforeJune2025 ? 0 : currentMortgageMonthly;
     
+    // Debug mortgage payment for first few months
+    if (currentMonthOffset >= 5 && currentMonthOffset <= 7) {
+      console.log(`Month ${currentMonthOffset}: Calculated payment ${currentMortgageMonthly.toFixed(2)}, Actual payment ${actualMortgageMonthly.toFixed(2)}`);
+    }
+    
     const grossIncome = paulSSMonthly + jessicaSSMonthly + vaDisabilityMonthly + actualBusinessMonthly + actualJessicaWorkMonthly + actualChapter35Monthly + actualIncome1Monthly + actualIncome2Monthly + actualIncome3Monthly;
     
     const taxes = 
