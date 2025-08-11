@@ -290,33 +290,59 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                 </div>
                 
                 <div>
-                  <Label className="block text-sm font-medium text-gray-700 mb-2">Jessica's Social Security</Label>
-                  <div className="space-y-3">
-                    <div>
-                      <Label className="block text-xs text-gray-600 mb-1">Monthly Amount</Label>
-                      <div className="relative">
-                        <span className="absolute left-3 top-2 text-gray-500">$</span>
-                        <Input 
-                          type="text" 
-                          value={formatCurrency(state.socialSecurity.jessicaAmount)}
-                          onChange={(e) => onUpdate('socialSecurity', { jessicaAmount: parseCurrency(e.target.value) })}
-                          className="pl-8 focus:ring-2 focus:ring-finance-blue focus:border-transparent"
-                          placeholder="0"
-                        />
+                  <Label className="block text-sm font-medium text-gray-700 mb-2">Jessica's Social Security (Two-Tier System)</Label>
+                  <div className="space-y-4">
+                    <div className="bg-blue-50 p-3 rounded-lg">
+                      <h4 className="text-sm font-medium text-blue-900 mb-2">Tier 1: Own Benefit (Before Paul Starts)</h4>
+                      <div className="space-y-2">
+                        <div>
+                          <Label className="block text-xs text-gray-600 mb-1">Monthly Amount</Label>
+                          <div className="relative">
+                            <span className="absolute left-3 top-2 text-gray-500">$</span>
+                            <Input 
+                              type="text" 
+                              value={formatCurrency(state.socialSecurity.jessicaAmount)}
+                              onChange={(e) => onUpdate('socialSecurity', { jessicaAmount: parseCurrency(e.target.value) })}
+                              className="pl-8 focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                              placeholder="0"
+                            />
+                          </div>
+                        </div>
+                        <div>
+                          <Label className="block text-xs text-gray-600 mb-1">Start Age</Label>
+                          <Input 
+                            type="number" 
+                            min="62"
+                            max="70"
+                            value={state.socialSecurity.jessicaStartAge}
+                            onChange={(e) => onUpdate('socialSecurity', { jessicaStartAge: parseInt(e.target.value) || 67 })}
+                            className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                          />
+                          <p className="text-xs text-gray-500 mt-1">Benefits start in birth month (October) when age is reached</p>
+                        </div>
                       </div>
                     </div>
-                    <div>
-                      <Label className="block text-xs text-gray-600 mb-1">Start Age</Label>
-                      <Input 
-                        type="number" 
-                        min="62"
-                        max="70"
-                        value={state.socialSecurity.jessicaStartAge}
-                        onChange={(e) => onUpdate('socialSecurity', { jessicaStartAge: parseInt(e.target.value) || 67 })}
-                        className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
-                      />
-                      <p className="text-xs text-gray-500 mt-1">Benefits start in birth month (October) when age is reached</p>
+                    
+                    <div className="bg-green-50 p-3 rounded-lg">
+                      <h4 className="text-sm font-medium text-green-900 mb-2">Tier 2: Spousal Benefit (After Paul Starts)</h4>
+                      <div className="space-y-2">
+                        <div>
+                          <Label className="block text-xs text-gray-600 mb-1">Spousal Benefit Amount</Label>
+                          <div className="relative">
+                            <span className="absolute left-3 top-2 text-gray-500">$</span>
+                            <Input 
+                              type="text" 
+                              value={formatCurrency(state.socialSecurity.paulAmount * 0.5)}
+                              readOnly
+                              className="pl-8 bg-gray-100 text-gray-600 cursor-not-allowed"
+                              placeholder="Calculated as 50% of Paul's benefit"
+                            />
+                          </div>
+                          <p className="text-xs text-gray-500 mt-1">Automatically calculated as 50% of Paul's benefit</p>
+                        </div>
+                      </div>
                     </div>
+                    
                     <div className="flex items-center">
                       <Checkbox 
                         id="jessica-ss-tax" 
