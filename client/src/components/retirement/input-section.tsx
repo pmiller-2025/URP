@@ -265,29 +265,17 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                         />
                       </div>
                     </div>
-                    <div className="grid grid-cols-2 gap-2">
-                      <div>
-                        <Label className="block text-xs text-gray-600 mb-1">Start Month</Label>
-                        <Input 
-                          type="number" 
-                          min="1"
-                          max="12"
-                          value={state.socialSecurity.paulStartMonth}
-                          onChange={(e) => onUpdate('socialSecurity', { paulStartMonth: parseInt(e.target.value) || 1 })}
-                          className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
-                        />
-                      </div>
-                      <div>
-                        <Label className="block text-xs text-gray-600 mb-1">Start Year</Label>
-                        <Input 
-                          type="number" 
-                          min="1"
-                          max="25"
-                          value={state.socialSecurity.paulStartYear}
-                          onChange={(e) => onUpdate('socialSecurity', { paulStartYear: parseInt(e.target.value) || 1 })}
-                          className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
-                        />
-                      </div>
+                    <div>
+                      <Label className="block text-xs text-gray-600 mb-1">Start Age</Label>
+                      <Input 
+                        type="number" 
+                        min="62"
+                        max="70"
+                        value={state.socialSecurity.paulStartAge}
+                        onChange={(e) => onUpdate('socialSecurity', { paulStartAge: parseInt(e.target.value) || 67 })}
+                        className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                      />
+                      <p className="text-xs text-gray-500 mt-1">Benefits start in birth month (June) when age is reached</p>
                     </div>
                     <div className="flex items-center">
                       <Checkbox 
@@ -317,29 +305,17 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                         />
                       </div>
                     </div>
-                    <div className="grid grid-cols-2 gap-2">
-                      <div>
-                        <Label className="block text-xs text-gray-600 mb-1">Start Month</Label>
-                        <Input 
-                          type="number" 
-                          min="1"
-                          max="12"
-                          value={state.socialSecurity.jessicaStartMonth}
-                          onChange={(e) => onUpdate('socialSecurity', { jessicaStartMonth: parseInt(e.target.value) || 1 })}
-                          className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
-                        />
-                      </div>
-                      <div>
-                        <Label className="block text-xs text-gray-600 mb-1">Start Year</Label>
-                        <Input 
-                          type="number" 
-                          min="1"
-                          max="25"
-                          value={state.socialSecurity.jessicaStartYear}
-                          onChange={(e) => onUpdate('socialSecurity', { jessicaStartYear: parseInt(e.target.value) || 1 })}
-                          className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
-                        />
-                      </div>
+                    <div>
+                      <Label className="block text-xs text-gray-600 mb-1">Start Age</Label>
+                      <Input 
+                        type="number" 
+                        min="62"
+                        max="70"
+                        value={state.socialSecurity.jessicaStartAge}
+                        onChange={(e) => onUpdate('socialSecurity', { jessicaStartAge: parseInt(e.target.value) || 67 })}
+                        className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                      />
+                      <p className="text-xs text-gray-500 mt-1">Benefits start in birth month (October) when age is reached</p>
                     </div>
                     <div className="flex items-center">
                       <Checkbox 

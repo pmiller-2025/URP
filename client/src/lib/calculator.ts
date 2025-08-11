@@ -21,10 +21,6 @@ export interface SocialSecurity {
   jessicaTaxable: boolean;
   paulStartAge: number;
   jessicaStartAge: number;
-  paulStartMonth: number;
-  paulStartYear: number;
-  jessicaStartMonth: number;
-  jessicaStartYear: number;
 }
 
 export interface SSBenefitOption {
@@ -309,11 +305,7 @@ export function getDefaultState(): CalculatorState {
       paulTaxable: true,
       jessicaTaxable: true,
       paulStartAge: 70,
-      jessicaStartAge: 67,
-      paulStartMonth: 6, // June 2025 default
-      paulStartYear: 1, // Year 1 of projection
-      jessicaStartMonth: 6, // June 2025 default
-      jessicaStartYear: 1 // Year 1 of projection
+      jessicaStartAge: 67
     },
     otherIncome: {
       vaDisability: 4050,
@@ -811,24 +803,30 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
     let jessicaSSMonthly = 0;
     
     if (!isBeforeJune2025) {
-      // Calculate start month offsets for SS benefits
-      const paulSSStartMonthOffset = (state.socialSecurity.paulStartYear - 1) * 12 + (state.socialSecurity.paulStartMonth - 1);
-      const jessicaSSStartMonthOffset = (state.socialSecurity.jessicaStartYear - 1) * 12 + (state.socialSecurity.jessicaStartMonth - 1);
-      
       if (paulAlive && jessicaAlive) {
-        // Both alive: each gets their own benefit if start date has passed
-        paulSSMonthly = (currentMonthOffset >= paulSSStartMonthOffset) ? 
+        // Both alive: each gets their own benefit if they reach start age
+        // Benefits start in their birth month when they reach the age
+        const paulEligible = paulAgeThisMonth >= state.socialSecurity.paulStartAge && 
+          (paulAgeThisMonth > state.socialSecurity.paulStartAge || actualMonth + 1 >= state.personalInfo.paulBirthMonth);
+        const jessicaEligible = jessicaAgeThisMonth >= state.socialSecurity.jessicaStartAge && 
+          (jessicaAgeThisMonth > state.socialSecurity.jessicaStartAge || actualMonth + 1 >= state.personalInfo.jessicaBirthMonth);
+          
+        paulSSMonthly = paulEligible ? 
           calculateInflationAdjusted(state.socialSecurity.paulAmount, state.socialSecurity.cola, yearIndex) : 0;
-        jessicaSSMonthly = (currentMonthOffset >= jessicaSSStartMonthOffset) ? 
+        jessicaSSMonthly = jessicaEligible ? 
           calculateInflationAdjusted(state.socialSecurity.jessicaAmount, state.socialSecurity.cola, yearIndex) : 0;
       } else if (!paulAlive && jessicaAlive) {
         // Paul died, Jessica alive: Jessica gets 100% of Paul's benefit, loses her own
         paulSSMonthly = 0;
-        jessicaSSMonthly = (currentMonthOffset >= jessicaSSStartMonthOffset) ? 
+        const jessicaEligible = jessicaAgeThisMonth >= state.socialSecurity.jessicaStartAge && 
+          (jessicaAgeThisMonth > state.socialSecurity.jessicaStartAge || actualMonth + 1 >= state.personalInfo.jessicaBirthMonth);
+        jessicaSSMonthly = jessicaEligible ? 
           calculateInflationAdjusted(state.socialSecurity.paulAmount, state.socialSecurity.cola, yearIndex) : 0;
       } else if (paulAlive && !jessicaAlive) {
         // Jessica died, Paul alive: Paul keeps his benefit, Jessica's stops
-        paulSSMonthly = (currentMonthOffset >= paulSSStartMonthOffset) ? 
+        const paulEligible = paulAgeThisMonth >= state.socialSecurity.paulStartAge && 
+          (paulAgeThisMonth > state.socialSecurity.paulStartAge || actualMonth + 1 >= state.personalInfo.paulBirthMonth);
+        paulSSMonthly = paulEligible ? 
           calculateInflationAdjusted(state.socialSecurity.paulAmount, state.socialSecurity.cola, yearIndex) : 0;
         jessicaSSMonthly = 0;
       } else {
