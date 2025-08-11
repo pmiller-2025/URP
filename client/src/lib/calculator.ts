@@ -884,6 +884,11 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
       console.log(`Applying lump sum payment of ${lumpSumPayment} in month ${currentMonthOffset} (${monthName})`);
     }
     
+    // Debug mortgage balance tracking
+    if (currentMonthOffset === 5 || currentMonthOffset === 6 || currentMonthOffset === 7) { // June, July, August
+      console.log(`Month ${currentMonthOffset} (${monthName}): Starting balance ${currentMortgageBalance}, accelerate: ${state.housing.acceleratePayoff}, target months: ${state.housing.targetPayoffMonths}`);
+    }
+    
     // Store beginning of month mortgage balance for display
     const beginningMortgageBalance = currentMortgageBalance;
     
@@ -895,7 +900,10 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
       const monthsSinceMortgageStart = Math.max(0, currentMonthOffset - mortgageStartMonth);
       const remainingMonths = Math.max(0, state.housing.targetPayoffMonths - monthsSinceMortgageStart);
       
-      if (remainingMonths > 0 && state.housing.acceleratePayoff) {
+      if (currentMonthOffset < mortgageStartMonth) {
+        // Before mortgage payments start, no payment and balance stays the same
+        currentMortgageMonthly = 0;
+      } else if (remainingMonths > 0 && state.housing.acceleratePayoff) {
         // Calculate payment for remaining balance over remaining months, but be conservative
         const monthlyRate = state.housing.interestRate / 100 / 12; // Use actual interest rate
         const monthlyInterest = currentMortgageBalance * monthlyRate;
@@ -915,10 +923,13 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
         const monthlyPrincipal = Math.min(state.housing.monthlyPayment - monthlyInterest, currentMortgageBalance);
         currentMortgageMonthly = monthlyInterest + monthlyPrincipal;
         currentMortgageBalance = Math.max(0, currentMortgageBalance - monthlyPrincipal);
-      } else {
-        // Pay off remaining balance
-        currentMortgageMonthly = currentMortgageBalance;
-        currentMortgageBalance = 0;
+      } else if (currentMonthOffset >= mortgageStartMonth) {
+        // Target payoff period has passed, but there's still a balance - make minimum payments
+        const monthlyRate = state.housing.interestRate / 100 / 12;
+        const monthlyInterest = currentMortgageBalance * monthlyRate;
+        const monthlyPrincipal = Math.min(state.housing.monthlyPayment - monthlyInterest, currentMortgageBalance);
+        currentMortgageMonthly = monthlyInterest + monthlyPrincipal;
+        currentMortgageBalance = Math.max(0, currentMortgageBalance - monthlyPrincipal);
       }
     }
     
