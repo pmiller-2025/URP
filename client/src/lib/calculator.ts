@@ -884,10 +884,7 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
       console.log(`Applying lump sum payment of ${lumpSumPayment} in month ${currentMonthOffset} (${monthName})`);
     }
     
-    // Debug mortgage balance tracking
-    if (currentMonthOffset === 5 || currentMonthOffset === 6 || currentMonthOffset === 7) { // June, July, August
-      console.log(`Month ${currentMonthOffset} (${monthName}): Starting balance ${currentMortgageBalance}, accelerate: ${state.housing.acceleratePayoff}, target months: ${state.housing.targetPayoffMonths}`);
-    }
+
     
     // Store beginning of month mortgage balance for display
     const beginningMortgageBalance = currentMortgageBalance;
@@ -926,10 +923,7 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
           const monthlyPrincipal = Math.min(currentMortgageMonthly - monthlyInterest, currentMortgageBalance);
           currentMortgageBalance = Math.max(0, currentMortgageBalance - monthlyPrincipal);
           
-          // Debug accelerated payment calculation
-          if (currentMonthOffset >= 5 && currentMonthOffset <= 7) {
-            console.log(`Month ${currentMonthOffset}: Regular ${regularPayment.toFixed(2)} + Extra ${extraPayment.toFixed(2)} = Total ${currentMortgageMonthly.toFixed(2)}, Remaining Months ${remainingMonths}`);
-          }
+
         }
       } else if (remainingMonths > 0) {
         // Use regular payment schedule

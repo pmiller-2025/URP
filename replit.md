@@ -144,6 +144,9 @@ Preferred communication style: Simple, everyday language.
 - **January 11, 2025**: Resolved production deployment mortgage calculation issue with enhanced edge case handling
 - **January 11, 2025**: Added robust fallback logic for mortgage payments after target payoff period expires
 - **January 11, 2025**: Fixed mortgage balance premature payoff issue in production environment
+- **January 11, 2025**: Fixed accelerated mortgage payment display to show regular payment + extra payment
+- **January 11, 2025**: Enhanced payment calculation logic to properly reflect accelerated payoff schedule
+- **January 11, 2025**: Mortgage payments now transparently show base payment plus acceleration amount
 
 ## Changelog
 
