@@ -884,6 +884,9 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
       console.log(`Applying lump sum payment of ${lumpSumPayment} in month ${currentMonthOffset} (${monthName})`);
     }
     
+    // Store beginning of month mortgage balance for display
+    const beginningMortgageBalance = currentMortgageBalance;
+    
     // Calculate monthly mortgage payment based on current balance and remaining months
     let currentMortgageMonthly = 0;
     if (currentMortgageBalance > 0) {
@@ -969,7 +972,7 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
       expense2: actualExpense2Monthly,
       expense3: actualExpense3Monthly,
       mortgage: actualMortgageMonthly,
-      mortgageBalance: currentMortgageBalance,
+      mortgageBalance: beginningMortgageBalance,
       netCashFlow,
       savingsBalance: runningBalance
     });
