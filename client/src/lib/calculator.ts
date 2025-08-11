@@ -904,8 +904,9 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
         // Before mortgage payments start, no payment and balance stays the same
         currentMortgageMonthly = 0;
       } else if (remainingMonths > 0 && state.housing.acceleratePayoff) {
-        // Calculate payment required to pay off mortgage in remaining months
+        // Calculate regular payment + accelerated extra payment
         const monthlyRate = state.housing.interestRate / 100 / 12;
+        const regularPayment = state.housing.monthlyPayment;
         
         if (remainingMonths === 1) {
           // Last month - pay off remaining balance plus interest
@@ -913,16 +914,21 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
           currentMortgageMonthly = currentMortgageBalance + monthlyInterest;
           currentMortgageBalance = 0;
         } else {
-          // Calculate payment needed to amortize remaining balance over remaining months
-          const requiredPayment = calculateMortgagePayment(currentMortgageBalance, state.housing.interestRate, remainingMonths);
+          // Calculate what total payment is needed to pay off in remaining months
+          const requiredTotalPayment = calculateMortgagePayment(currentMortgageBalance, state.housing.interestRate, remainingMonths);
+          
+          // The displayed payment is regular payment + extra payment
+          const extraPayment = Math.max(0, requiredTotalPayment - regularPayment);
+          currentMortgageMonthly = regularPayment + extraPayment;
+          
+          // Apply the payment to reduce balance
           const monthlyInterest = currentMortgageBalance * monthlyRate;
-          const monthlyPrincipal = Math.min(requiredPayment - monthlyInterest, currentMortgageBalance);
-          currentMortgageMonthly = requiredPayment;
+          const monthlyPrincipal = Math.min(currentMortgageMonthly - monthlyInterest, currentMortgageBalance);
           currentMortgageBalance = Math.max(0, currentMortgageBalance - monthlyPrincipal);
           
           // Debug accelerated payment calculation
           if (currentMonthOffset >= 5 && currentMonthOffset <= 7) {
-            console.log(`Month ${currentMonthOffset}: Balance ${currentMortgageBalance.toFixed(2)}, Required Payment ${requiredPayment.toFixed(2)}, Remaining Months ${remainingMonths}`);
+            console.log(`Month ${currentMonthOffset}: Regular ${regularPayment.toFixed(2)} + Extra ${extraPayment.toFixed(2)} = Total ${currentMortgageMonthly.toFixed(2)}, Remaining Months ${remainingMonths}`);
           }
         }
       } else if (remainingMonths > 0) {
