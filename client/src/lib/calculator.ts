@@ -882,7 +882,7 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
     if (state.housing.lumpSumAmount > 0 && currentMonthOffset === lumpSumMonthOffset) {
       lumpSumPayment = state.housing.lumpSumAmount;
       currentMortgageBalance = Math.max(0, currentMortgageBalance - lumpSumPayment);
-      console.log(`Applying lump sum payment of ${lumpSumPayment} in month ${currentMonthOffset} (${monthName})`);
+
     }
     
 

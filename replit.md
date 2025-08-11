@@ -147,6 +147,9 @@ Preferred communication style: Simple, everyday language.
 - **January 11, 2025**: Fixed accelerated mortgage payment display to show regular payment + extra payment
 - **January 11, 2025**: Enhanced payment calculation logic to properly reflect accelerated payoff schedule
 - **January 11, 2025**: Mortgage payments now transparently show base payment plus acceleration amount
+- **January 11, 2025**: Resolved mortgage payment inconsistency between year views in monthly table
+- **January 11, 2025**: Updated previous year calculation logic to match current accelerated payment method
+- **January 11, 2025**: Monthly table now displays consistent accelerated payment amounts across all years
 
 ## Changelog
 
