@@ -150,6 +150,9 @@ Preferred communication style: Simple, everyday language.
 - **January 11, 2025**: Resolved mortgage payment inconsistency between year views in monthly table
 - **January 11, 2025**: Updated previous year calculation logic to match current accelerated payment method
 - **January 11, 2025**: Monthly table now displays consistent accelerated payment amounts across all years
+- **January 11, 2025**: Changed Jessica's Tier 2 Social Security from automatic calculation to custom data entry field
+- **January 11, 2025**: Users can now manually enter Jessica's spousal benefit amount instead of automatic 50% calculation
+- **January 11, 2025**: Updated both monthly and annual projection logic to use custom spousal benefit amounts
 
 ## Changelog
 

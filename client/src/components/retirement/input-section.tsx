@@ -327,18 +327,18 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                       <h4 className="text-sm font-medium text-green-900 mb-2">Tier 2: Spousal Benefit (After Paul Starts)</h4>
                       <div className="space-y-2">
                         <div>
-                          <Label className="block text-xs text-gray-600 mb-1">Spousal Benefit Amount</Label>
+                          <Label className="block text-xs text-gray-600 mb-1">Monthly Spousal Benefit Amount</Label>
                           <div className="relative">
                             <span className="absolute left-3 top-2 text-gray-500">$</span>
                             <Input 
                               type="text" 
-                              value={formatCurrency(state.socialSecurity.paulAmount * 0.5)}
-                              readOnly
-                              className="pl-8 bg-gray-100 text-gray-600 cursor-not-allowed"
-                              placeholder="Calculated as 50% of Paul's benefit"
+                              value={formatCurrency(state.socialSecurity.jessicaSpousalAmount)}
+                              onChange={(e) => onUpdate('socialSecurity', { jessicaSpousalAmount: parseCurrency(e.target.value) })}
+                              className="pl-8 focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                              placeholder="0"
                             />
                           </div>
-                          <p className="text-xs text-gray-500 mt-1">Automatically calculated as 50% of Paul's benefit</p>
+                          <p className="text-xs text-gray-500 mt-1">Custom spousal benefit amount when Paul starts receiving benefits</p>
                         </div>
                       </div>
                     </div>
