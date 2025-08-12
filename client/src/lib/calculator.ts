@@ -161,6 +161,7 @@ export interface MonthlyData {
   mortgage: number;
   mortgageBalance: number;
   netCashFlow: number;
+  returnOnInvestments: number;
   savingsBalance: number;
 }
 
@@ -184,6 +185,7 @@ export interface AnnualData {
   expense3: number;
   mortgage: number;
   netCashFlow: number;
+  returnOnInvestments: number;
   investmentReturn: number;
   savingsBalance: number;
   homeValue: number;
@@ -970,8 +972,16 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
     const netIncome = grossIncome - taxes;
     const netCashFlow = netIncome - actualLivingExpMonthly - actualInsuranceMonthly - actualExpense1Monthly - actualExpense2Monthly - actualExpense3Monthly - actualMortgageMonthly;
     
+    // Calculate monthly investment return (gross amount before taxes)
+    const monthlyInvestmentReturn = runningBalance * (state.savings.annualReturn / 100 / 12);
+    
     // All positive cash flow goes to savings, negative cash flow comes from savings
     runningBalance += netCashFlow;
+    
+    // Apply investment returns (net after taxes)
+    const monthlyTaxOnGains = state.savings.taxOnGains ? monthlyInvestmentReturn * (state.savings.gainsTaxRate / 100) : 0;
+    const netMonthlyInvestmentReturn = monthlyInvestmentReturn - monthlyTaxOnGains;
+    runningBalance += netMonthlyInvestmentReturn;
     
     // Deduct lump sum payment from savings when applied
     if (lumpSumPayment > 0) {
@@ -997,6 +1007,7 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
       mortgage: actualMortgageMonthly,
       mortgageBalance: beginningMortgageBalance,
       netCashFlow,
+      returnOnInvestments: monthlyInvestmentReturn, // Gross return before taxes
       savingsBalance: runningBalance
     });
   }
@@ -1358,6 +1369,7 @@ export function calculateAnnualProjections(state: CalculatorState): AnnualData[]
       expense3: expense3Annual,
       mortgage: mortgageAnnual + lumpSumAnnual,
       netCashFlow,
+      returnOnInvestments: investmentReturn, // Gross return before taxes
       investmentReturn: netInvestmentReturn,
       savingsBalance: currentSavingsBalance,
       homeValue,

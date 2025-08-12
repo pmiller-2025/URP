@@ -51,6 +51,7 @@ const getAnnualColumns = (data: AnnualData[]) => {
     { key: 'mortgage', label: 'Mortgage Payments', visible: true },
     { key: 'mortgageBalance', label: 'Mortgage Balance', visible: true },
     { key: 'netCashFlow', label: 'Net Cash Flow', visible: true },
+    { key: 'returnOnInvestments', label: 'Return on Investments', visible: true },
     { key: 'investmentReturn', label: 'Investment Return', visible: true },
     { key: 'savingsBalance', label: 'Savings Balance', visible: true },
     { key: 'homeValue', label: 'Home Value', visible: true },
@@ -94,6 +95,7 @@ const getMonthlyColumns = (data: MonthlyData[]) => {
     { key: 'mortgage', label: 'Mortgage Payment', visible: true },
     { key: 'mortgageBalance', label: 'Mortgage Balance', visible: true },
     { key: 'netCashFlow', label: 'Net Cash Flow', visible: true },
+    { key: 'returnOnInvestments', label: 'Return on Investments', visible: true },
     { key: 'savingsBalance', label: 'Savings Balance', visible: true }
   );
   
@@ -188,6 +190,8 @@ export function ResultsTable({
         return data[columnKey] > 0 ? formatCurrency(data[columnKey]) : '$0';
       case 'netCashFlow':
         return formatCurrency(data[columnKey]);
+      case 'returnOnInvestments':
+        return formatCurrency(data[columnKey]);
       case 'netWorth':
         return formatCurrency(data[columnKey]);
       default:
@@ -212,6 +216,10 @@ export function ResultsTable({
     
     if (columnKey === 'netWorth') {
       return `${baseClass} font-medium text-finance-green`;
+    }
+    
+    if (columnKey === 'returnOnInvestments') {
+      return `${baseClass} text-finance-green`;
     }
     
     if (['totalIncome', 'grossIncome'].includes(columnKey)) {
