@@ -819,11 +819,13 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
           (jessicaAgeThisMonth > state.socialSecurity.jessicaStartAge || actualMonth + 1 >= state.personalInfo.jessicaBirthMonth);
         
         if (jessicaEligible && !paulEligible) {
-          // Tier 1: Jessica's own benefit (before Paul starts)
+          // Tier 1 only: Jessica's own benefit (before Paul starts)
           jessicaSSMonthly = calculateInflationAdjusted(state.socialSecurity.jessicaAmount, state.socialSecurity.cola, yearIndex);
         } else if (jessicaEligible && paulEligible) {
-          // Tier 2: Custom spousal benefit amount (after Paul starts)
-          jessicaSSMonthly = calculateInflationAdjusted(state.socialSecurity.jessicaSpousalAmount, state.socialSecurity.cola, yearIndex);
+          // Tier 1 + Tier 2: Jessica's own benefit + spousal benefit (after Paul starts)
+          const tier1 = calculateInflationAdjusted(state.socialSecurity.jessicaAmount, state.socialSecurity.cola, yearIndex);
+          const tier2 = calculateInflationAdjusted(state.socialSecurity.jessicaSpousalAmount, state.socialSecurity.cola, yearIndex);
+          jessicaSSMonthly = tier1 + tier2;
         } else {
           jessicaSSMonthly = 0;
         }
@@ -1030,11 +1032,13 @@ export function calculateAnnualProjections(state: CalculatorState): AnnualData[]
       const paulEligible = paulAge >= state.socialSecurity.paulStartAge;
       
       if (jessicaEligible && !paulEligible) {
-        // Tier 1: Jessica's own benefit (before Paul starts)
+        // Tier 1 only: Jessica's own benefit (before Paul starts)
         jessicaSSAnnual = calculateInflationAdjusted(state.socialSecurity.jessicaAmount * 12, state.socialSecurity.cola, yearIndex);
       } else if (jessicaEligible && paulEligible) {
-        // Tier 2: Custom spousal benefit amount (after Paul starts)
-        jessicaSSAnnual = calculateInflationAdjusted(state.socialSecurity.jessicaSpousalAmount * 12, state.socialSecurity.cola, yearIndex);
+        // Tier 1 + Tier 2: Jessica's own benefit + spousal benefit (after Paul starts)
+        const tier1Annual = calculateInflationAdjusted(state.socialSecurity.jessicaAmount * 12, state.socialSecurity.cola, yearIndex);
+        const tier2Annual = calculateInflationAdjusted(state.socialSecurity.jessicaSpousalAmount * 12, state.socialSecurity.cola, yearIndex);
+        jessicaSSAnnual = tier1Annual + tier2Annual;
       } else {
         jessicaSSAnnual = 0;
       }

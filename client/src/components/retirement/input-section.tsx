@@ -290,7 +290,8 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                 </div>
                 
                 <div>
-                  <Label className="block text-sm font-medium text-gray-700 mb-2">Jessica's Social Security (Two-Tier System)</Label>
+                  <Label className="block text-sm font-medium text-gray-700 mb-2">Jessica's Social Security (Two-Tier System - Total of Both Tiers)</Label>
+                  <p className="text-xs text-gray-600 mb-3">Jessica receives Tier 1 only before Paul starts benefits, then Tier 1 + Tier 2 combined after Paul starts.</p>
                   <div className="space-y-4">
                     <div className="bg-blue-50 p-3 rounded-lg">
                       <h4 className="text-sm font-medium text-blue-900 mb-2">Tier 1: Own Benefit (Before Paul Starts)</h4>

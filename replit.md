@@ -153,6 +153,8 @@ Preferred communication style: Simple, everyday language.
 - **January 11, 2025**: Changed Jessica's Tier 2 Social Security from automatic calculation to custom data entry field
 - **January 11, 2025**: Users can now manually enter Jessica's spousal benefit amount instead of automatic 50% calculation
 - **January 11, 2025**: Updated both monthly and annual projection logic to use custom spousal benefit amounts
+- **January 11, 2025**: Fixed Jessica's Social Security to be total of both tiers (Tier 1 + Tier 2) instead of switching between them
+- **January 11, 2025**: Before Paul starts benefits: Jessica gets Tier 1 only; After Paul starts: Jessica gets Tier 1 + Tier 2 combined
 
 ## Changelog
 
