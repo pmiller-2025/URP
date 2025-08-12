@@ -156,9 +156,10 @@ Preferred communication style: Simple, everyday language.
 - **January 11, 2025**: Fixed Jessica's Social Security to be total of both tiers (Tier 1 + Tier 2) instead of switching between them
 - **January 11, 2025**: Before Paul starts benefits: Jessica gets Tier 1 only; After Paul starts: Jessica gets Tier 1 + Tier 2 combined
 - **January 11, 2025**: Added "Return on Investments" column to both annual and monthly reports
-- **January 11, 2025**: Investment returns shown before taxes are applied, taxable at the specified investment gains tax rate
-- **January 11, 2025**: Monthly view calculates investment returns based on monthly savings balance growth
-- **January 11, 2025**: Annual view displays gross investment returns before tax deductions
+- **January 11, 2025**: Investment returns calculated from total savings balance (including cash flow and contributions)
+- **January 11, 2025**: Returns shown as gross amounts before taxes, with taxes applied at specified investment gains tax rate
+- **January 11, 2025**: Monthly returns calculated from current savings balance after cash flow applied
+- **January 11, 2025**: Annual returns calculated from total savings balance including all contributions
 
 ## Changelog
 

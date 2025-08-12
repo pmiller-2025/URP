@@ -972,11 +972,11 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
     const netIncome = grossIncome - taxes;
     const netCashFlow = netIncome - actualLivingExpMonthly - actualInsuranceMonthly - actualExpense1Monthly - actualExpense2Monthly - actualExpense3Monthly - actualMortgageMonthly;
     
-    // Calculate monthly investment return (gross amount before taxes)
-    const monthlyInvestmentReturn = runningBalance * (state.savings.annualReturn / 100 / 12);
-    
     // All positive cash flow goes to savings, negative cash flow comes from savings
     runningBalance += netCashFlow;
+    
+    // Calculate monthly investment return from total savings balance (gross amount before taxes)
+    const monthlyInvestmentReturn = runningBalance * (state.savings.annualReturn / 100 / 12);
     
     // Apply investment returns (net after taxes)
     const monthlyTaxOnGains = state.savings.taxOnGains ? monthlyInvestmentReturn * (state.savings.gainsTaxRate / 100) : 0;
@@ -1334,14 +1334,16 @@ export function calculateAnnualProjections(state: CalculatorState): AnnualData[]
     
     const netCashFlow = afterTaxIncome - livingExpAnnual - insuranceAnnual - mortgageAnnual - lumpSumAnnual - expense1Annual - expense2Annual - expense3Annual;
     
-    // Calculate investment returns
-    const beginningBalance = currentSavingsBalance;
-    const investmentReturn = beginningBalance * (state.savings.annualReturn / 100);
+    // All positive cash flow automatically increases savings, negative cash flow comes from savings
+    currentSavingsBalance += netCashFlow + state.savings.additionalAnnual;
+    
+    // Calculate investment returns from total savings balance
+    const investmentReturn = currentSavingsBalance * (state.savings.annualReturn / 100);
     const taxOnGains = state.savings.taxOnGains ? investmentReturn * (state.savings.gainsTaxRate / 100) : 0;
     const netInvestmentReturn = investmentReturn - taxOnGains;
     
-    // All positive cash flow automatically increases savings, negative cash flow comes from savings
-    currentSavingsBalance += netCashFlow + netInvestmentReturn + state.savings.additionalAnnual;
+    // Apply net investment returns to savings
+    currentSavingsBalance += netInvestmentReturn;
     
     // Calculate home value with appreciation
     const homeValue = calculateInflationAdjusted(state.housing.homeValue, state.housing.homeAppreciation, yearIndex);
