@@ -975,11 +975,12 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
     // All positive cash flow goes to savings, negative cash flow comes from savings
     runningBalance += netCashFlow;
     
-    // Calculate monthly investment return from total savings balance (gross amount before taxes)
-    const monthlyInvestmentReturn = runningBalance * (state.savings.annualReturn / 100 / 12);
+    // Calculate monthly investment return from total savings balance (only on positive balance)
+    const investableMonthlyBalance = Math.max(0, runningBalance);
+    const monthlyInvestmentReturn = investableMonthlyBalance > 0 ? investableMonthlyBalance * (state.savings.annualReturn / 100 / 12) : 0;
     
     // Calculate investment taxes
-    const monthlyTaxOnGains = state.savings.taxOnGains ? monthlyInvestmentReturn * (state.savings.gainsTaxRate / 100) : 0;
+    const monthlyTaxOnGains = (state.savings.taxOnGains && monthlyInvestmentReturn > 0) ? monthlyInvestmentReturn * (state.savings.gainsTaxRate / 100) : 0;
     
     // Apply investment returns (net after taxes) 
     const netMonthlyInvestmentReturn = monthlyInvestmentReturn - monthlyTaxOnGains;
@@ -1208,17 +1209,12 @@ export function calculateAnnualProjections(state: CalculatorState): AnnualData[]
     
     const totalIncome = paulSSAnnual + jessicaSSAnnual + vaDisabilityAnnual + businessAnnual + jessicaAnnual + chapter35Annual + income1Annual + income2Annual + income3Annual;
     
-    // Calculate taxes
-    // Calculate investment returns from total savings balance
-    const investmentReturn = currentSavingsBalance * (state.savings.annualReturn / 100);
-    const taxOnGains = state.savings.taxOnGains ? investmentReturn * (state.savings.gainsTaxRate / 100) : 0;
-    
+    // Calculate taxes (without investment taxes initially)
     const totalTaxes = 
       calculateTaxes(paulSSAnnual, state.taxRates.socialSecurity, state.socialSecurity.paulTaxable) +
       calculateTaxes(jessicaSSAnnual, state.taxRates.socialSecurity, state.socialSecurity.jessicaTaxable) +
       calculateTaxes(businessAnnual, state.taxRates.business, true) +
-      calculateTaxes(jessicaAnnual, state.taxRates.jessica, true) +
-      taxOnGains; // Add investment taxes to total
+      calculateTaxes(jessicaAnnual, state.taxRates.jessica, true);
     
     const afterTaxIncome = totalIncome - totalTaxes;
     
@@ -1348,9 +1344,17 @@ export function calculateAnnualProjections(state: CalculatorState): AnnualData[]
     // All positive cash flow automatically increases savings, negative cash flow comes from savings
     currentSavingsBalance += netCashFlow + state.savings.additionalAnnual;
     
-    // Apply net investment returns to savings (taxes already calculated above)
+    // Calculate investment returns from updated savings balance (only on positive balance)
+    const investableBalance = Math.max(0, currentSavingsBalance);
+    const investmentReturn = investableBalance > 0 ? investableBalance * (state.savings.annualReturn / 100) : 0;
+    const taxOnGains = (state.savings.taxOnGains && investmentReturn > 0) ? investmentReturn * (state.savings.gainsTaxRate / 100) : 0;
     const netInvestmentReturn = investmentReturn - taxOnGains;
+    
+    // Apply net investment returns to savings
     currentSavingsBalance += netInvestmentReturn;
+    
+    // Update total taxes to include investment taxes
+    const finalTotalTaxes = totalTaxes + taxOnGains;
     
     // Calculate home value with appreciation
     const homeValue = calculateInflationAdjusted(state.housing.homeValue, state.housing.homeAppreciation, yearIndex);
@@ -1369,7 +1373,7 @@ export function calculateAnnualProjections(state: CalculatorState): AnnualData[]
       jessicaWork: jessicaAnnual,
       chapter35: chapter35Annual,
       totalIncome,
-      totalTaxes,
+      totalTaxes: finalTotalTaxes, // Include investment taxes
       afterTaxIncome,
       livingExp: livingExpAnnual,
       insurance: insuranceAnnual,
