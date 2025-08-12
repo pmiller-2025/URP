@@ -545,11 +545,15 @@ export function getPayoffDate(months: number): string {
 }
 
 export function calculateTaxes(income: number, rate: number, isTaxable: boolean): number {
-  return isTaxable ? income * (rate / 100) : 0;
+  if (!isTaxable || !income || isNaN(income) || isNaN(rate)) return 0;
+  const result = income * (rate / 100);
+  return isNaN(result) ? 0 : result;
 }
 
 export function calculateInflationAdjusted(baseAmount: number, rate: number, years: number): number {
-  return baseAmount * Math.pow(1 + (rate / 100), years);
+  if (isNaN(baseAmount) || isNaN(rate) || isNaN(years)) return baseAmount || 0;
+  const result = baseAmount * Math.pow(1 + (rate / 100), years);
+  return isNaN(result) ? baseAmount || 0 : result;
 }
 
 export function getTotalLivingExpenses(expenses: Expenses): number {
@@ -976,46 +980,53 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
     runningBalance += netCashFlow;
     
     // Calculate monthly investment return from total savings balance (only on positive balance)
-    const investableMonthlyBalance = Math.max(0, runningBalance);
-    const monthlyInvestmentReturn = investableMonthlyBalance > 0 ? investableMonthlyBalance * (state.savings.annualReturn / 100 / 12) : 0;
+    const investableMonthlyBalance = Math.max(0, runningBalance || 0);
+    const annualReturn = isNaN(state.savings.annualReturn) ? 0 : state.savings.annualReturn;
+    const gainsTaxRate = isNaN(state.savings.gainsTaxRate) ? 0 : state.savings.gainsTaxRate;
+    const monthlyInvestmentReturn = investableMonthlyBalance > 0 ? investableMonthlyBalance * (annualReturn / 100 / 12) : 0;
     
     // Calculate investment taxes
-    const monthlyTaxOnGains = (state.savings.taxOnGains && monthlyInvestmentReturn > 0) ? monthlyInvestmentReturn * (state.savings.gainsTaxRate / 100) : 0;
+    const monthlyTaxOnGains = (state.savings.taxOnGains && monthlyInvestmentReturn > 0) ? monthlyInvestmentReturn * (gainsTaxRate / 100) : 0;
     
     // Apply investment returns (net after taxes) 
     const netMonthlyInvestmentReturn = monthlyInvestmentReturn - monthlyTaxOnGains;
     runningBalance += netMonthlyInvestmentReturn;
+    
+    // Ensure no NaN values in running balance
+    runningBalance = isNaN(runningBalance) ? 0 : runningBalance;
     
     // Deduct lump sum payment from savings when applied
     if (lumpSumPayment > 0) {
       runningBalance -= lumpSumPayment;
     }
     
-    // Include investment taxes in total taxes
-    const totalTaxes = taxes + monthlyTaxOnGains;
+    // Include investment taxes in total taxes (with NaN safety)
+    const safeTaxes = isNaN(taxes) ? 0 : taxes;
+    const safeMonthlyTaxOnGains = isNaN(monthlyTaxOnGains) ? 0 : monthlyTaxOnGains;
+    const totalTaxes = safeTaxes + safeMonthlyTaxOnGains;
     const finalNetIncome = grossIncome - totalTaxes;
 
     monthlyData.push({
       month: monthName,
-      paulSS: paulSSMonthly,
-      jessicaSS: jessicaSSMonthly,
-      vaDisability: vaDisabilityMonthly,
-      business: actualBusinessMonthly,
-      jessicaWork: actualJessicaWorkMonthly,
-      chapter35: actualChapter35Monthly,
-      grossIncome,
-      taxes: totalTaxes, // Now includes investment taxes
-      netIncome: finalNetIncome,
-      livingExp: actualLivingExpMonthly,
-      insurance: actualInsuranceMonthly,
-      expense1: actualExpense1Monthly,
-      expense2: actualExpense2Monthly,
-      expense3: actualExpense3Monthly,
-      mortgage: actualMortgageMonthly,
-      mortgageBalance: beginningMortgageBalance,
-      netCashFlow,
-      returnOnInvestments: monthlyInvestmentReturn, // Gross return before taxes
-      savingsBalance: runningBalance
+      paulSS: isNaN(paulSSMonthly) ? 0 : paulSSMonthly,
+      jessicaSS: isNaN(jessicaSSMonthly) ? 0 : jessicaSSMonthly,
+      vaDisability: isNaN(vaDisabilityMonthly) ? 0 : vaDisabilityMonthly,
+      business: isNaN(actualBusinessMonthly) ? 0 : actualBusinessMonthly,
+      jessicaWork: isNaN(actualJessicaWorkMonthly) ? 0 : actualJessicaWorkMonthly,
+      chapter35: isNaN(actualChapter35Monthly) ? 0 : actualChapter35Monthly,
+      grossIncome: isNaN(grossIncome) ? 0 : grossIncome,
+      taxes: isNaN(totalTaxes) ? 0 : totalTaxes, // Now includes investment taxes
+      netIncome: isNaN(finalNetIncome) ? 0 : finalNetIncome,
+      livingExp: isNaN(actualLivingExpMonthly) ? 0 : actualLivingExpMonthly,
+      insurance: isNaN(actualInsuranceMonthly) ? 0 : actualInsuranceMonthly,
+      expense1: isNaN(actualExpense1Monthly) ? 0 : actualExpense1Monthly,
+      expense2: isNaN(actualExpense2Monthly) ? 0 : actualExpense2Monthly,
+      expense3: isNaN(actualExpense3Monthly) ? 0 : actualExpense3Monthly,
+      mortgage: isNaN(actualMortgageMonthly) ? 0 : actualMortgageMonthly,
+      mortgageBalance: isNaN(beginningMortgageBalance) ? 0 : beginningMortgageBalance,
+      netCashFlow: isNaN(netCashFlow) ? 0 : netCashFlow,
+      returnOnInvestments: isNaN(monthlyInvestmentReturn) ? 0 : monthlyInvestmentReturn, // Gross return before taxes
+      savingsBalance: isNaN(runningBalance) ? 0 : runningBalance
     });
   }
   
@@ -1345,16 +1356,21 @@ export function calculateAnnualProjections(state: CalculatorState): AnnualData[]
     currentSavingsBalance += netCashFlow + state.savings.additionalAnnual;
     
     // Calculate investment returns from updated savings balance (only on positive balance)
-    const investableBalance = Math.max(0, currentSavingsBalance);
-    const investmentReturn = investableBalance > 0 ? investableBalance * (state.savings.annualReturn / 100) : 0;
-    const taxOnGains = (state.savings.taxOnGains && investmentReturn > 0) ? investmentReturn * (state.savings.gainsTaxRate / 100) : 0;
+    const investableBalance = Math.max(0, currentSavingsBalance || 0);
+    const annualReturn = isNaN(state.savings.annualReturn) ? 0 : state.savings.annualReturn;
+    const gainsTaxRate = isNaN(state.savings.gainsTaxRate) ? 0 : state.savings.gainsTaxRate;
+    const investmentReturn = investableBalance > 0 ? investableBalance * (annualReturn / 100) : 0;
+    const taxOnGains = (state.savings.taxOnGains && investmentReturn > 0) ? investmentReturn * (gainsTaxRate / 100) : 0;
     const netInvestmentReturn = investmentReturn - taxOnGains;
     
     // Apply net investment returns to savings
     currentSavingsBalance += netInvestmentReturn;
     
+    // Ensure no NaN values in final calculations
+    currentSavingsBalance = isNaN(currentSavingsBalance) ? 0 : currentSavingsBalance;
+    
     // Update total taxes to include investment taxes
-    const finalTotalTaxes = totalTaxes + taxOnGains;
+    const finalTotalTaxes = (isNaN(totalTaxes) ? 0 : totalTaxes) + (isNaN(taxOnGains) ? 0 : taxOnGains);
     
     // Calculate home value with appreciation
     const homeValue = calculateInflationAdjusted(state.housing.homeValue, state.housing.homeAppreciation, yearIndex);
@@ -1364,30 +1380,30 @@ export function calculateAnnualProjections(state: CalculatorState): AnnualData[]
     
     annualData.push({
       year: 2025 + yearIndex,
-      paulAge,
-      jessicaAge,
-      paulSS: paulSSAnnual,
-      jessicaSS: jessicaSSAnnual,
-      vaDisability: vaDisabilityAnnual,
-      business: businessAnnual,
-      jessicaWork: jessicaAnnual,
-      chapter35: chapter35Annual,
-      totalIncome,
-      totalTaxes: finalTotalTaxes, // Include investment taxes
-      afterTaxIncome,
-      livingExp: livingExpAnnual,
-      insurance: insuranceAnnual,
-      expense1: expense1Annual,
-      expense2: expense2Annual,
-      expense3: expense3Annual,
-      mortgage: mortgageAnnual + lumpSumAnnual,
-      netCashFlow,
-      returnOnInvestments: investmentReturn, // Gross return before taxes
-      investmentReturn: netInvestmentReturn,
-      savingsBalance: currentSavingsBalance,
-      homeValue,
-      mortgageBalance: currentMortgageBalance,
-      netWorth
+      paulAge: isNaN(paulAge) ? 0 : paulAge,
+      jessicaAge: isNaN(jessicaAge) ? 0 : jessicaAge,
+      paulSS: isNaN(paulSSAnnual) ? 0 : paulSSAnnual,
+      jessicaSS: isNaN(jessicaSSAnnual) ? 0 : jessicaSSAnnual,
+      vaDisability: isNaN(vaDisabilityAnnual) ? 0 : vaDisabilityAnnual,
+      business: isNaN(businessAnnual) ? 0 : businessAnnual,
+      jessicaWork: isNaN(jessicaAnnual) ? 0 : jessicaAnnual,
+      chapter35: isNaN(chapter35Annual) ? 0 : chapter35Annual,
+      totalIncome: isNaN(totalIncome) ? 0 : totalIncome,
+      totalTaxes: isNaN(finalTotalTaxes) ? 0 : finalTotalTaxes, // Include investment taxes
+      afterTaxIncome: isNaN(afterTaxIncome) ? 0 : afterTaxIncome,
+      livingExp: isNaN(livingExpAnnual) ? 0 : livingExpAnnual,
+      insurance: isNaN(insuranceAnnual) ? 0 : insuranceAnnual,
+      expense1: isNaN(expense1Annual) ? 0 : expense1Annual,
+      expense2: isNaN(expense2Annual) ? 0 : expense2Annual,
+      expense3: isNaN(expense3Annual) ? 0 : expense3Annual,
+      mortgage: isNaN(mortgageAnnual + lumpSumAnnual) ? 0 : mortgageAnnual + lumpSumAnnual,
+      netCashFlow: isNaN(netCashFlow) ? 0 : netCashFlow,
+      returnOnInvestments: isNaN(investmentReturn) ? 0 : investmentReturn, // Gross return before taxes
+      investmentReturn: isNaN(netInvestmentReturn) ? 0 : netInvestmentReturn,
+      savingsBalance: isNaN(currentSavingsBalance) ? 0 : currentSavingsBalance,
+      homeValue: isNaN(homeValue) ? 0 : homeValue,
+      mortgageBalance: isNaN(currentMortgageBalance) ? 0 : currentMortgageBalance,
+      netWorth: isNaN(netWorth) ? 0 : netWorth
     });
   }
   
