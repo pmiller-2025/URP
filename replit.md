@@ -160,6 +160,10 @@ Preferred communication style: Simple, everyday language.
 - **January 11, 2025**: Returns shown as gross amounts before taxes, with taxes applied at specified investment gains tax rate
 - **January 11, 2025**: Monthly returns calculated from current savings balance after cash flow applied
 - **January 11, 2025**: Annual returns calculated from total savings balance including all contributions
+- **January 11, 2025**: Fixed NaN calculation errors in year 2033+ by adding comprehensive NaN safety checks throughout calculator
+- **January 11, 2025**: Investment taxes now properly included in total tax columns for both monthly and annual views
+- **January 11, 2025**: Net investment returns (after taxes) are added back to savings balance for proper compounding
+- **January 11, 2025**: Added safety checks to prevent calculations on negative savings balances
 
 ## Changelog
 
