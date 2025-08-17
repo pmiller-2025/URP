@@ -76,8 +76,8 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
 
   return (
     <>
-      {/* First Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+      {/* Horizontal Stacked Layout - Better Balance */}
+      <div className="space-y-6 mb-8">
         {/* Personal Information Card */}
         <Card className="bg-white rounded-xl shadow-sm border border-gray-200">
           <CardContent className="p-6">

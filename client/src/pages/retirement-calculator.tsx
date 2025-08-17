@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { InputSection } from "@/components/retirement/input-section";
+import { InputSectionHorizontal } from "@/components/retirement/input-section-horizontal";
 import { SummaryCards } from "@/components/retirement/summary-cards";
 import { ResultsTable } from "@/components/retirement/results-table";
 import { SavingsChart } from "@/components/retirement/savings-chart";
@@ -276,12 +276,9 @@ export default function RetirementCalculator() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Input Section */}
-        <InputSection 
+        <InputSectionHorizontal 
           state={state} 
           onUpdate={handleStateUpdate}
-          extraPayment={extraPayment}
-          standardPayoffMonths={standardPayoffMonths}
-          payoffDate={payoffDate}
         />
 
         {/* View Toggle */}
