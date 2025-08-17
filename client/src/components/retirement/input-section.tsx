@@ -7,7 +7,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CalculatorState, ssBenefitOptions, calculateAge, getCurrentDate, BudgetCategory, getTotalLivingExpenses, calculateLifeInsuranceDuration, calculateLifeInsuranceTotalCost, calculateExtraPayment } from "@/lib/calculator";
 import { InvestmentAllocator } from "./investment-allocator";
-import { InvestmentEquivalentBadge } from "./investment-equivalent-badge";
 import { Trash2, Plus } from "lucide-react";
 
 interface InputSectionProps {
@@ -236,13 +235,7 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
             
             <div className="space-y-4">
               <div>
-                <div className="flex items-center mb-1">
-                  <Label className="block text-sm font-medium text-gray-700">VA Disability (Monthly)</Label>
-                  <InvestmentEquivalentBadge 
-                    monthlyAmount={state.otherIncome.vaDisability} 
-                    label="VA Disability Investment Equivalent"
-                  />
-                </div>
+                <Label className="block text-sm font-medium text-gray-700 mb-1">VA Disability (Monthly)</Label>
                 <div className="relative">
                   <span className="absolute left-3 top-2 text-gray-500">$</span>
                   <Input 
@@ -260,14 +253,7 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                   <Label className="block text-sm font-medium text-gray-700 mb-2">Paul's Social Security</Label>
                   <div className="space-y-3">
                     <div>
-                      <div className="flex items-center mb-1">
-                        <Label className="block text-xs text-gray-600">Monthly Amount</Label>
-                        <InvestmentEquivalentBadge 
-                          monthlyAmount={state.socialSecurity.paulAmount} 
-                          label="Paul's SS Investment Equivalent"
-                          className="text-xs"
-                        />
-                      </div>
+                      <Label className="block text-xs text-gray-600 mb-1">Monthly Amount</Label>
                       <div className="relative">
                         <span className="absolute left-3 top-2 text-gray-500">$</span>
                         <Input 
@@ -311,14 +297,7 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                       <h4 className="text-sm font-medium text-blue-900 mb-2">Tier 1: Own Benefit (Before Paul Starts)</h4>
                       <div className="space-y-2">
                         <div>
-                          <div className="flex items-center mb-1">
-                            <Label className="block text-xs text-gray-600">Monthly Amount</Label>
-                            <InvestmentEquivalentBadge 
-                              monthlyAmount={state.socialSecurity.jessicaAmount} 
-                              label="Jessica's Tier 1 SS Investment Equivalent"
-                              className="text-xs"
-                            />
-                          </div>
+                          <Label className="block text-xs text-gray-600 mb-1">Monthly Amount</Label>
                           <div className="relative">
                             <span className="absolute left-3 top-2 text-gray-500">$</span>
                             <Input 
@@ -349,14 +328,7 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                       <h4 className="text-sm font-medium text-green-900 mb-2">Tier 2: Spousal Benefit (After Paul Starts)</h4>
                       <div className="space-y-2">
                         <div>
-                          <div className="flex items-center mb-1">
-                            <Label className="block text-xs text-gray-600">Monthly Spousal Benefit Amount</Label>
-                            <InvestmentEquivalentBadge 
-                              monthlyAmount={state.socialSecurity.jessicaSpousalAmount} 
-                              label="Jessica's Tier 2 SS Investment Equivalent"
-                              className="text-xs"
-                            />
-                          </div>
+                          <Label className="block text-xs text-gray-600 mb-1">Monthly Spousal Benefit Amount</Label>
                           <div className="relative">
                             <span className="absolute left-3 top-2 text-gray-500">$</span>
                             <Input 
@@ -372,22 +344,7 @@ export function InputSection({ state, onUpdate, extraPayment, standardPayoffMont
                       </div>
                     </div>
                     
-                    {/* Combined Social Security Investment Equivalent */}
-                    <div className="bg-yellow-50 border border-yellow-200 p-3 rounded-lg mt-4">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <h4 className="text-sm font-medium text-yellow-900">Combined SS Benefits</h4>
-                          <p className="text-xs text-yellow-700">When Jessica receives Tier 1 + Tier 2</p>
-                        </div>
-                        <InvestmentEquivalentBadge 
-                          monthlyAmount={state.socialSecurity.jessicaAmount + state.socialSecurity.jessicaSpousalAmount} 
-                          label="Jessica's Combined SS Investment Equivalent"
-                          className="bg-yellow-100 text-yellow-800 hover:bg-yellow-200"
-                        />
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-center mt-4">
+                    <div className="flex items-center">
                       <Checkbox 
                         id="jessica-ss-tax" 
                         checked={state.socialSecurity.jessicaTaxable}

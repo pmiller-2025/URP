@@ -217,25 +217,6 @@ export function isPersonAlive(currentAge: number, endOfLifeAge: number): boolean
   return currentAge < endOfLifeAge;
 }
 
-// Calculate the investment equivalent of a monthly income stream
-// Formula: Monthly Payment / (Annual Rate / 12) = Required Principal
-export function calculateInvestmentEquivalent(monthlyAmount: number, annualRate: number = 0.04): number {
-  if (monthlyAmount <= 0 || annualRate <= 0) return 0;
-  const monthlyRate = annualRate / 12;
-  return monthlyAmount / monthlyRate;
-}
-
-// Format investment equivalent for display
-export function formatInvestmentEquivalent(monthlyAmount: number, annualRate: number = 0.04): string {
-  const equivalent = calculateInvestmentEquivalent(monthlyAmount, annualRate);
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(equivalent);
-}
-
 export function getCurrentDate(): { month: number; year: number } {
   return {
     month: 9, // September 2025 start
