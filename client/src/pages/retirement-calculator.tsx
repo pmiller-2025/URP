@@ -102,6 +102,12 @@ export default function RetirementCalculator() {
         needsUpdate = true;
       }
       
+      // Update projection years to new default
+      if (parsed.personalInfo?.projectionYears !== 30) {
+        parsed.personalInfo.projectionYears = 30;
+        needsUpdate = true;
+      }
+      
       // Update business income to start in month 1
       if (parsed.otherIncome?.businessStartMonth !== 1) {
         parsed.otherIncome.businessStartMonth = 1;

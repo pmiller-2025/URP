@@ -188,6 +188,7 @@ Preferred communication style: Simple, everyday language.
 - **January 18, 2025**: Fixed mortgage balance carryover in monthly view to properly show zero balance after 10-month payoff
 - **January 18, 2025**: Resolved Year 2+ mortgage balance calculation - now correctly shows $0 balance after accelerated payoff completion
 - **January 18, 2025**: Updated default projection years from 20 to 30 years for extended retirement planning
+- **January 18, 2025**: Added automatic migration to update existing scenarios to 30-year projections
 
 ## Changelog
 
