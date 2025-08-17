@@ -173,7 +173,7 @@ Preferred communication style: Simple, everyday language.
 - **January 18, 2025**: Updated lump sum payment default to $0
 - **January 18, 2025**: Updated target payoff months default to 10 months
 - **January 18, 2025**: Updated Jessica's work income duration to 12 months
-- **January 18, 2025**: Updated Paul's birth month to September (9/25 starting date)
+- **January 18, 2025**: Rolled back birth dates to original: Paul (June), Jessica (October)
 - **January 18, 2025**: Updated retirement calculations to start from September 2025 instead of January 2025
 
 ## Changelog

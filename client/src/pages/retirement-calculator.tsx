@@ -84,9 +84,15 @@ export default function RetirementCalculator() {
         needsUpdate = true;
       }
       
-      // Update Paul's birth month to new default (September)
-      if (parsed.personalInfo?.paulBirthMonth !== 9) {
-        parsed.personalInfo.paulBirthMonth = 9;
+      // Update Paul's birth month back to original (June)
+      if (parsed.personalInfo?.paulBirthMonth !== 6) {
+        parsed.personalInfo.paulBirthMonth = 6;
+        needsUpdate = true;
+      }
+      
+      // Update Jessica's birth month back to original (October)
+      if (parsed.personalInfo?.jessicaBirthMonth !== 10) {
+        parsed.personalInfo.jessicaBirthMonth = 10;
         needsUpdate = true;
       }
       
