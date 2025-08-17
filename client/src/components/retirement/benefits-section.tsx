@@ -24,11 +24,12 @@ export function BenefitsSection({ state, onUpdate }: BenefitsSectionProps) {
     return parseFloat(value.replace(/,/g, '')) || 0;
   };
 
-  // Calculate total monthly benefits
+  // Calculate total monthly benefits (peak when all are active)
   const totalMonthlyBenefits = state.otherIncome.vaDisability + 
     state.socialSecurity.paulAmount + 
     state.socialSecurity.jessicaAmount + 
-    state.socialSecurity.jessicaSpousalAmount;
+    state.socialSecurity.jessicaSpousalAmount +
+    state.otherIncome.chapter35;
 
   // Calculate guaranteed income percentage vs work income
   const workIncome = state.otherIncome.businessIncome + state.otherIncome.jessicaIncome;
@@ -98,6 +99,77 @@ export function BenefitsSection({ state, onUpdate }: BenefitsSectionProps) {
               <strong>Survivor Benefits:</strong> Jessica receives 50% if Paul passes after March 2035, zero if before.
             </AlertDescription>
           </Alert>
+        </div>
+
+        <Separator />
+
+        {/* Chapter 35 Education Benefits */}
+        <div className="bg-gradient-to-r from-orange-50 to-yellow-50 p-4 rounded-lg border border-orange-200">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center">
+              <Calendar className="w-5 h-5 text-orange-600 mr-2" />
+              <Label className="text-base font-semibold text-orange-900">Chapter 35 Education Benefits</Label>
+            </div>
+            <Badge className="bg-orange-100 text-orange-800 border-orange-200">
+              Non-taxable
+            </Badge>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div>
+              <Label className="block text-sm font-medium text-orange-800 mb-1">Monthly Amount</Label>
+              <div className="relative">
+                <DollarSign className="absolute left-3 top-2.5 w-4 h-4 text-gray-500" />
+                <Input 
+                  type="text" 
+                  value={formatCurrency(state.otherIncome.chapter35)}
+                  onChange={(e) => onUpdate('otherIncome', { chapter35: parseCurrency(e.target.value) })}
+                  className="pl-9 focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white"
+                />
+              </div>
+            </div>
+            <div>
+              <Label className="block text-sm font-medium text-orange-800 mb-1">Start Month</Label>
+              <select 
+                value={state.otherIncome.chapter35StartMonth}
+                onChange={(e) => onUpdate('otherIncome', { chapter35StartMonth: parseInt(e.target.value) })}
+                className="w-full p-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white"
+              >
+                {Array.from({ length: 12 }, (_, i) => (
+                  <option key={i + 1} value={i + 1}>
+                    {String(i + 1).padStart(2, '0')}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <Label className="block text-sm font-medium text-orange-800 mb-1">Start Year</Label>
+              <select 
+                value={state.otherIncome.chapter35StartYear}
+                onChange={(e) => onUpdate('otherIncome', { chapter35StartYear: parseInt(e.target.value) })}
+                className="w-full p-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white"
+              >
+                {Array.from({ length: 10 }, (_, i) => (
+                  <option key={i} value={2025 + i}>
+                    {2025 + i}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <Label className="block text-sm font-medium text-orange-800 mb-1">Duration (months)</Label>
+              <Input 
+                type="number" 
+                min="1"
+                value={state.otherIncome.chapter35Duration}
+                onChange={(e) => onUpdate('otherIncome', { chapter35Duration: parseInt(e.target.value) || 24 })}
+                className="focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white"
+              />
+            </div>
+          </div>
+          <p className="text-xs text-orange-700 mt-2 bg-orange-50 p-2 rounded">
+            VA education benefit for dependents - typically 24-36 months
+          </p>
         </div>
 
         <Separator />
@@ -298,16 +370,10 @@ export function BenefitsSection({ state, onUpdate }: BenefitsSectionProps) {
                 <p className="text-xs text-gray-600 mt-1">Typical range: 1.5% - 3.0%</p>
               </div>
               
-              <div className="flex items-center">
-                <Checkbox 
-                  id="cola-tax" 
-                  checked={state.socialSecurity.colaTaxable}
-                  onCheckedChange={(checked) => onUpdate('socialSecurity', { colaTaxable: checked })}
-                  className="rounded border-gray-300 text-gray-600 focus:ring-gray-500"
-                />
-                <Label htmlFor="cola-tax" className="ml-2 text-sm text-gray-700">
-                  COLA increases are taxable
-                </Label>
+              <div className="text-center">
+                <p className="text-xs text-gray-600 bg-gray-50 p-2 rounded">
+                  COLA increases follow same tax treatment as base benefits
+                </p>
               </div>
             </div>
           </div>
@@ -320,24 +386,28 @@ export function BenefitsSection({ state, onUpdate }: BenefitsSectionProps) {
             Benefits Summary
           </h4>
           
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-3 text-sm">
             <div className="text-center">
               <div className="font-semibold text-green-800">${state.otherIncome.vaDisability.toLocaleString()}</div>
-              <div className="text-green-600">VA Disability</div>
+              <div className="text-green-600 text-xs">VA Disability</div>
+            </div>
+            <div className="text-center">
+              <div className="font-semibold text-green-800">${state.otherIncome.chapter35.toLocaleString()}</div>
+              <div className="text-green-600 text-xs">Chapter 35</div>
             </div>
             <div className="text-center">
               <div className="font-semibold text-green-800">${state.socialSecurity.paulAmount.toLocaleString()}</div>
-              <div className="text-green-600">Paul SS</div>
+              <div className="text-green-600 text-xs">Paul SS</div>
             </div>
             <div className="text-center">
               <div className="font-semibold text-green-800">
                 ${(state.socialSecurity.jessicaAmount + state.socialSecurity.jessicaSpousalAmount).toLocaleString()}
               </div>
-              <div className="text-green-600">Jessica SS Total</div>
+              <div className="text-green-600 text-xs">Jessica SS Total</div>
             </div>
-            <div className="text-center border-l border-green-300 pl-4">
+            <div className="text-center border-l border-green-300 pl-3">
               <div className="font-bold text-lg text-green-800">${totalMonthlyBenefits.toLocaleString()}</div>
-              <div className="text-green-600 font-semibold">Total Monthly</div>
+              <div className="text-green-600 font-semibold text-xs">Peak Monthly Total</div>
             </div>
           </div>
         </div>
