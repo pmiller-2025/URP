@@ -182,6 +182,7 @@ Preferred communication style: Simple, everyday language.
 - **January 18, 2025**: Updated Paul's birth month from June to July 1962
 - **January 18, 2025**: Updated Jessica's work income to start from month 1 (September 2025)
 - **January 18, 2025**: Updated Chapter 35 benefits to start from month 1 (September 2025)
+- **January 18, 2025**: Changed default view mode from annual to monthly
 
 ## Changelog
 

@@ -141,7 +141,7 @@ export default function RetirementCalculator() {
     }
     return getDefaultState();
   });
-  const [viewMode, setViewMode] = useState<ViewMode>('annual');
+  const [viewMode, setViewMode] = useState<ViewMode>('monthly');
   const [selectedYear, setSelectedYear] = useState(1);
   const [chartType, setChartType] = useState<ChartType>('savings');
   
