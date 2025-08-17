@@ -309,7 +309,7 @@ export function getDefaultState(): CalculatorState {
       paulTaxable: true,
       jessicaTaxable: true,
       paulStartAge: 70,
-      jessicaStartAge: 67
+      jessicaStartAge: 62
     },
     otherIncome: {
       vaDisability: 4050,
@@ -781,9 +781,11 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
         paulSSMonthly = paulEligible ? 
           calculateInflationAdjusted(state.socialSecurity.paulAmount, state.socialSecurity.cola, yearIndex) : 0;
         
-        // Jessica's two-tier benefit calculation
+        // Jessica's two-tier benefit calculation - starts January after turning 62
+        // Jessica born Dec 1968, turns 62 in Dec 2030, benefits start Jan 2031
         const jessicaEligible = jessicaAgeThisMonth >= state.socialSecurity.jessicaStartAge && 
-          (jessicaAgeThisMonth > state.socialSecurity.jessicaStartAge || actualMonth + 1 >= state.personalInfo.jessicaBirthMonth);
+          (jessicaAgeThisMonth > state.socialSecurity.jessicaStartAge || 
+           (jessicaAgeThisMonth === state.socialSecurity.jessicaStartAge && actualMonth + 1 >= 1)); // Start benefits in January (month 1)
         
         if (jessicaEligible && !paulEligible) {
           // Tier 1 only: Jessica's own benefit (before Paul starts)
@@ -800,7 +802,8 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
         // Paul died, Jessica alive: Jessica gets 100% of Paul's benefit as survivor benefit
         paulSSMonthly = 0;
         const jessicaEligible = jessicaAgeThisMonth >= state.socialSecurity.jessicaStartAge && 
-          (jessicaAgeThisMonth > state.socialSecurity.jessicaStartAge || actualMonth + 1 >= state.personalInfo.jessicaBirthMonth);
+          (jessicaAgeThisMonth > state.socialSecurity.jessicaStartAge || 
+           (jessicaAgeThisMonth === state.socialSecurity.jessicaStartAge && actualMonth + 1 >= 1)); // Start benefits in January (month 1)
         jessicaSSMonthly = jessicaEligible ? 
           calculateInflationAdjusted(state.socialSecurity.paulAmount, state.socialSecurity.cola, yearIndex) : 0;
       } else if (paulAlive && !jessicaAlive) {
@@ -1012,7 +1015,8 @@ export function calculateAnnualProjections(state: CalculatorState): AnnualData[]
       paulSSAnnual = (paulAge >= state.socialSecurity.paulStartAge) ? 
         calculateInflationAdjusted(state.socialSecurity.paulAmount * 12, state.socialSecurity.cola, yearIndex) : 0;
       
-      // Jessica's two-tier benefit calculation
+      // Jessica's two-tier benefit calculation - benefits start January after turning 62
+      // For annual calculation, she's eligible if she's reached the start age during the year
       const jessicaEligible = jessicaAge >= state.socialSecurity.jessicaStartAge;
       const paulEligible = paulAge >= state.socialSecurity.paulStartAge;
       

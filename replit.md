@@ -189,6 +189,10 @@ Preferred communication style: Simple, everyday language.
 - **January 18, 2025**: Resolved Year 2+ mortgage balance calculation - now correctly shows $0 balance after accelerated payoff completion
 - **January 18, 2025**: Updated default projection years from 20 to 30 years for extended retirement planning
 - **January 18, 2025**: Added automatic migration to update existing scenarios to 30-year projections
+- **January 18, 2025**: Updated Jessica's Social Security Tier 1 to start at age 62 instead of 67
+- **January 18, 2025**: Jessica's benefits now start in January 2031 (January after turning 62 in December 2030)
+- **January 18, 2025**: Fixed mortgage calculations with correct $37,400 balance and accurate amortization schedule
+- **January 18, 2025**: Updated interest savings calculation to $1,030.98 for 10-month accelerated payoff vs standard 22-month payoff
 
 ## Changelog
 
