@@ -10,6 +10,8 @@ URP (Ultimate Retirement Planner) is a comprehensive web application designed to
 - **Personal Details Updated**: Paul (July 1962, age 63), Jessica (December 1968, age 56), with accurate Social Security timing calculations
 - **Income Timeline Chart Added**: New visualization showing stacked bar chart of income sources over time, with annual and monthly views to track transition from work income to retirement benefits
 - **Fixed Business Income Default**: Updated localStorage migration to correct business income from old $2000 default to new $4000 default for deployed app consistency
+- **Complete UI Redesign**: Transformed vertical column layout to horizontal stacked sections with collapsible functionality for improved user experience and visual balance
+- **Four-Section Layout**: Organized input sections as Personal Information → Income → Benefits → Living Expenses in logical workflow order with expand/collapse capability
 
 ## User Preferences
 Preferred communication style: Simple, everyday language.
