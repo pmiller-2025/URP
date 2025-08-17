@@ -31,7 +31,7 @@ export default function RetirementCalculator() {
       let needsUpdate = false;
       
       // Check if the saved defaults have the old end of life values and update them
-      if (parsed.personalInfo?.paulEndOfLifeAge === 85) {
+      if (parsed.personalInfo?.paulEndOfLifeAge === 85 || parsed.personalInfo?.paulEndOfLifeAge === 70) {
         parsed.personalInfo.paulEndOfLifeAge = 100;
         needsUpdate = true;
       }
@@ -143,6 +143,10 @@ export default function RetirementCalculator() {
         localStorage.setItem('urp-default-state', JSON.stringify(parsed));
       }
       
+      // Debug logging for End of Life ages
+      console.log('Loaded state paulEndOfLifeAge:', parsed.personalInfo?.paulEndOfLifeAge);
+      console.log('Loaded state jessicaEndOfLifeAge:', parsed.personalInfo?.jessicaEndOfLifeAge);
+      
       return parsed;
     }
     return getDefaultState();
@@ -153,7 +157,8 @@ export default function RetirementCalculator() {
   
   // Force update end of life ages to new defaults if they're still using old values
   useEffect(() => {
-    if (state.personalInfo.paulEndOfLifeAge === 85 || state.personalInfo.jessicaEndOfLifeAge === 90) {
+    if (state.personalInfo.paulEndOfLifeAge === 85 || state.personalInfo.paulEndOfLifeAge === 70 || state.personalInfo.jessicaEndOfLifeAge === 90) {
+      console.log('Fixing End of Life ages - Paul from', state.personalInfo.paulEndOfLifeAge, 'to 100');
       setState(prev => ({
         ...prev,
         personalInfo: {
