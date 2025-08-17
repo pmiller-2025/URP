@@ -940,6 +940,11 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
     const netIncome = grossIncome - taxes;
     const netCashFlow = netIncome - actualLivingExpMonthly - actualInsuranceMonthly - actualExpense1Monthly - actualExpense2Monthly - actualExpense3Monthly - actualMortgageMonthly;
     
+    // Add initial $30,000 savings in September 2025 (month 8, offset 8)
+    if (currentMonthOffset === 8) {
+      runningBalance += 30000;
+    }
+    
     // All positive cash flow goes to savings, negative cash flow comes from savings
     runningBalance += netCashFlow;
     
