@@ -297,7 +297,7 @@ export function getDefaultState(): CalculatorState {
       lukeAge: 20,
       lukeBirthMonth: 11,
       lukeBirthYear: 2004,
-      projectionYears: 20,
+      projectionYears: 30,
       paulEndOfLifeAge: 100, // Default to age 100
       jessicaEndOfLifeAge: 100 // Default to age 100
     },
@@ -900,6 +900,7 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
     
     // Apply lump sum payment if it occurs this month
     let lumpSumPayment = 0;
+    const lumpSumMonthOffset = (state.housing.lumpSumYear - 1) * 12 + (state.housing.lumpSumMonth - 1);
     if (state.housing.lumpSumAmount > 0 && currentMonthOffset === lumpSumMonthOffset) {
       lumpSumPayment = state.housing.lumpSumAmount;
       currentMortgageBalance = Math.max(0, currentMortgageBalance - lumpSumPayment);
