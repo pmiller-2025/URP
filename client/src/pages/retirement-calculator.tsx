@@ -46,6 +46,12 @@ export default function RetirementCalculator() {
         needsUpdate = true;
       }
       
+      // Update business income to new default if it's showing old value
+      if (parsed.otherIncome?.businessIncome === 2000) {
+        parsed.otherIncome.businessIncome = 4000;
+        needsUpdate = true;
+      }
+      
       // Update Social Security defaults to new values
       if (parsed.socialSecurity?.paulAmount !== 3968) {
         parsed.socialSecurity.paulAmount = 3968;
