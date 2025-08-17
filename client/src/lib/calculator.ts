@@ -292,7 +292,7 @@ export function getDefaultState(): CalculatorState {
       jessicaAge: 56,
       paulBirthMonth: 6,
       paulBirthYear: 1962,
-      jessicaBirthMonth: 10,
+      jessicaBirthMonth: 12,
       jessicaBirthYear: 1968,
       lukeAge: 20,
       lukeBirthMonth: 11,

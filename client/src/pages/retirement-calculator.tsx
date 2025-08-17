@@ -90,9 +90,9 @@ export default function RetirementCalculator() {
         needsUpdate = true;
       }
       
-      // Update Jessica's birth month back to original (October)
-      if (parsed.personalInfo?.jessicaBirthMonth !== 10) {
-        parsed.personalInfo.jessicaBirthMonth = 10;
+      // Update Jessica's birth month back to original (December)
+      if (parsed.personalInfo?.jessicaBirthMonth !== 12) {
+        parsed.personalInfo.jessicaBirthMonth = 12;
         needsUpdate = true;
       }
       
