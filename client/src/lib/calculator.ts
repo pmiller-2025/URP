@@ -343,7 +343,7 @@ export function getDefaultState(): CalculatorState {
       mortgageBalance: 37400,
       monthlyPayment: 1816.92,
       interestRate: 5.5,
-      targetPayoffMonths: 24,
+      targetPayoffMonths: 10,
       homeAppreciation: 2.5,
       acceleratePayoff: true,
       lumpSumAmount: 0,

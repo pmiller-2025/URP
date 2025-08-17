@@ -72,6 +72,12 @@ export default function RetirementCalculator() {
         needsUpdate = true;
       }
       
+      // Update target payoff months to new default
+      if (parsed.housing?.targetPayoffMonths !== 10) {
+        parsed.housing.targetPayoffMonths = 10;
+        needsUpdate = true;
+      }
+      
       // Save the updated defaults back if any changes were made
       if (needsUpdate) {
         localStorage.setItem('urp-default-state', JSON.stringify(parsed));
