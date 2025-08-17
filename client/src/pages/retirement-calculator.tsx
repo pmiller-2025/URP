@@ -46,6 +46,20 @@ export default function RetirementCalculator() {
         needsUpdate = true;
       }
       
+      // Update Social Security defaults to new values
+      if (parsed.socialSecurity?.paulAmount !== 3968) {
+        parsed.socialSecurity.paulAmount = 3968;
+        needsUpdate = true;
+      }
+      if (parsed.socialSecurity?.jessicaAmount !== 872) {
+        parsed.socialSecurity.jessicaAmount = 872;
+        needsUpdate = true;
+      }
+      if (parsed.socialSecurity?.jessicaSpousalAmount !== 263) {
+        parsed.socialSecurity.jessicaSpousalAmount = 263;
+        needsUpdate = true;
+      }
+      
       // Save the updated defaults back if any changes were made
       if (needsUpdate) {
         localStorage.setItem('urp-default-state', JSON.stringify(parsed));

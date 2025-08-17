@@ -167,6 +167,7 @@ Preferred communication style: Simple, everyday language.
 - **January 18, 2025**: Updated Jessica's Tier 1 Social Security default to $872/month
 - **January 18, 2025**: Updated Jessica's Tier 2 spousal benefit default to $263/month
 - **January 18, 2025**: Updated Paul's Social Security default to $3,968/month at age 70
+- **January 18, 2025**: Added automatic migration to update cached Social Security values to new defaults
 
 ## Changelog
 
