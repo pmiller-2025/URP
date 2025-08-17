@@ -303,7 +303,7 @@ export function getDefaultState(): CalculatorState {
     },
     socialSecurity: {
       paulAmount: 0, // User will set custom amount
-      jessicaAmount: 859, // Jessica's Tier 1 SS benefit
+      jessicaAmount: 872, // Jessica's Tier 1 SS benefit
       jessicaSpousalAmount: 0, // User will set custom amount
       cola: 3.0,
       paulTaxable: true,
