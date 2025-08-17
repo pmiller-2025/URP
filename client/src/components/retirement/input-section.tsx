@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CalculatorState, ssBenefitOptions, calculateAge, getCurrentDate, BudgetCategory, getTotalLivingExpenses, calculateLifeInsuranceDuration, calculateLifeInsuranceTotalCost, calculateExtraPayment } from "@/lib/calculator";
 import { InvestmentAllocator } from "./investment-allocator";
+import { BenefitsSection } from "./benefits-section";
 import { Trash2, Plus } from "lucide-react";
 
 interface InputSectionProps {
