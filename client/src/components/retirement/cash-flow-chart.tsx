@@ -1,15 +1,18 @@
 import { useEffect, useRef, useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { MonthlyData } from "@/lib/calculator";
+import { MonthlyData, AnnualData } from "@/lib/calculator";
 
 interface CashFlowChartProps {
   monthlyData: MonthlyData[];
+  annualData?: AnnualData[];
 }
 
-export function CashFlowChart({ monthlyData }: CashFlowChartProps) {
+export function CashFlowChart({ monthlyData, annualData }: CashFlowChartProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [timeFrameYears, setTimeFrameYears] = useState(5);
+  const [viewMode, setViewMode] = useState<'annual' | 'monthly'>('monthly');
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -33,22 +36,43 @@ export function CashFlowChart({ monthlyData }: CashFlowChartProps) {
     // Clear canvas
     ctx.clearRect(0, 0, width, height);
 
-    // Sample data based on selected time frame
-    const monthsToShow = timeFrameYears * 12;
-    const sampleData = monthlyData.slice(0, monthsToShow);
+    // Extract data based on view mode
+    let totalIncomeData: number[], totalExpensesData: number[], netCashFlowData: number[];
     
-    // Extract data
-    const totalIncomeData = sampleData.map(d => d.netIncome);
-    const totalExpensesData = sampleData.map(d => d.livingExp + d.insurance + d.expense1 + d.expense2 + d.expense3 + d.mortgage);
-    const netCashFlowData = sampleData.map(d => d.netCashFlow);
-    
-    // Extract income source data
-    const paulSSData = sampleData.map(d => d.paulSS);
-    const jessicaSSData = sampleData.map(d => d.jessicaSS);
-    const vaDisabilityData = sampleData.map(d => d.vaDisability);
-    const businessData = sampleData.map(d => d.business);
-    const jessicaWorkData = sampleData.map(d => d.jessicaWork);
-    const chapter35Data = sampleData.map(d => d.chapter35);
+    if (viewMode === 'monthly') {
+      const monthsToShow = timeFrameYears * 12;
+      const sampleData = monthlyData.slice(0, monthsToShow);
+      totalIncomeData = sampleData.map(d => d.netIncome);
+      totalExpensesData = sampleData.map(d => d.livingExp + d.insurance + d.expense1 + d.expense2 + d.expense3 + d.mortgage);
+      netCashFlowData = sampleData.map(d => d.netCashFlow);
+    } else {
+      // Annual view - convert from annual data or aggregate monthly data
+      const yearsToShow = Math.min(timeFrameYears, annualData?.length || 10);
+      if (annualData) {
+        const sampleData = annualData.slice(0, yearsToShow);
+        totalIncomeData = sampleData.map(d => d.totalIncome);
+        totalExpensesData = sampleData.map(d => d.totalExpenses);
+        netCashFlowData = sampleData.map(d => d.netCashFlow);
+      } else {
+        // Fallback to aggregated monthly data
+        totalIncomeData = [];
+        totalExpensesData = [];
+        netCashFlowData = [];
+        for (let year = 0; year < yearsToShow; year++) {
+          const yearStart = year * 12;
+          const yearEnd = Math.min(yearStart + 12, monthlyData.length);
+          const yearData = monthlyData.slice(yearStart, yearEnd);
+          
+          const yearIncome = yearData.reduce((sum, d) => sum + d.netIncome, 0);
+          const yearExpenses = yearData.reduce((sum, d) => sum + (d.livingExp + d.insurance + d.expense1 + d.expense2 + d.expense3 + d.mortgage), 0);
+          const yearCashFlow = yearData.reduce((sum, d) => sum + d.netCashFlow, 0);
+          
+          totalIncomeData.push(yearIncome);
+          totalExpensesData.push(yearExpenses);
+          netCashFlowData.push(yearCashFlow);
+        }
+      }
+    }
 
     // Find min/max values
     const maxIncome = Math.max(...totalIncomeData);
@@ -246,7 +270,7 @@ export function CashFlowChart({ monthlyData }: CashFlowChartProps) {
       }
     });
 
-  }, [monthlyData, timeFrameYears]);
+  }, [monthlyData, annualData, timeFrameYears, viewMode]);
 
   return (
     <Card className="bg-white rounded-xl shadow-sm border border-gray-200 mb-8">
@@ -256,9 +280,25 @@ export function CashFlowChart({ monthlyData }: CashFlowChartProps) {
             <i className="fas fa-chart-line text-finance-blue mr-2"></i>
             Cash Flow Analysis ({timeFrameYears} Years)
           </h2>
-          <div className="flex items-center space-x-4 text-sm">
+          <div className="flex items-center space-x-6">
+            <div className="flex space-x-2">
+              <Button
+                variant={viewMode === 'annual' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setViewMode('annual')}
+              >
+                Annual
+              </Button>
+              <Button
+                variant={viewMode === 'monthly' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setViewMode('monthly')}
+              >
+                Monthly
+              </Button>
+            </div>
             <div className="flex items-center space-x-2">
-              <span className="text-gray-600">Time Frame:</span>
+              <span className="text-gray-600 text-sm">Time Frame:</span>
               <Select value={timeFrameYears.toString()} onValueChange={(value) => setTimeFrameYears(Number(value))}>
                 <SelectTrigger className="w-24">
                   <SelectValue />
@@ -273,34 +313,20 @@ export function CashFlowChart({ monthlyData }: CashFlowChartProps) {
                 </SelectContent>
               </Select>
             </div>
-            <div className="flex items-center">
-              <div className="w-3 h-3 bg-blue-500 rounded mr-2"></div>
-              <span className="text-gray-600">Paul SS</span>
-            </div>
-            <div className="flex items-center">
-              <div className="w-3 h-3 bg-purple-600 rounded mr-2"></div>
-              <span className="text-gray-600">Jessica SS</span>
-            </div>
-            <div className="flex items-center">
-              <div className="w-3 h-3 bg-red-500 rounded mr-2"></div>
-              <span className="text-gray-600">VA Disability</span>
-            </div>
-            <div className="flex items-center">
-              <div className="w-3 h-3 bg-green-500 rounded mr-2"></div>
-              <span className="text-gray-600">Business</span>
-            </div>
-            <div className="flex items-center">
-              <div className="w-3 h-3 bg-amber-500 rounded mr-2"></div>
-              <span className="text-gray-600">Jessica Work</span>
-            </div>
-            <div className="flex items-center">
-              <div className="w-3 h-3 bg-violet-500 rounded mr-2"></div>
-              <span className="text-gray-600">Chapter 35</span>
-            </div>
-            <div className="flex items-center">
-              <div className="w-3 h-3 bg-finance-blue rounded mr-2"></div>
-              <span className="text-gray-600">Net Cash Flow</span>
-            </div>
+          </div>
+        </div>
+        <div className="flex items-center space-x-4 text-sm mb-4">
+          <div className="flex items-center">
+            <div className="w-3 h-3 bg-finance-green rounded mr-2"></div>
+            <span className="text-gray-600">Total Income</span>
+          </div>
+          <div className="flex items-center">
+            <div className="w-3 h-3 bg-red-500 rounded mr-2"></div>
+            <span className="text-gray-600">Total Expenses</span>
+          </div>
+          <div className="flex items-center">
+            <div className="w-3 h-3 bg-blue-500 rounded mr-2"></div>
+            <span className="text-gray-600">Net Cash Flow</span>
           </div>
         </div>
         <div className="relative">
@@ -309,9 +335,6 @@ export function CashFlowChart({ monthlyData }: CashFlowChartProps) {
             className="w-full h-96 border border-gray-200 rounded-lg"
             style={{ width: '100%', height: '24rem' }}
           />
-        </div>
-        <div className="mt-4 text-sm text-gray-600">
-          <p>This chart shows your monthly cash flow patterns over {timeFrameYears} years. Stacked colored areas show different income sources, red areas represent total expenses, and the blue line shows your net cash flow (surplus or deficit).</p>
         </div>
       </CardContent>
     </Card>

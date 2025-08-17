@@ -340,8 +340,8 @@ export default function RetirementCalculator() {
         </div>
         
         {/* Render selected chart */}
-        {chartType === 'savings' && <SavingsChart annualData={annualData} />}
-        {chartType === 'cashflow' && <CashFlowChart monthlyData={monthlyData} />}
+        {chartType === 'savings' && <SavingsChart annualData={annualData} monthlyData={monthlyData} />}
+        {chartType === 'cashflow' && <CashFlowChart monthlyData={monthlyData} annualData={annualData} />}
         {chartType === 'income' && <IncomeTimelineChart state={state} viewMode={viewMode} selectedYear={selectedYear} />}
 
         {/* Results Table */}

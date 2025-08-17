@@ -1,5 +1,6 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { CalculatorState, calculateMonthlyProjections } from '@/lib/calculator';
 
 interface IncomeTimelineChartProps {
@@ -16,6 +17,7 @@ interface IncomeSource {
 
 export function IncomeTimelineChart({ state, viewMode, selectedYear = 1 }: IncomeTimelineChartProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [internalViewMode, setInternalViewMode] = useState<'annual' | 'monthly'>(viewMode);
   
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -45,7 +47,7 @@ export function IncomeTimelineChart({ state, viewMode, selectedYear = 1 }: Incom
     let labels: string[];
     let periods: number;
 
-    if (viewMode === 'annual') {
+    if (internalViewMode === 'annual') {
       // Annual view - 30 years
       periods = 30;
       labels = Array.from({ length: periods }, (_, i) => `Year ${i + 1}`);
@@ -197,25 +199,45 @@ export function IncomeTimelineChart({ state, viewMode, selectedYear = 1 }: Incom
     ctx.fillStyle = '#111827';
     ctx.font = 'bold 14px system-ui';
     ctx.textAlign = 'center';
-    const title = viewMode === 'annual' 
+    const title = internalViewMode === 'annual' 
       ? 'Income Sources Over 30 Years' 
       : `Monthly Income Sources - Year ${selectedYear}`;
     ctx.fillText(title, width / 2, 25);
 
-  }, [state, viewMode, selectedYear]);
+  }, [state, internalViewMode, selectedYear]);
 
   return (
     <Card className="w-full">
       <CardHeader className="pb-2">
-        <CardTitle className="text-lg font-semibold">
-          Income Timeline Breakdown
-        </CardTitle>
-        <p className="text-sm text-gray-600">
-          {viewMode === 'annual' 
-            ? 'Annual income composition showing transition from work to retirement benefits'
-            : `Monthly breakdown for Year ${selectedYear} showing seasonal variations`
-          }
-        </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <CardTitle className="text-lg font-semibold">
+              Income Timeline Breakdown
+            </CardTitle>
+            <p className="text-sm text-gray-600">
+              {internalViewMode === 'annual' 
+                ? 'Annual income composition showing transition from work to retirement benefits'
+                : `Monthly breakdown for Year ${selectedYear} showing seasonal variations`
+              }
+            </p>
+          </div>
+          <div className="flex space-x-2">
+            <Button
+              variant={internalViewMode === 'annual' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setInternalViewMode('annual')}
+            >
+              Annual
+            </Button>
+            <Button
+              variant={internalViewMode === 'monthly' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setInternalViewMode('monthly')}
+            >
+              Monthly
+            </Button>
+          </div>
+        </div>
       </CardHeader>
       <CardContent>
         <div className="relative">

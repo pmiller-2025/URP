@@ -1,12 +1,15 @@
-import { useEffect, useRef } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { AnnualData } from "@/lib/calculator";
+import { useEffect, useRef, useState } from "react";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { AnnualData, MonthlyData } from "@/lib/calculator";
 
 interface SavingsChartProps {
   annualData: AnnualData[];
+  monthlyData?: MonthlyData[];
 }
 
-export function SavingsChart({ annualData }: SavingsChartProps) {
+export function SavingsChart({ annualData, monthlyData }: SavingsChartProps) {
+  const [viewMode, setViewMode] = useState<'annual' | 'monthly'>('annual');
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -31,10 +34,20 @@ export function SavingsChart({ annualData }: SavingsChartProps) {
     // Clear canvas
     ctx.clearRect(0, 0, width, height);
 
-    // Extract data
-    const years = annualData.map(d => d.year);
-    const savingsData = annualData.map(d => d.savingsBalance);
-    const netWorthData = annualData.map(d => d.netWorth);
+    // Extract data based on view mode
+    let years: number[], savingsData: number[], netWorthData: number[];
+    
+    if (viewMode === 'annual') {
+      years = annualData.map(d => d.year);
+      savingsData = annualData.map(d => d.savingsBalance);
+      netWorthData = annualData.map(d => d.netWorth);
+    } else {
+      // Monthly view - show first 60 months (5 years)
+      const monthsToShow = Math.min(60, monthlyData?.length || 0);
+      years = Array.from({ length: monthsToShow }, (_, i) => i + 1);
+      savingsData = monthlyData?.slice(0, monthsToShow).map(d => d.savingsBalance) || [];
+      netWorthData = monthlyData?.slice(0, monthsToShow).map(d => d.netWorth) || [];
+    }
 
     // Find min/max values
     const maxSavings = Math.max(...savingsData);
@@ -149,7 +162,7 @@ export function SavingsChart({ annualData }: SavingsChartProps) {
       ctx.fill();
     });
 
-  }, [annualData]);
+  }, [annualData, monthlyData, viewMode]);
 
   return (
     <Card className="bg-white rounded-xl shadow-sm border border-gray-200 mb-8">
@@ -159,14 +172,32 @@ export function SavingsChart({ annualData }: SavingsChartProps) {
             <i className="fas fa-chart-area text-finance-blue mr-2"></i>
             Savings Balance Over Time
           </h2>
-          <div className="flex items-center space-x-4 text-sm">
-            <div className="flex items-center">
-              <div className="w-3 h-3 bg-finance-blue rounded mr-2"></div>
-              <span className="text-gray-600">Savings Balance</span>
+          <div className="flex items-center space-x-6">
+            <div className="flex space-x-2">
+              <Button
+                variant={viewMode === 'annual' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setViewMode('annual')}
+              >
+                Annual
+              </Button>
+              <Button
+                variant={viewMode === 'monthly' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setViewMode('monthly')}
+              >
+                Monthly
+              </Button>
             </div>
-            <div className="flex items-center">
-              <div className="w-3 h-3 bg-finance-green rounded mr-2"></div>
-              <span className="text-gray-600">Net Worth</span>
+            <div className="flex items-center space-x-4 text-sm">
+              <div className="flex items-center">
+                <div className="w-3 h-3 bg-finance-blue rounded mr-2"></div>
+                <span className="text-gray-600">Savings Balance</span>
+              </div>
+              <div className="flex items-center">
+                <div className="w-3 h-3 bg-finance-green rounded mr-2"></div>
+                <span className="text-gray-600">Net Worth</span>
+              </div>
             </div>
           </div>
         </div>
