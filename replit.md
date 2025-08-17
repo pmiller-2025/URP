@@ -165,6 +165,7 @@ Preferred communication style: Simple, everyday language.
 - **January 11, 2025**: Net investment returns (after taxes) are added back to savings balance for proper compounding
 - **January 11, 2025**: Added safety checks to prevent calculations on negative savings balances
 - **January 18, 2025**: Updated Jessica's Tier 1 Social Security default to $872/month
+- **January 18, 2025**: Updated Jessica's Tier 2 spousal benefit default to $263/month
 
 ## Changelog
 
