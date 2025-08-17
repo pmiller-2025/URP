@@ -1,31 +1,32 @@
-import { useEffect, useRef, useState } from "react";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { MonthlyData, AnnualData } from "@/lib/calculator";
+import { useEffect, useRef, useState } from 'react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
+import { MonthlyData, AnnualData } from '@/lib/calculator';
 
 interface CashFlowChartProps {
   monthlyData: MonthlyData[];
-  annualData?: AnnualData[];
+  annualData: AnnualData[];
 }
 
 export function CashFlowChart({ monthlyData, annualData }: CashFlowChartProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [timeFrameYears, setTimeFrameYears] = useState(5);
+  const [timeFrameYears, setTimeFrameYears] = useState(10);
   const [viewMode, setViewMode] = useState<'annual' | 'monthly'>('monthly');
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-
+    
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Set canvas size
+    // Set canvas dimensions
     const rect = canvas.getBoundingClientRect();
-    canvas.width = rect.width * window.devicePixelRatio;
-    canvas.height = rect.height * window.devicePixelRatio;
-    ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    ctx.scale(dpr, dpr);
 
     const width = rect.width;
     const height = rect.height;
@@ -36,70 +37,51 @@ export function CashFlowChart({ monthlyData, annualData }: CashFlowChartProps) {
     // Clear canvas
     ctx.clearRect(0, 0, width, height);
 
-    // Extract data based on view mode
-    let totalIncomeData: number[], totalExpensesData: number[], netCashFlowData: number[];
-    
+    // Determine data to display
+    let totalIncomeData: number[] = [];
+    let totalExpensesData: number[] = [];
+    let netCashFlowData: number[] = [];
+    let labels: string[] = [];
+
     if (viewMode === 'monthly') {
-      const monthsToShow = timeFrameYears * 12;
+      // Monthly view - show months up to timeframe
+      const monthsToShow = Math.min(timeFrameYears * 12, monthlyData.length);
       const sampleData = monthlyData.slice(0, monthsToShow);
-      totalIncomeData = sampleData.map(d => d.netIncome);
-      totalExpensesData = sampleData.map(d => d.livingExp + d.insurance + d.expense1 + d.expense2 + d.expense3 + d.mortgage);
+      
+      totalIncomeData = sampleData.map(d => d.totalIncome);
+      totalExpensesData = sampleData.map(d => d.totalExpenses);
       netCashFlowData = sampleData.map(d => d.netCashFlow);
+      labels = sampleData.map((_, i) => `Month ${i + 1}`);
     } else {
-      // Annual view - convert from annual data or aggregate monthly data
-      const yearsToShow = Math.min(timeFrameYears, annualData?.length || 10);
-      if (annualData) {
-        const sampleData = annualData.slice(0, yearsToShow);
-        totalIncomeData = sampleData.map(d => d.totalIncome);
-        totalExpensesData = sampleData.map(d => d.totalExpenses);
-        netCashFlowData = sampleData.map(d => d.netCashFlow);
-      } else {
-        // Fallback to aggregated monthly data
-        totalIncomeData = [];
-        totalExpensesData = [];
-        netCashFlowData = [];
-        for (let year = 0; year < yearsToShow; year++) {
-          const yearStart = year * 12;
-          const yearEnd = Math.min(yearStart + 12, monthlyData.length);
-          const yearData = monthlyData.slice(yearStart, yearEnd);
-          
-          const yearIncome = yearData.reduce((sum, d) => sum + d.netIncome, 0);
-          const yearExpenses = yearData.reduce((sum, d) => sum + (d.livingExp + d.insurance + d.expense1 + d.expense2 + d.expense3 + d.mortgage), 0);
-          const yearCashFlow = yearData.reduce((sum, d) => sum + d.netCashFlow, 0);
-          
-          totalIncomeData.push(yearIncome);
-          totalExpensesData.push(yearExpenses);
-          netCashFlowData.push(yearCashFlow);
-        }
-      }
+      // Annual view - show years up to timeframe
+      const yearsToShow = Math.min(timeFrameYears, annualData.length);
+      const sampleData = annualData.slice(0, yearsToShow);
+      
+      totalIncomeData = sampleData.map(d => d.totalIncome);
+      totalExpensesData = sampleData.map(d => d.livingExpenses || 0); // Use livingExpenses for annual
+      netCashFlowData = sampleData.map(d => d.netCashFlow);
+      labels = sampleData.map((_, i) => `Year ${i + 1}`);
     }
 
-    // Find min/max values
-    const maxIncome = Math.max(...totalIncomeData);
-    const maxExpenses = Math.max(...totalExpensesData);
-    const maxCashFlow = Math.max(...netCashFlowData);
-    const minCashFlow = Math.min(...netCashFlowData);
-    
-    const maxValue = Math.max(maxIncome, maxExpenses, maxCashFlow);
-    const minValue = Math.min(0, minCashFlow);
+    if (totalIncomeData.length === 0) return;
 
-    // Draw grid
+    // Calculate value ranges
+    const maxValue = Math.max(
+      Math.max(...totalIncomeData),
+      Math.max(...totalExpensesData),
+      Math.max(...netCashFlowData.map(Math.abs))
+    );
+    const minValue = Math.min(0, Math.min(...netCashFlowData));
+
+    // Draw background
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, width, height);
+
+    // Draw grid lines
     ctx.strokeStyle = '#e5e7eb';
     ctx.lineWidth = 1;
-
-    // Vertical grid lines (every year)
-    const gridLines = timeFrameYears;
-    for (let i = 0; i <= gridLines; i++) {
-      const x = padding + (i * chartWidth) / gridLines;
-      ctx.beginPath();
-      ctx.moveTo(x, padding);
-      ctx.lineTo(x, height - padding);
-      ctx.stroke();
-    }
-
-    // Horizontal grid lines
-    for (let i = 0; i <= 6; i++) {
-      const y = padding + (i * chartHeight) / 6;
+    for (let i = 0; i <= 5; i++) {
+      const y = padding + (i * chartHeight) / 5;
       ctx.beginPath();
       ctx.moveTo(padding, y);
       ctx.lineTo(width - padding, y);
@@ -130,56 +112,22 @@ export function CashFlowChart({ monthlyData, annualData }: CashFlowChartProps) {
 
     // Function to get point coordinates
     const getPoint = (index: number, value: number) => {
-      const x = padding + (index * chartWidth) / (sampleData.length - 1);
+      const x = padding + (index * chartWidth) / (totalIncomeData.length - 1);
       const y = height - padding - ((value - minValue) * chartHeight) / (maxValue - minValue);
       return { x, y };
     };
 
-    // Draw stacked income areas
-    const incomeColors = [
-      'rgba(59, 130, 246, 0.3)', // Paul SS - blue
-      'rgba(147, 51, 234, 0.3)', // Jessica SS - purple
-      'rgba(239, 68, 68, 0.3)',  // VA Disability - red
-      'rgba(34, 197, 94, 0.3)',  // Business - green
-      'rgba(245, 158, 11, 0.3)', // Jessica Work - amber
-      'rgba(168, 85, 247, 0.3)'  // Chapter 35 - violet
-    ];
-    
-    const incomeSources = [paulSSData, jessicaSSData, vaDisabilityData, businessData, jessicaWorkData, chapter35Data];
-    const sourceNames = ['Paul SS', 'Jessica SS', 'VA Disability', 'Business', 'Jessica Work', 'Chapter 35'];
-    
-    // Create cumulative data for stacking
-    const cumulativeData = sampleData.map((_, index) => {
-      let cumulative = 0;
-      return incomeSources.map(source => {
-        cumulative += source[index] || 0;
-        return cumulative;
-      });
+    // Draw total income area (filled)
+    ctx.fillStyle = 'rgba(34, 197, 94, 0.2)'; // green with transparency
+    ctx.beginPath();
+    ctx.moveTo(padding, height - padding);
+    totalIncomeData.forEach((value, index) => {
+      const point = getPoint(index, value);
+      ctx.lineTo(point.x, point.y);
     });
-    
-    // Draw stacked areas from bottom to top
-    for (let sourceIndex = incomeSources.length - 1; sourceIndex >= 0; sourceIndex--) {
-      ctx.fillStyle = incomeColors[sourceIndex];
-      ctx.beginPath();
-      ctx.moveTo(padding, height - padding);
-      
-      // Draw top line of this income source
-      cumulativeData.forEach((cumArray, dataIndex) => {
-        const value = cumArray[sourceIndex] || 0;
-        const point = getPoint(dataIndex, value);
-        ctx.lineTo(point.x, point.y);
-      });
-      
-      // Draw bottom line (previous cumulative or zero)
-      for (let dataIndex = cumulativeData.length - 1; dataIndex >= 0; dataIndex--) {
-        const value = sourceIndex === 0 ? 0 : (cumulativeData[dataIndex][sourceIndex - 1] || 0);
-        const point = getPoint(dataIndex, value);
-        ctx.lineTo(point.x, point.y);
-      }
-      
-      ctx.closePath();
-      ctx.fill();
-    }
+    ctx.lineTo(padding + chartWidth, height - padding);
+    ctx.closePath();
+    ctx.fill();
 
     // Draw expenses area (filled)
     ctx.fillStyle = 'rgba(239, 68, 68, 0.2)'; // red with transparency
@@ -193,9 +141,9 @@ export function CashFlowChart({ monthlyData, annualData }: CashFlowChartProps) {
     ctx.closePath();
     ctx.fill();
 
-    // Draw total income outline
-    ctx.strokeStyle = '#059669'; // darker green for outline
-    ctx.lineWidth = 2;
+    // Draw total income line
+    ctx.strokeStyle = '#10b981'; // finance-green
+    ctx.lineWidth = 3;
     ctx.beginPath();
     totalIncomeData.forEach((value, index) => {
       const point = getPoint(index, value);
@@ -209,7 +157,7 @@ export function CashFlowChart({ monthlyData, annualData }: CashFlowChartProps) {
 
     // Draw expenses line
     ctx.strokeStyle = '#ef4444'; // red
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 3;
     ctx.beginPath();
     totalExpensesData.forEach((value, index) => {
       const point = getPoint(index, value);
@@ -223,7 +171,7 @@ export function CashFlowChart({ monthlyData, annualData }: CashFlowChartProps) {
 
     // Draw net cash flow line
     ctx.strokeStyle = '#3b82f6'; // blue
-    ctx.lineWidth = 3;
+    ctx.lineWidth = 2;
     ctx.beginPath();
     netCashFlowData.forEach((value, index) => {
       const point = getPoint(index, value);
@@ -238,36 +186,49 @@ export function CashFlowChart({ monthlyData, annualData }: CashFlowChartProps) {
     // Draw axis labels
     ctx.fillStyle = '#374151';
     ctx.font = '12px Inter, sans-serif';
+    
+    // X-axis labels
     ctx.textAlign = 'center';
-
-    // X-axis labels (years)
-    for (let i = 0; i <= timeFrameYears; i++) {
-      const x = padding + (i * chartWidth) / timeFrameYears;
-      const year = 2025 + i;
-      ctx.fillText(year.toString(), x, height - padding + 20);
+    const labelStep = Math.max(1, Math.floor(totalIncomeData.length / 6));
+    for (let i = 0; i < totalIncomeData.length; i += labelStep) {
+      const x = padding + (i * chartWidth) / (totalIncomeData.length - 1);
+      ctx.fillText(labels[i] || '', x, height - padding + 20);
     }
 
-    // Y-axis labels (values)
+    // Y-axis labels
     ctx.textAlign = 'right';
-    for (let i = 0; i <= 6; i++) {
-      const value = minValue + (i * (maxValue - minValue)) / 6;
-      const y = height - padding - (i * chartHeight) / 6;
-      const label = Math.abs(value) >= 1000 ? 
-        `$${(value / 1000).toFixed(0)}K` : 
-        `$${value.toFixed(0)}`;
+    for (let i = 0; i <= 5; i++) {
+      const value = minValue + (i * (maxValue - minValue)) / 5;
+      const y = height - padding - (i * chartHeight) / 5;
+      const label = value >= 1000000 ? 
+        `$${(value / 1000000).toFixed(1)}M` : 
+        value >= 1000 ? `$${(value / 1000).toFixed(0)}K` : `$${value.toFixed(0)}`;
       ctx.fillText(label, padding - 10, y + 4);
     }
 
-    // Add data points for net cash flow
+    // Add data points for key lines
+    ctx.fillStyle = '#10b981';
+    totalIncomeData.forEach((value, index) => {
+      const point = getPoint(index, value);
+      ctx.beginPath();
+      ctx.arc(point.x, point.y, 3, 0, 2 * Math.PI);
+      ctx.fill();
+    });
+
+    ctx.fillStyle = '#ef4444';
+    totalExpensesData.forEach((value, index) => {
+      const point = getPoint(index, value);
+      ctx.beginPath();
+      ctx.arc(point.x, point.y, 3, 0, 2 * Math.PI);
+      ctx.fill();
+    });
+
     ctx.fillStyle = '#3b82f6';
     netCashFlowData.forEach((value, index) => {
-      // Only show points every 6 months to avoid clutter
-      if (index % 6 === 0) {
-        const point = getPoint(index, value);
-        ctx.beginPath();
-        ctx.arc(point.x, point.y, 4, 0, 2 * Math.PI);
-        ctx.fill();
-      }
+      const point = getPoint(index, value);
+      ctx.beginPath();
+      ctx.arc(point.x, point.y, 3, 0, 2 * Math.PI);
+      ctx.fill();
     });
 
   }, [monthlyData, annualData, timeFrameYears, viewMode]);

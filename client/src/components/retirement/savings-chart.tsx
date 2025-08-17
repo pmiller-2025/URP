@@ -129,9 +129,13 @@ export function SavingsChart({ annualData, monthlyData }: SavingsChartProps) {
     ctx.textAlign = 'center';
 
     // X-axis labels (years)
-    for (let i = 0; i < annualData.length; i += 5) {
-      const x = padding + (i * chartWidth) / (annualData.length - 1);
-      ctx.fillText(years[i].toString(), x, height - padding + 20);
+    const dataLength = viewMode === 'annual' ? annualData.length : years.length;
+    for (let i = 0; i < dataLength; i += 5) {
+      if (years[i] !== undefined) {
+        const x = padding + (i * chartWidth) / (dataLength - 1);
+        const label = viewMode === 'annual' ? `Year ${years[i]}` : `Month ${years[i]}`;
+        ctx.fillText(label, x, height - padding + 20);
+      }
     }
 
     // Y-axis labels (values)
