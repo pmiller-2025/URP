@@ -214,18 +214,12 @@ export function InputSectionHorizontal({ state, onUpdate }: InputSectionProps) {
           </CardContent>
         </Card>
 
-        {/* Row 2: Benefits Section - Full Width */}
-        <BenefitsSection 
-          state={state} 
-          onUpdate={onUpdate}
-        />
-
-        {/* Row 3: Other Income - Full Width */}
+        {/* Row 2: Income - Full Width */}
         <Card className="bg-white rounded-xl shadow-sm border border-gray-200">
           <CardContent className="p-6">
             <div className="flex items-center mb-6">
               <i className="fas fa-money-bill-wave text-finance-blue mr-3"></i>
-              <h2 className="text-xl font-semibold text-gray-900">Other Income</h2>
+              <h2 className="text-xl font-semibold text-gray-900">Income</h2>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -458,6 +452,12 @@ export function InputSectionHorizontal({ state, onUpdate }: InputSectionProps) {
             </div>
           </CardContent>
         </Card>
+
+        {/* Row 3: Benefits Section - Full Width */}
+        <BenefitsSection 
+          state={state} 
+          onUpdate={onUpdate}
+        />
       </div>
     </>
   );
