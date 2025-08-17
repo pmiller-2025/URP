@@ -351,7 +351,7 @@ export function getDefaultState(): CalculatorState {
       lumpSumYear: 1
     },
     savings: {
-      initialAmount: 100000,
+      initialAmount: 30000,
       annualReturn: 5.0,
       additionalAnnual: 0,
       taxOnGains: true,

@@ -96,6 +96,12 @@ export default function RetirementCalculator() {
         needsUpdate = true;
       }
       
+      // Update initial savings balance to new default
+      if (parsed.savings?.initialAmount !== 30000) {
+        parsed.savings.initialAmount = 30000;
+        needsUpdate = true;
+      }
+      
       // Save the updated defaults back if any changes were made
       if (needsUpdate) {
         localStorage.setItem('urp-default-state', JSON.stringify(parsed));
