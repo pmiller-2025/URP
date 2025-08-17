@@ -78,6 +78,12 @@ export default function RetirementCalculator() {
         needsUpdate = true;
       }
       
+      // Update Jessica's work duration to new default
+      if (parsed.otherIncome?.jessicaDuration !== 12) {
+        parsed.otherIncome.jessicaDuration = 12;
+        needsUpdate = true;
+      }
+      
       // Save the updated defaults back if any changes were made
       if (needsUpdate) {
         localStorage.setItem('urp-default-state', JSON.stringify(parsed));
