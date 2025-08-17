@@ -682,15 +682,18 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
   // Initialize mortgage balance tracking
   let yearStartMortgageBalance = state.housing.mortgageBalance;
   
-  // Get lump sum payment offset (September 2025 start = month 9 = offset 0)
-  const lumpSumMonthOffset = (state.housing.lumpSumYear - 1) * 12 + (state.housing.lumpSumMonth - 1);
-  const yearStartMonthOffset = yearIndex * 12;
-  
-  // If lump sum was applied in previous years, account for it
-  if (state.housing.lumpSumAmount > 0 && lumpSumMonthOffset < yearStartMonthOffset) {
-    yearStartMortgageBalance = Math.max(0, yearStartMortgageBalance - state.housing.lumpSumAmount);
+  // For years after Year 1, calculate the mortgage balance after previous years' payments
+  if (year > 1) {
+    // Get lump sum payment offset (September 2025 start = month 9 = offset 0)
+    const lumpSumMonthOffset = (state.housing.lumpSumYear - 1) * 12 + (state.housing.lumpSumMonth - 1);
+    const yearStartMonthOffset = yearIndex * 12;
     
-    // Also account for mortgage payments made in previous years
+    // Apply lump sum if it was in previous years
+    if (state.housing.lumpSumAmount > 0 && lumpSumMonthOffset < yearStartMonthOffset) {
+      yearStartMortgageBalance = Math.max(0, yearStartMortgageBalance - state.housing.lumpSumAmount);
+    }
+    
+    // Account for mortgage payments made in previous years
     const mortgageStartMonth = 0; // September 2025 is month 0 (start of projections)
     for (let prevMonthOffset = mortgageStartMonth; prevMonthOffset < yearStartMonthOffset; prevMonthOffset++) {
       if (yearStartMortgageBalance > 0) {
