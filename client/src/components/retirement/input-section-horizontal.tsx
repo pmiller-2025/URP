@@ -557,8 +557,8 @@ export function InputSectionHorizontal({ state, onUpdate }: InputSectionProps) {
                       <span className="absolute left-3 top-2 text-gray-500">$</span>
                       <Input 
                         type="text" 
-                        value={formatCurrency(state.livingExpenses.monthlyExpenses)}
-                        onChange={(e) => onUpdate('livingExpenses', { monthlyExpenses: parseCurrency(e.target.value) })}
+                        value={formatCurrency(state.expenses.basicLiving)}
+                        onChange={(e) => onUpdate('expenses', { basicLiving: parseCurrency(e.target.value) })}
                         className="pl-8 focus:ring-2 focus:ring-red-500 focus:border-transparent bg-white text-lg"
                       />
                     </div>
@@ -574,8 +574,8 @@ export function InputSectionHorizontal({ state, onUpdate }: InputSectionProps) {
                           step="0.1"
                           min="0"
                           max="10"
-                          value={state.livingExpenses.inflationRate}
-                          onChange={(e) => onUpdate('livingExpenses', { inflationRate: parseFloat(e.target.value) || 2.5 })}
+                          value={state.expenses.inflationRate}
+                          onChange={(e) => onUpdate('expenses', { inflationRate: parseFloat(e.target.value) || 2.5 })}
                           className="pr-8 focus:ring-2 focus:ring-finance-blue focus:border-transparent"
                         />
                         <span className="absolute right-3 top-2 text-gray-500">%</span>
@@ -593,9 +593,10 @@ export function InputSectionHorizontal({ state, onUpdate }: InputSectionProps) {
                           step="5"
                           min="50"
                           max="120"
-                          value={state.livingExpenses.retirementMultiplier}
-                          onChange={(e) => onUpdate('livingExpenses', { retirementMultiplier: parseFloat(e.target.value) || 80 })}
+                          value={80}
+                          onChange={(e) => {/* Will implement later */}}
                           className="pr-8 focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                          disabled
                         />
                         <span className="absolute right-3 top-2 text-gray-500">%</span>
                       </div>
@@ -604,154 +605,20 @@ export function InputSectionHorizontal({ state, onUpdate }: InputSectionProps) {
                   </div>
                 </div>
 
-                {/* Expense Categories Breakdown */}
+                {/* Budget Integration Info */}
                 <div className="border-t border-gray-200 pt-6">
-                  <h3 className="text-lg font-medium text-gray-700 mb-4">Expense Categories (Optional Detail)</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div className="bg-gray-50 p-3 rounded-lg">
-                      <Label className="block text-sm font-medium text-gray-700 mb-1">Housing</Label>
-                      <div className="relative">
-                        <span className="absolute left-2 top-1 text-gray-500 text-sm">$</span>
-                        <Input 
-                          type="number" 
-                          value={state.livingExpenses.housing || 0}
-                          onChange={(e) => onUpdate('livingExpenses', { housing: parseFloat(e.target.value) || 0 })}
-                          className="pl-6 text-sm"
-                          placeholder="0"
-                        />
-                      </div>
-                      <p className="text-xs text-gray-500 mt-1">Rent, utilities, maintenance</p>
+                  <div className="bg-blue-50 rounded-lg border border-blue-200 p-4">
+                    <div className="flex items-center mb-2">
+                      <i className="fas fa-info-circle text-blue-600 mr-2"></i>
+                      <h3 className="text-lg font-medium text-blue-800">Detailed Budget Integration</h3>
                     </div>
-
-                    <div className="bg-gray-50 p-3 rounded-lg">
-                      <Label className="block text-sm font-medium text-gray-700 mb-1">Food & Dining</Label>
-                      <div className="relative">
-                        <span className="absolute left-2 top-1 text-gray-500 text-sm">$</span>
-                        <Input 
-                          type="number" 
-                          value={state.livingExpenses.food || 0}
-                          onChange={(e) => onUpdate('livingExpenses', { food: parseFloat(e.target.value) || 0 })}
-                          className="pl-6 text-sm"
-                          placeholder="0"
-                        />
-                      </div>
-                      <p className="text-xs text-gray-500 mt-1">Groceries, restaurants</p>
-                    </div>
-
-                    <div className="bg-gray-50 p-3 rounded-lg">
-                      <Label className="block text-sm font-medium text-gray-700 mb-1">Transportation</Label>
-                      <div className="relative">
-                        <span className="absolute left-2 top-1 text-gray-500 text-sm">$</span>
-                        <Input 
-                          type="number" 
-                          value={state.livingExpenses.transportation || 0}
-                          onChange={(e) => onUpdate('livingExpenses', { transportation: parseFloat(e.target.value) || 0 })}
-                          className="pl-6 text-sm"
-                          placeholder="0"
-                        />
-                      </div>
-                      <p className="text-xs text-gray-500 mt-1">Car, gas, insurance</p>
-                    </div>
-
-                    <div className="bg-gray-50 p-3 rounded-lg">
-                      <Label className="block text-sm font-medium text-gray-700 mb-1">Healthcare</Label>
-                      <div className="relative">
-                        <span className="absolute left-2 top-1 text-gray-500 text-sm">$</span>
-                        <Input 
-                          type="number" 
-                          value={state.livingExpenses.healthcare || 0}
-                          onChange={(e) => onUpdate('livingExpenses', { healthcare: parseFloat(e.target.value) || 0 })}
-                          className="pl-6 text-sm"
-                          placeholder="0"
-                        />
-                      </div>
-                      <p className="text-xs text-gray-500 mt-1">Insurance, medical costs</p>
-                    </div>
-
-                    <div className="bg-gray-50 p-3 rounded-lg">
-                      <Label className="block text-sm font-medium text-gray-700 mb-1">Entertainment</Label>
-                      <div className="relative">
-                        <span className="absolute left-2 top-1 text-gray-500 text-sm">$</span>
-                        <Input 
-                          type="number" 
-                          value={state.livingExpenses.entertainment || 0}
-                          onChange={(e) => onUpdate('livingExpenses', { entertainment: parseFloat(e.target.value) || 0 })}
-                          className="pl-6 text-sm"
-                          placeholder="0"
-                        />
-                      </div>
-                      <p className="text-xs text-gray-500 mt-1">Travel, hobbies, leisure</p>
-                    </div>
-
-                    <div className="bg-gray-50 p-3 rounded-lg">
-                      <Label className="block text-sm font-medium text-gray-700 mb-1">Personal Care</Label>
-                      <div className="relative">
-                        <span className="absolute left-2 top-1 text-gray-500 text-sm">$</span>
-                        <Input 
-                          type="number" 
-                          value={state.livingExpenses.personalCare || 0}
-                          onChange={(e) => onUpdate('livingExpenses', { personalCare: parseFloat(e.target.value) || 0 })}
-                          className="pl-6 text-sm"
-                          placeholder="0"
-                        />
-                      </div>
-                      <p className="text-xs text-gray-500 mt-1">Clothing, grooming</p>
-                    </div>
-
-                    <div className="bg-gray-50 p-3 rounded-lg">
-                      <Label className="block text-sm font-medium text-gray-700 mb-1">Debt Payments</Label>
-                      <div className="relative">
-                        <span className="absolute left-2 top-1 text-gray-500 text-sm">$</span>
-                        <Input 
-                          type="number" 
-                          value={state.livingExpenses.debtPayments || 0}
-                          onChange={(e) => onUpdate('livingExpenses', { debtPayments: parseFloat(e.target.value) || 0 })}
-                          className="pl-6 text-sm"
-                          placeholder="0"
-                        />
-                      </div>
-                      <p className="text-xs text-gray-500 mt-1">Credit cards, loans</p>
-                    </div>
-
-                    <div className="bg-gray-50 p-3 rounded-lg">
-                      <Label className="block text-sm font-medium text-gray-700 mb-1">Other</Label>
-                      <div className="relative">
-                        <span className="absolute left-2 top-1 text-gray-500 text-sm">$</span>
-                        <Input 
-                          type="number" 
-                          value={state.livingExpenses.other || 0}
-                          onChange={(e) => onUpdate('livingExpenses', { other: parseFloat(e.target.value) || 0 })}
-                          className="pl-6 text-sm"
-                          placeholder="0"
-                        />
-                      </div>
-                      <p className="text-xs text-gray-500 mt-1">Miscellaneous expenses</p>
-                    </div>
-                  </div>
-
-                  {/* Category Total Display */}
-                  <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm font-medium text-blue-800">Total Category Breakdown:</span>
-                      <span className="text-lg font-semibold text-blue-900">
-                        ${formatCurrency(
-                          (state.livingExpenses.housing || 0) +
-                          (state.livingExpenses.food || 0) +
-                          (state.livingExpenses.transportation || 0) +
-                          (state.livingExpenses.healthcare || 0) +
-                          (state.livingExpenses.entertainment || 0) +
-                          (state.livingExpenses.personalCare || 0) +
-                          (state.livingExpenses.debtPayments || 0) +
-                          (state.livingExpenses.other || 0)
-                        )}
-                      </span>
-                    </div>
-                    <p className="text-xs text-blue-600 mt-1">
-                      {((state.livingExpenses.housing || 0) + (state.livingExpenses.food || 0) + (state.livingExpenses.transportation || 0) + (state.livingExpenses.healthcare || 0) + (state.livingExpenses.entertainment || 0) + (state.livingExpenses.personalCare || 0) + (state.livingExpenses.debtPayments || 0) + (state.livingExpenses.other || 0)) !== state.livingExpenses.monthlyExpenses ? 
-                        `Difference from monthly total: $${formatCurrency(Math.abs(state.livingExpenses.monthlyExpenses - ((state.livingExpenses.housing || 0) + (state.livingExpenses.food || 0) + (state.livingExpenses.transportation || 0) + (state.livingExpenses.healthcare || 0) + (state.livingExpenses.entertainment || 0) + (state.livingExpenses.personalCare || 0) + (state.livingExpenses.debtPayments || 0) + (state.livingExpenses.other || 0))))}` :
-                        'Categories match monthly total'
-                      }
+                    <p className="text-sm text-blue-700 mb-3">
+                      The system already includes a comprehensive detailed budget feature with category breakdown. 
+                      You can switch between "Fixed Amount" (shown above) and "Detailed Categories" in the existing expense settings.
                     </p>
+                    <div className="text-sm text-blue-600">
+                      Current Budget Type: <strong>{state.expenses.budgetType === 'fixed' ? 'Fixed Amount' : 'Detailed Categories'}</strong>
+                    </div>
                   </div>
                 </div>
               </div>
