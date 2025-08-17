@@ -346,7 +346,7 @@ export function getDefaultState(): CalculatorState {
       targetPayoffMonths: 24,
       homeAppreciation: 2.5,
       acceleratePayoff: true,
-      lumpSumAmount: 50000,
+      lumpSumAmount: 0,
       lumpSumMonth: 1,
       lumpSumYear: 1
     },

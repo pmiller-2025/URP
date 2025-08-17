@@ -169,6 +169,7 @@ Preferred communication style: Simple, everyday language.
 - **January 18, 2025**: Updated Paul's Social Security default to $3,968/month at age 70
 - **January 18, 2025**: Added automatic migration to update cached Social Security values to new defaults
 - **January 18, 2025**: Updated mortgage balance default to $37,400
+- **January 18, 2025**: Updated lump sum payment default to $0
 
 ## Changelog
 
