@@ -922,19 +922,16 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
           currentMortgageMonthly = currentMortgageBalance + monthlyInterest;
           currentMortgageBalance = 0;
         } else {
-          // Calculate what total payment is needed to pay off in remaining months
+          // Calculate exactly what payment is needed to pay off in remaining months
           const requiredTotalPayment = calculateMortgagePayment(currentMortgageBalance, state.housing.interestRate, remainingMonths);
           
-          // Use conservative approach - cap extra payment at 10% of remaining balance
-          const extraPayment = Math.min(requiredTotalPayment - regularPayment, currentMortgageBalance * 0.1);
-          currentMortgageMonthly = regularPayment + Math.max(0, extraPayment);
+          // Use the full required payment to ensure payoff in target months
+          currentMortgageMonthly = requiredTotalPayment;
           
           // Apply the payment to reduce balance
           const monthlyInterest = currentMortgageBalance * monthlyRate;
           const monthlyPrincipal = Math.min(currentMortgageMonthly - monthlyInterest, currentMortgageBalance);
           currentMortgageBalance = Math.max(0, currentMortgageBalance - monthlyPrincipal);
-          
-
         }
       } else if (remainingMonths > 0) {
         // Use regular payment schedule
@@ -943,13 +940,9 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
         const monthlyPrincipal = Math.min(state.housing.monthlyPayment - monthlyInterest, currentMortgageBalance);
         currentMortgageMonthly = monthlyInterest + monthlyPrincipal;
         currentMortgageBalance = Math.max(0, currentMortgageBalance - monthlyPrincipal);
-      } else if (currentMonthOffset >= mortgageStartMonth) {
-        // Target payoff period has passed, but there's still a balance - make minimum payments
-        const monthlyRate = state.housing.interestRate / 100 / 12;
-        const monthlyInterest = currentMortgageBalance * monthlyRate;
-        const monthlyPrincipal = Math.min(state.housing.monthlyPayment - monthlyInterest, currentMortgageBalance);
-        currentMortgageMonthly = monthlyInterest + monthlyPrincipal;
-        currentMortgageBalance = Math.max(0, currentMortgageBalance - monthlyPrincipal);
+      } else {
+        // Target payoff period has passed - mortgage should be paid off, no more payments
+        currentMortgageMonthly = 0;
       }
     }
     

@@ -183,6 +183,7 @@ Preferred communication style: Simple, everyday language.
 - **January 18, 2025**: Updated Jessica's work income to start from month 1 (September 2025)
 - **January 18, 2025**: Updated Chapter 35 benefits to start from month 1 (September 2025)
 - **January 18, 2025**: Changed default view mode from annual to monthly
+- **January 18, 2025**: Fixed mortgage payment logic to properly end payments after 10-month target payoff period
 
 ## Changelog
 
