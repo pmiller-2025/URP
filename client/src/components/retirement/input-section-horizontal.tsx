@@ -17,7 +17,8 @@ export function InputSectionHorizontal({ state, onUpdate }: InputSectionProps) {
   const [expandedSections, setExpandedSections] = useState({
     personal: true,
     income: true,
-    benefits: true
+    benefits: true,
+    expenses: true
   });
 
   const toggleSection = (section: keyof typeof expandedSections) => {
@@ -521,6 +522,238 @@ export function InputSectionHorizontal({ state, onUpdate }: InputSectionProps) {
                   state={state} 
                   onUpdate={onUpdate}
                 />
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Row 4: Living Expenses - Full Width */}
+        <Card className="bg-white rounded-xl shadow-sm border border-gray-200">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center">
+                <i className="fas fa-shopping-cart text-finance-blue mr-3"></i>
+                <h2 className="text-xl font-semibold text-gray-900">Living Expenses</h2>
+              </div>
+              <button
+                onClick={() => toggleSection('expenses')}
+                className="flex items-center text-gray-500 hover:text-gray-700 transition-colors"
+              >
+                {expandedSections.expenses ? (
+                  <ChevronUp className="h-5 w-5" />
+                ) : (
+                  <ChevronDown className="h-5 w-5" />
+                )}
+              </button>
+            </div>
+            
+            {expandedSections.expenses && (
+              <div className="space-y-6">
+                {/* Monthly Living Expenses */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                    <Label className="block text-sm font-medium text-red-800 mb-2">Monthly Living Expenses</Label>
+                    <div className="relative">
+                      <span className="absolute left-3 top-2 text-gray-500">$</span>
+                      <Input 
+                        type="text" 
+                        value={formatCurrency(state.livingExpenses.monthlyExpenses)}
+                        onChange={(e) => onUpdate('livingExpenses', { monthlyExpenses: parseCurrency(e.target.value) })}
+                        className="pl-8 focus:ring-2 focus:ring-red-500 focus:border-transparent bg-white text-lg"
+                      />
+                    </div>
+                    <p className="text-xs text-red-600 mt-1">Current monthly spending for living costs</p>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div>
+                      <Label className="block text-sm font-medium text-gray-700 mb-2">Annual Inflation Rate</Label>
+                      <div className="relative">
+                        <Input 
+                          type="number" 
+                          step="0.1"
+                          min="0"
+                          max="10"
+                          value={state.livingExpenses.inflationRate}
+                          onChange={(e) => onUpdate('livingExpenses', { inflationRate: parseFloat(e.target.value) || 2.5 })}
+                          className="pr-8 focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                        />
+                        <span className="absolute right-3 top-2 text-gray-500">%</span>
+                      </div>
+                      <p className="text-xs text-gray-500 mt-1">Expected annual increase in living costs</p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div>
+                      <Label className="block text-sm font-medium text-gray-700 mb-2">Retirement Spending Adjustment</Label>
+                      <div className="relative">
+                        <Input 
+                          type="number" 
+                          step="5"
+                          min="50"
+                          max="120"
+                          value={state.livingExpenses.retirementMultiplier}
+                          onChange={(e) => onUpdate('livingExpenses', { retirementMultiplier: parseFloat(e.target.value) || 80 })}
+                          className="pr-8 focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                        />
+                        <span className="absolute right-3 top-2 text-gray-500">%</span>
+                      </div>
+                      <p className="text-xs text-gray-500 mt-1">Percentage of current expenses needed in retirement</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Expense Categories Breakdown */}
+                <div className="border-t border-gray-200 pt-6">
+                  <h3 className="text-lg font-medium text-gray-700 mb-4">Expense Categories (Optional Detail)</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div className="bg-gray-50 p-3 rounded-lg">
+                      <Label className="block text-sm font-medium text-gray-700 mb-1">Housing</Label>
+                      <div className="relative">
+                        <span className="absolute left-2 top-1 text-gray-500 text-sm">$</span>
+                        <Input 
+                          type="number" 
+                          value={state.livingExpenses.housing || 0}
+                          onChange={(e) => onUpdate('livingExpenses', { housing: parseFloat(e.target.value) || 0 })}
+                          className="pl-6 text-sm"
+                          placeholder="0"
+                        />
+                      </div>
+                      <p className="text-xs text-gray-500 mt-1">Rent, utilities, maintenance</p>
+                    </div>
+
+                    <div className="bg-gray-50 p-3 rounded-lg">
+                      <Label className="block text-sm font-medium text-gray-700 mb-1">Food & Dining</Label>
+                      <div className="relative">
+                        <span className="absolute left-2 top-1 text-gray-500 text-sm">$</span>
+                        <Input 
+                          type="number" 
+                          value={state.livingExpenses.food || 0}
+                          onChange={(e) => onUpdate('livingExpenses', { food: parseFloat(e.target.value) || 0 })}
+                          className="pl-6 text-sm"
+                          placeholder="0"
+                        />
+                      </div>
+                      <p className="text-xs text-gray-500 mt-1">Groceries, restaurants</p>
+                    </div>
+
+                    <div className="bg-gray-50 p-3 rounded-lg">
+                      <Label className="block text-sm font-medium text-gray-700 mb-1">Transportation</Label>
+                      <div className="relative">
+                        <span className="absolute left-2 top-1 text-gray-500 text-sm">$</span>
+                        <Input 
+                          type="number" 
+                          value={state.livingExpenses.transportation || 0}
+                          onChange={(e) => onUpdate('livingExpenses', { transportation: parseFloat(e.target.value) || 0 })}
+                          className="pl-6 text-sm"
+                          placeholder="0"
+                        />
+                      </div>
+                      <p className="text-xs text-gray-500 mt-1">Car, gas, insurance</p>
+                    </div>
+
+                    <div className="bg-gray-50 p-3 rounded-lg">
+                      <Label className="block text-sm font-medium text-gray-700 mb-1">Healthcare</Label>
+                      <div className="relative">
+                        <span className="absolute left-2 top-1 text-gray-500 text-sm">$</span>
+                        <Input 
+                          type="number" 
+                          value={state.livingExpenses.healthcare || 0}
+                          onChange={(e) => onUpdate('livingExpenses', { healthcare: parseFloat(e.target.value) || 0 })}
+                          className="pl-6 text-sm"
+                          placeholder="0"
+                        />
+                      </div>
+                      <p className="text-xs text-gray-500 mt-1">Insurance, medical costs</p>
+                    </div>
+
+                    <div className="bg-gray-50 p-3 rounded-lg">
+                      <Label className="block text-sm font-medium text-gray-700 mb-1">Entertainment</Label>
+                      <div className="relative">
+                        <span className="absolute left-2 top-1 text-gray-500 text-sm">$</span>
+                        <Input 
+                          type="number" 
+                          value={state.livingExpenses.entertainment || 0}
+                          onChange={(e) => onUpdate('livingExpenses', { entertainment: parseFloat(e.target.value) || 0 })}
+                          className="pl-6 text-sm"
+                          placeholder="0"
+                        />
+                      </div>
+                      <p className="text-xs text-gray-500 mt-1">Travel, hobbies, leisure</p>
+                    </div>
+
+                    <div className="bg-gray-50 p-3 rounded-lg">
+                      <Label className="block text-sm font-medium text-gray-700 mb-1">Personal Care</Label>
+                      <div className="relative">
+                        <span className="absolute left-2 top-1 text-gray-500 text-sm">$</span>
+                        <Input 
+                          type="number" 
+                          value={state.livingExpenses.personalCare || 0}
+                          onChange={(e) => onUpdate('livingExpenses', { personalCare: parseFloat(e.target.value) || 0 })}
+                          className="pl-6 text-sm"
+                          placeholder="0"
+                        />
+                      </div>
+                      <p className="text-xs text-gray-500 mt-1">Clothing, grooming</p>
+                    </div>
+
+                    <div className="bg-gray-50 p-3 rounded-lg">
+                      <Label className="block text-sm font-medium text-gray-700 mb-1">Debt Payments</Label>
+                      <div className="relative">
+                        <span className="absolute left-2 top-1 text-gray-500 text-sm">$</span>
+                        <Input 
+                          type="number" 
+                          value={state.livingExpenses.debtPayments || 0}
+                          onChange={(e) => onUpdate('livingExpenses', { debtPayments: parseFloat(e.target.value) || 0 })}
+                          className="pl-6 text-sm"
+                          placeholder="0"
+                        />
+                      </div>
+                      <p className="text-xs text-gray-500 mt-1">Credit cards, loans</p>
+                    </div>
+
+                    <div className="bg-gray-50 p-3 rounded-lg">
+                      <Label className="block text-sm font-medium text-gray-700 mb-1">Other</Label>
+                      <div className="relative">
+                        <span className="absolute left-2 top-1 text-gray-500 text-sm">$</span>
+                        <Input 
+                          type="number" 
+                          value={state.livingExpenses.other || 0}
+                          onChange={(e) => onUpdate('livingExpenses', { other: parseFloat(e.target.value) || 0 })}
+                          className="pl-6 text-sm"
+                          placeholder="0"
+                        />
+                      </div>
+                      <p className="text-xs text-gray-500 mt-1">Miscellaneous expenses</p>
+                    </div>
+                  </div>
+
+                  {/* Category Total Display */}
+                  <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm font-medium text-blue-800">Total Category Breakdown:</span>
+                      <span className="text-lg font-semibold text-blue-900">
+                        ${formatCurrency(
+                          (state.livingExpenses.housing || 0) +
+                          (state.livingExpenses.food || 0) +
+                          (state.livingExpenses.transportation || 0) +
+                          (state.livingExpenses.healthcare || 0) +
+                          (state.livingExpenses.entertainment || 0) +
+                          (state.livingExpenses.personalCare || 0) +
+                          (state.livingExpenses.debtPayments || 0) +
+                          (state.livingExpenses.other || 0)
+                        )}
+                      </span>
+                    </div>
+                    <p className="text-xs text-blue-600 mt-1">
+                      {((state.livingExpenses.housing || 0) + (state.livingExpenses.food || 0) + (state.livingExpenses.transportation || 0) + (state.livingExpenses.healthcare || 0) + (state.livingExpenses.entertainment || 0) + (state.livingExpenses.personalCare || 0) + (state.livingExpenses.debtPayments || 0) + (state.livingExpenses.other || 0)) !== state.livingExpenses.monthlyExpenses ? 
+                        `Difference from monthly total: $${formatCurrency(Math.abs(state.livingExpenses.monthlyExpenses - ((state.livingExpenses.housing || 0) + (state.livingExpenses.food || 0) + (state.livingExpenses.transportation || 0) + (state.livingExpenses.healthcare || 0) + (state.livingExpenses.entertainment || 0) + (state.livingExpenses.personalCare || 0) + (state.livingExpenses.debtPayments || 0) + (state.livingExpenses.other || 0))))}` :
+                        'Categories match monthly total'
+                      }
+                    </p>
+                  </div>
+                </div>
               </div>
             )}
           </CardContent>
