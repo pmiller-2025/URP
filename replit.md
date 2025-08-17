@@ -8,6 +8,8 @@ URP (Ultimate Retirement Planner) is a comprehensive web application designed to
 - **Enhanced Birth Month Logic**: Implemented proper Social Security benefit timing based on birth months - Jessica's Tier 1 starts January 2031 (age 62), increases to Tier 1+Tier 2 when Paul starts August 2032 (age 70)
 - **Mortgage Calculations**: Finalized $37,400 balance with 10-month accelerated payoff saving $1,030.98 in interest
 - **Personal Details Updated**: Paul (July 1962, age 63), Jessica (December 1968, age 56), with accurate Social Security timing calculations
+- **Income Timeline Chart Added**: New visualization showing stacked bar chart of income sources over time, with annual and monthly views to track transition from work income to retirement benefits
+- **Fixed Business Income Default**: Updated localStorage migration to correct business income from old $2000 default to new $4000 default for deployed app consistency
 
 ## User Preferences
 Preferred communication style: Simple, everyday language.
