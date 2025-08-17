@@ -102,6 +102,12 @@ export default function RetirementCalculator() {
         needsUpdate = true;
       }
       
+      // Update business income to start in month 1
+      if (parsed.otherIncome?.businessStartMonth !== 1) {
+        parsed.otherIncome.businessStartMonth = 1;
+        needsUpdate = true;
+      }
+      
       // Save the updated defaults back if any changes were made
       if (needsUpdate) {
         localStorage.setItem('urp-default-state', JSON.stringify(parsed));
