@@ -690,9 +690,18 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
   
   for (let month = 0; month < 12; month++) {
     const currentMonthOffset = yearIndex * 12 + month;
-    // Start from September 2025 (month 8 in 0-indexed system)
-    const actualMonth = (month + 8) % 12; // Start from September (month 8)
-    const actualYear = 2025 + yearIndex + Math.floor((month + 8) / 12);
+    
+    let actualMonth, actualYear;
+    if (year === 1) {
+      // Year 1: Start from September 2025 (month 8 in 0-indexed system)
+      actualMonth = (month + 8) % 12; // Start from September (month 8)
+      actualYear = 2025 + yearIndex + Math.floor((month + 8) / 12);
+    } else {
+      // Year 2+: Start from January
+      actualMonth = month; // January = 0, February = 1, etc.
+      actualYear = 2025 + yearIndex;
+    }
+    
     const monthName = new Date(actualYear, actualMonth).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
     
     // All months from September 2025 onwards are active (no zero-value months)
@@ -997,6 +1006,7 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
     return monthlyData.slice(0, 4); // Keep only first 4 months (Sep, Oct, Nov, Dec 2025)
   }
   
+  // For Year 2+, show all 12 months (Jan-Dec)
   return monthlyData;
 }
 
