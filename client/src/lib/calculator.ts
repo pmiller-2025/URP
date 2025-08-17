@@ -320,7 +320,7 @@ export function getDefaultState(): CalculatorState {
       businessStartMonth: 1,
       businessStartYear: 1,
       jessicaDuration: 12,
-      jessicaStartMonth: 6,
+      jessicaStartMonth: 1,
       jessicaStartYear: 1,
       chapter35Duration: 24,
       chapter35StartMonth: 6,

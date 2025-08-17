@@ -180,6 +180,7 @@ Preferred communication style: Simple, everyday language.
 - **January 18, 2025**: Updated business income to start from month 1 (September 2025)
 - **January 18, 2025**: Updated Paul's current age from 62 to 63
 - **January 18, 2025**: Updated Paul's birth month from June to July 1962
+- **January 18, 2025**: Updated Jessica's work income to start from month 1 (September 2025)
 
 ## Changelog
 
