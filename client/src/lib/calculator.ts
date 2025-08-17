@@ -722,9 +722,16 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
     }
   }
   
+  // Calculate the correct starting balance for this year
+  // For year 1, use initial amount. For later years, get balance from annual projections
   let runningBalance = state.savings.initialAmount;
-  // Note: We can't use annualData here as it would cause infinite recursion
-  // Instead, we'll calculate savings progression month by month
+  if (year > 1) {
+    // Get annual data up to the previous year to determine starting balance
+    const annualData = calculateAnnualProjections(state);
+    if (annualData[year - 2]) {
+      runningBalance = annualData[year - 2].savingsBalance;
+    }
+  }
   
   let currentMortgageBalance = yearStartMortgageBalance;
   
