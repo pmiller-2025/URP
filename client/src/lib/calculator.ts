@@ -219,7 +219,7 @@ export function isPersonAlive(currentAge: number, endOfLifeAge: number): boolean
 
 export function getCurrentDate(): { month: number; year: number } {
   return {
-    month: 9, // September 2025 start
+    month: 1, // January 2025 start
     year: 2025
   };
 }
@@ -690,12 +690,12 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
   
   for (let month = 0; month < 12; month++) {
     const currentMonthOffset = yearIndex * 12 + month;
-    // Start from September 2025 (month 8 in 0-indexed system)
-    const actualMonth = (month + 8) % 12; // Start from September (month 8)
-    const actualYear = 2025 + yearIndex + Math.floor((month + 8) / 12);
+    // Start from January 2025 (month 0 in 0-indexed system)
+    const actualMonth = month; // Start from January (month 0)
+    const actualYear = 2025 + yearIndex;
     const monthName = new Date(actualYear, actualMonth).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
     
-    // All months from September 2025 onwards are active (no zero-value months)
+    // All months from January 2025 onwards are active (no zero-value months)
     const isBeforeJune2025 = false; // No longer applicable - all months are active
     
     // Calculate income sources for this specific month
@@ -772,7 +772,7 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
     let paulSSMonthly = 0;
     let jessicaSSMonthly = 0;
     
-    // All months are active starting from September 2025
+    // All months are active starting from January 2025
     if (true) {
       if (paulAlive && jessicaAlive) {
         // Paul's benefit calculation - starts the month after birth month when he reaches start age
@@ -825,7 +825,7 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
     
     // Calculate VA Disability with inflation and survivor benefits
     let vaDisabilityMonthly = 0;
-    // All months are active starting from September 2025
+    // All months are active starting from January 2025
     if (true) {
       if (paulAlive) {
         // Paul alive: gets full VA Disability
@@ -993,6 +993,52 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
   }
   
   return monthlyData;
+}
+
+// Helper function to get annual data with first year showing only Sep-Dec
+export function getFilteredAnnualData(state: CalculatorState): AnnualData[] {
+  const fullAnnualData = calculateAnnualProjections(state);
+  
+  // For the first year, we want to show only September-December data
+  if (fullAnnualData.length > 0) {
+    const firstYear = fullAnnualData[0];
+    const monthlyData = calculateMonthlyProjections(state, 1);
+    
+    // Sum only September-December months (months 8-11 in the monthly data)
+    const sepDecMonths = monthlyData.slice(8, 12);
+    
+    if (sepDecMonths.length > 0) {
+      // Calculate the 4-month totals for first year
+      const firstYearFiltered: AnnualData = {
+        ...firstYear,
+        year: 2025, // Show as partial year
+        paulSS: sepDecMonths.reduce((sum, month) => sum + month.paulSS, 0),
+        jessicaSS: sepDecMonths.reduce((sum, month) => sum + month.jessicaSS, 0),
+        vaDisability: sepDecMonths.reduce((sum, month) => sum + month.vaDisability, 0),
+        business: sepDecMonths.reduce((sum, month) => sum + month.business, 0),
+        jessicaWork: sepDecMonths.reduce((sum, month) => sum + month.jessicaWork, 0),
+        chapter35: sepDecMonths.reduce((sum, month) => sum + month.chapter35, 0),
+        totalIncome: sepDecMonths.reduce((sum, month) => sum + month.grossIncome, 0),
+        totalTaxes: sepDecMonths.reduce((sum, month) => sum + month.taxes, 0),
+        afterTaxIncome: sepDecMonths.reduce((sum, month) => sum + month.netIncome, 0),
+        livingExp: sepDecMonths.reduce((sum, month) => sum + month.livingExp, 0),
+        insurance: sepDecMonths.reduce((sum, month) => sum + month.insurance, 0),
+        expense1: sepDecMonths.reduce((sum, month) => sum + month.expense1, 0),
+        expense2: sepDecMonths.reduce((sum, month) => sum + month.expense2, 0),
+        expense3: sepDecMonths.reduce((sum, month) => sum + month.expense3, 0),
+        mortgage: sepDecMonths.reduce((sum, month) => sum + month.mortgage, 0),
+        netCashFlow: sepDecMonths.reduce((sum, month) => sum + month.netCashFlow, 0),
+        returnOnInvestments: sepDecMonths.reduce((sum, month) => sum + month.returnOnInvestments, 0),
+        savingsBalance: sepDecMonths[sepDecMonths.length - 1].savingsBalance, // End balance
+        mortgageBalance: sepDecMonths[sepDecMonths.length - 1].mortgageBalance, // End balance
+      };
+      
+      // Return filtered first year + rest of annual data starting from year 2
+      return [firstYearFiltered, ...fullAnnualData.slice(1)];
+    }
+  }
+  
+  return fullAnnualData;
 }
 
 export function calculateAnnualProjections(state: CalculatorState): AnnualData[] {

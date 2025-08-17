@@ -12,6 +12,7 @@ import {
   CalculatorState, 
   getDefaultState, 
   calculateAnnualProjections, 
+  getFilteredAnnualData,
   calculateMonthlyProjections,
   calculateSummaryMetrics,
   calculateExtraPayment,
@@ -177,7 +178,7 @@ export default function RetirementCalculator() {
   }, [state.personalInfo.paulEndOfLifeAge, state.personalInfo.jessicaEndOfLifeAge]);
   
   // Calculate projections whenever state changes
-  const annualData = calculateAnnualProjections(state);
+  const annualData = getFilteredAnnualData(state);
   const monthlyData = calculateMonthlyProjections(state, selectedYear);
   const summaryMetrics = calculateSummaryMetrics(annualData, state);
   
