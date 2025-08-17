@@ -4,6 +4,7 @@ import { SummaryCards } from "@/components/retirement/summary-cards";
 import { ResultsTable } from "@/components/retirement/results-table";
 import { SavingsChart } from "@/components/retirement/savings-chart";
 import { CashFlowChart } from "@/components/retirement/cash-flow-chart";
+import { IncomeTimelineChart } from "@/components/retirement/income-timeline-chart";
 import { ScenarioManager } from "@/components/retirement/scenario-manager";
 import { AIDialogue } from "@/components/retirement/ai-dialogue";
 import { Button } from "@/components/ui/button";
@@ -20,7 +21,7 @@ import {
 } from "@/lib/calculator";
 
 type ViewMode = 'annual' | 'monthly';
-type ChartType = 'savings' | 'cashflow';
+type ChartType = 'savings' | 'cashflow' | 'income';
 
 export default function RetirementCalculator() {
   const [state, setState] = useState<CalculatorState>(() => {
@@ -329,6 +330,7 @@ export default function RetirementCalculator() {
               <SelectContent>
                 <SelectItem value="savings">Savings & Net Worth</SelectItem>
                 <SelectItem value="cashflow">Cash Flow Analysis</SelectItem>
+                <SelectItem value="income">Income Timeline</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -337,6 +339,7 @@ export default function RetirementCalculator() {
         {/* Render selected chart */}
         {chartType === 'savings' && <SavingsChart annualData={annualData} />}
         {chartType === 'cashflow' && <CashFlowChart monthlyData={monthlyData} />}
+        {chartType === 'income' && <IncomeTimelineChart state={state} viewMode={viewMode} selectedYear={selectedYear} />}
 
         {/* Results Table */}
         <ResultsTable 
