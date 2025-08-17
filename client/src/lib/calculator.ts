@@ -288,7 +288,7 @@ export const defaultBudgetCategories: BudgetCategory[] = [
 export function getDefaultState(): CalculatorState {
   return {
     personalInfo: {
-      paulAge: 62,
+      paulAge: 63,
       jessicaAge: 56,
       paulBirthMonth: 6,
       paulBirthYear: 1962,

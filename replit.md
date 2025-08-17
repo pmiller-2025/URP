@@ -178,6 +178,7 @@ Preferred communication style: Simple, everyday language.
 - **January 18, 2025**: Updated initial savings balance default to $30,000
 - **January 18, 2025**: Fixed mortgage payment calculations to start from September 2025 - payments now apply correctly from month 1
 - **January 18, 2025**: Updated business income to start from month 1 (September 2025)
+- **January 18, 2025**: Updated Paul's current age from 62 to 63
 
 ## Changelog
 
