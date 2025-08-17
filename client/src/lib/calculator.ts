@@ -219,7 +219,7 @@ export function isPersonAlive(currentAge: number, endOfLifeAge: number): boolean
 
 export function getCurrentDate(): { month: number; year: number } {
   return {
-    month: 1, // January 2025 start
+    month: 9, // September 2025 start
     year: 2025
   };
 }
@@ -689,74 +689,72 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
   let currentMortgageBalance = yearStartMortgageBalance;
   
   for (let month = 0; month < 12; month++) {
-    // All years now start in January and end in December
-    const actualMonth = month; // January = 0, February = 1, etc.
-    const actualYear = 2025 + yearIndex;
-    const currentMonthOffset = yearIndex * 12 + month; // Simple: Year 1 = months 0-11, Year 2 = months 12-23, etc.
-    
+    const currentMonthOffset = yearIndex * 12 + month;
+    // Start from September 2025 (month 8 in 0-indexed system)
+    const actualMonth = (month + 8) % 12; // Start from September (month 8)
+    const actualYear = 2025 + yearIndex + Math.floor((month + 8) / 12);
     const monthName = new Date(actualYear, actualMonth).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
     
-    // All months from January 2025 onwards are active
+    // All months from September 2025 onwards are active (no zero-value months)
     const isBeforeJune2025 = false; // No longer applicable - all months are active
     
     // Calculate income sources for this specific month
-    // Calculate income sources using standard year/month calculation
-    const businessStartMonthOffset = (state.otherIncome.businessStartYear - 2025) * 12 + (state.otherIncome.businessStartMonth - 1);
+    const businessStartMonthOffset = (state.otherIncome.businessStartYear - 1) * 12 + (state.otherIncome.businessStartMonth - 1);
     const businessMonthsElapsed = currentMonthOffset - businessStartMonthOffset;
     const businessMonthly = (businessMonthsElapsed >= 0 && businessMonthsElapsed < state.otherIncome.businessDuration) 
       ? state.otherIncome.businessIncome 
       : 0;
     
-    const jessicaStartMonthOffset = (state.otherIncome.jessicaStartYear - 2025) * 12 + (state.otherIncome.jessicaStartMonth - 1);
+    const jessicaStartMonthOffset = (state.otherIncome.jessicaStartYear - 1) * 12 + (state.otherIncome.jessicaStartMonth - 1);
     const jessicaMonthsElapsed = currentMonthOffset - jessicaStartMonthOffset;
     const jessicaWorkMonthly = (jessicaMonthsElapsed >= 0 && jessicaMonthsElapsed < state.otherIncome.jessicaDuration) 
       ? state.otherIncome.jessicaIncome 
       : 0;
     
-    const chapter35StartMonthOffset = (state.otherIncome.chapter35StartYear - 2025) * 12 + (state.otherIncome.chapter35StartMonth - 1);
+    const chapter35StartMonthOffset = (state.otherIncome.chapter35StartYear - 1) * 12 + (state.otherIncome.chapter35StartMonth - 1);
     const chapter35MonthsElapsed = currentMonthOffset - chapter35StartMonthOffset;
     const chapter35Monthly = (chapter35MonthsElapsed >= 0 && chapter35MonthsElapsed < state.otherIncome.chapter35Duration) 
       ? state.otherIncome.chapter35 
       : 0;
 
-    const income1StartMonthOffset = (state.otherIncome.income1StartYear - 2025) * 12 + (state.otherIncome.income1StartMonth - 1);
+    const income1StartMonthOffset = (state.otherIncome.income1StartYear - 1) * 12 + (state.otherIncome.income1StartMonth - 1);
     const income1MonthsElapsed = currentMonthOffset - income1StartMonthOffset;
     const income1Monthly = (state.otherIncome.income1 > 0 && income1MonthsElapsed >= 0 && income1MonthsElapsed < state.otherIncome.income1Duration) 
       ? state.otherIncome.income1 
       : 0;
 
-    const income2StartMonthOffset = (state.otherIncome.income2StartYear - 2025) * 12 + (state.otherIncome.income2StartMonth - 1);
+    const income2StartMonthOffset = (state.otherIncome.income2StartYear - 1) * 12 + (state.otherIncome.income2StartMonth - 1);
     const income2MonthsElapsed = currentMonthOffset - income2StartMonthOffset;
     const income2Monthly = (state.otherIncome.income2 > 0 && income2MonthsElapsed >= 0 && income2MonthsElapsed < state.otherIncome.income2Duration) 
       ? state.otherIncome.income2 
       : 0;
 
-    const income3StartMonthOffset = (state.otherIncome.income3StartYear - 2025) * 12 + (state.otherIncome.income3StartMonth - 1);
+    const income3StartMonthOffset = (state.otherIncome.income3StartYear - 1) * 12 + (state.otherIncome.income3StartMonth - 1);
     const income3MonthsElapsed = currentMonthOffset - income3StartMonthOffset;
     const income3Monthly = (state.otherIncome.income3 > 0 && income3MonthsElapsed >= 0 && income3MonthsElapsed < state.otherIncome.income3Duration) 
       ? state.otherIncome.income3 
       : 0;
     
     // Calculate expense sources for this specific month
-    const lifeInsuranceStartMonthOffset = (state.expenses.lifeInsuranceStartYear - 2025) * 12 + (state.expenses.lifeInsuranceStartMonth - 1);
-    const lifeInsuranceEndMonthOffset = (state.expenses.lifeInsuranceEndYear - 2025) * 12 + (state.expenses.lifeInsuranceEndMonth - 1);
+    const lifeInsuranceStartMonthOffset = (state.expenses.lifeInsuranceStartYear - 1) * 12 + (state.expenses.lifeInsuranceStartMonth - 1);
+    const lifeInsuranceEndMonthOffset = (state.expenses.lifeInsuranceEndYear - 1) * 12 + (state.expenses.lifeInsuranceEndMonth - 1);
     const insuranceMonthly = (currentMonthOffset >= lifeInsuranceStartMonthOffset && currentMonthOffset <= lifeInsuranceEndMonthOffset) 
       ? state.expenses.lifeInsurance 
       : 0;
 
-    const expense1StartMonthOffset = (state.expenses.expense1StartYear - 2025) * 12 + (state.expenses.expense1StartMonth - 1);
+    const expense1StartMonthOffset = (state.expenses.expense1StartYear - 1) * 12 + (state.expenses.expense1StartMonth - 1);
     const expense1MonthsElapsed = currentMonthOffset - expense1StartMonthOffset;
     const expense1Monthly = (state.expenses.expense1 > 0 && expense1MonthsElapsed >= 0 && expense1MonthsElapsed < state.expenses.expense1Duration) 
       ? state.expenses.expense1 
       : 0;
 
-    const expense2StartMonthOffset = (state.expenses.expense2StartYear - 2025) * 12 + (state.expenses.expense2StartMonth - 1);
+    const expense2StartMonthOffset = (state.expenses.expense2StartYear - 1) * 12 + (state.expenses.expense2StartMonth - 1);
     const expense2MonthsElapsed = currentMonthOffset - expense2StartMonthOffset;
     const expense2Monthly = (state.expenses.expense2 > 0 && expense2MonthsElapsed >= 0 && expense2MonthsElapsed < state.expenses.expense2Duration) 
       ? state.expenses.expense2 
       : 0;
 
-    const expense3StartMonthOffset = (state.expenses.expense3StartYear - 2025) * 12 + (state.expenses.expense3StartMonth - 1);
+    const expense3StartMonthOffset = (state.expenses.expense3StartYear - 1) * 12 + (state.expenses.expense3StartMonth - 1);
     const expense3MonthsElapsed = currentMonthOffset - expense3StartMonthOffset;
     const expense3Monthly = (state.expenses.expense3 > 0 && expense3MonthsElapsed >= 0 && expense3MonthsElapsed < state.expenses.expense3Duration) 
       ? state.expenses.expense3 
@@ -827,7 +825,7 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
     
     // Calculate VA Disability with inflation and survivor benefits
     let vaDisabilityMonthly = 0;
-    // All months are active starting from January 2025
+    // All months are active starting from September 2025
     if (true) {
       if (paulAlive) {
         // Paul alive: gets full VA Disability
@@ -857,7 +855,7 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
     
     // Apply lump sum payment if it occurs this month
     let lumpSumPayment = 0;
-    const lumpSumMonthOffset = (state.housing.lumpSumYear - 2025) * 12 + (state.housing.lumpSumMonth - 1);
+    const lumpSumMonthOffset = (state.housing.lumpSumYear - 1) * 12 + (state.housing.lumpSumMonth - 1);
     if (state.housing.lumpSumAmount > 0 && currentMonthOffset === lumpSumMonthOffset) {
       lumpSumPayment = state.housing.lumpSumAmount;
       currentMortgageBalance = Math.max(0, currentMortgageBalance - lumpSumPayment);
@@ -940,11 +938,6 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
     const netIncome = grossIncome - taxes;
     const netCashFlow = netIncome - actualLivingExpMonthly - actualInsuranceMonthly - actualExpense1Monthly - actualExpense2Monthly - actualExpense3Monthly - actualMortgageMonthly;
     
-    // Add initial $30,000 savings in September 2025 (month 8, offset 8)
-    if (currentMonthOffset === 8) {
-      runningBalance += 30000;
-    }
-    
     // All positive cash flow goes to savings, negative cash flow comes from savings
     runningBalance += netCashFlow;
     
@@ -999,11 +992,8 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
     });
   }
   
-  // All years now show full 12 months (Jan-Dec)
   return monthlyData;
 }
-
-
 
 export function calculateAnnualProjections(state: CalculatorState): AnnualData[] {
   const annualData: AnnualData[] = [];
