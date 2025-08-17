@@ -401,8 +401,8 @@ export function InputSectionHorizontal({ state, onUpdate }: InputSectionProps) {
                   <div className="flex items-center mt-3">
                     <Checkbox 
                       id="jessica-tax" 
-                      checked={state.otherIncome.jessicaTaxable}
-                      onCheckedChange={(checked) => onUpdate('otherIncome', { jessicaTaxable: checked })}
+                      checked={true}
+                      disabled
                       className="rounded border-gray-300 text-finance-blue focus:ring-finance-blue"
                     />
                     <Label htmlFor="jessica-tax" className="ml-2 text-sm text-gray-600">Taxable at {state.taxRates.jessica}%</Label>
@@ -586,21 +586,12 @@ export function InputSectionHorizontal({ state, onUpdate }: InputSectionProps) {
 
                   <div className="space-y-4">
                     <div>
-                      <Label className="block text-sm font-medium text-gray-700 mb-2">Retirement Spending Adjustment</Label>
-                      <div className="relative">
-                        <Input 
-                          type="number" 
-                          step="5"
-                          min="50"
-                          max="120"
-                          value={80}
-                          onChange={(e) => {/* Will implement later */}}
-                          className="pr-8 focus:ring-2 focus:ring-finance-blue focus:border-transparent"
-                          disabled
-                        />
-                        <span className="absolute right-3 top-2 text-gray-500">%</span>
+                      <Label className="block text-sm font-medium text-gray-700 mb-2">Note</Label>
+                      <div className="bg-gray-50 p-3 rounded-lg">
+                        <p className="text-sm text-gray-600">
+                          Living expenses remain constant throughout retirement without adjustment multipliers.
+                        </p>
                       </div>
-                      <p className="text-xs text-gray-500 mt-1">Percentage of current expenses needed in retirement</p>
                     </div>
                   </div>
                 </div>

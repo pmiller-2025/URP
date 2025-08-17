@@ -91,6 +91,12 @@ export default function RetirementCalculator() {
         needsUpdate = true;
       }
       
+      // Update basic living expenses to new default
+      if (parsed.expenses?.basicLiving !== 5000) {
+        parsed.expenses.basicLiving = 5000;
+        needsUpdate = true;
+      }
+      
       // Update Paul's birth month back to original (June)
       if (parsed.personalInfo?.paulBirthMonth !== 6) {
         parsed.personalInfo.paulBirthMonth = 6;
