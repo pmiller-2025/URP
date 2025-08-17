@@ -219,7 +219,7 @@ export function isPersonAlive(currentAge: number, endOfLifeAge: number): boolean
 
 export function getCurrentDate(): { month: number; year: number } {
   return {
-    month: 1, // January 2025 start
+    month: 9, // September 2025 start
     year: 2025
   };
 }
@@ -690,12 +690,12 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
   
   for (let month = 0; month < 12; month++) {
     const currentMonthOffset = yearIndex * 12 + month;
-    // Start from January 2025 (month 0 in 0-indexed system)
-    const actualMonth = month; // Start from January (month 0)
-    const actualYear = 2025 + yearIndex;
+    // Start from September 2025 (month 8 in 0-indexed system)
+    const actualMonth = (month + 8) % 12; // Start from September (month 8)
+    const actualYear = 2025 + yearIndex + Math.floor((month + 8) / 12);
     const monthName = new Date(actualYear, actualMonth).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
     
-    // All months from January 2025 onwards are active (no zero-value months)
+    // All months from September 2025 onwards are active (no zero-value months)
     const isBeforeJune2025 = false; // No longer applicable - all months are active
     
     // Calculate income sources for this specific month
@@ -772,7 +772,7 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
     let paulSSMonthly = 0;
     let jessicaSSMonthly = 0;
     
-    // All months are active starting from January 2025
+    // All months are active starting from September 2025
     if (true) {
       if (paulAlive && jessicaAlive) {
         // Paul's benefit calculation - starts the month after birth month when he reaches start age
@@ -825,7 +825,7 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
     
     // Calculate VA Disability with inflation and survivor benefits
     let vaDisabilityMonthly = 0;
-    // All months are active starting from January 2025
+    // All months are active starting from September 2025
     if (true) {
       if (paulAlive) {
         // Paul alive: gets full VA Disability
@@ -990,6 +990,11 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
       returnOnInvestments: isNaN(monthlyInvestmentReturn) ? 0 : monthlyInvestmentReturn, // Gross return before taxes
       savingsBalance: isNaN(runningBalance) ? 0 : runningBalance
     });
+  }
+  
+  // For the first year, only show September-December months
+  if (year === 1) {
+    return monthlyData.filter((month, index) => index >= 8); // Keep only months 8-11 (Sep-Dec)
   }
   
   return monthlyData;
