@@ -205,7 +205,7 @@ export interface SummaryMetrics {
   standardPayoffDate: string;
 }
 
-export function calculateAge(birthMonth: number, birthYear: number, currentMonth: number = 6, currentYear: number = 2025): number {
+export function calculateAge(birthMonth: number, birthYear: number, currentMonth: number = 9, currentYear: number = 2025): number {
   let age = currentYear - birthYear;
   if (currentMonth < birthMonth) {
     age--;
@@ -219,7 +219,7 @@ export function isPersonAlive(currentAge: number, endOfLifeAge: number): boolean
 
 export function getCurrentDate(): { month: number; year: number } {
   return {
-    month: 1, // January 2025 start
+    month: 9, // September 2025 start
     year: 2025
   };
 }
@@ -682,7 +682,7 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
   // Initialize mortgage balance tracking
   let yearStartMortgageBalance = state.housing.mortgageBalance;
   
-  // Get lump sum payment offset (January 2025 start = month 1 = offset 0)
+  // Get lump sum payment offset (September 2025 start = month 9 = offset 0)
   const lumpSumMonthOffset = (state.housing.lumpSumYear - 1) * 12 + (state.housing.lumpSumMonth - 1);
   const yearStartMonthOffset = yearIndex * 12;
   
@@ -730,13 +730,13 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
   
   for (let month = 0; month < 12; month++) {
     const currentMonthOffset = yearIndex * 12 + month;
-    // Start from January 2025 (month 0 in 0-indexed system)
-    const actualMonth = month; // Start from January (month 0)
-    const actualYear = 2025 + yearIndex;
+    // Start from September 2025 (month 8 in 0-indexed system)
+    const actualMonth = (month + 8) % 12; // Start from September (month 8)
+    const actualYear = 2025 + yearIndex + Math.floor((month + 8) / 12);
     const monthName = new Date(actualYear, actualMonth).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
     
-    // For months January-May 2025 (first year), use zero values for income/expenses
-    const isBeforeJune2025 = yearIndex === 0 && month < 5; // January-May are months 0-4
+    // All months from September 2025 onwards are active (no zero-value months)
+    const isBeforeJune2025 = false; // No longer applicable - all months are active
     
     // Calculate income sources for this specific month
     const businessStartMonthOffset = (state.otherIncome.businessStartYear - 1) * 12 + (state.otherIncome.businessStartMonth - 1);

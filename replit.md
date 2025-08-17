@@ -125,6 +125,7 @@ Preferred communication style: Simple, everyday language.
 - **January 06, 2025**: Changed projections to start from January 2025 instead of June 2025
 - **January 06, 2025**: First 5 months (Jan-May 2025) show zero values for income and expenses
 - **January 06, 2025**: Actual retirement calculations begin from June 2025 as originally planned
+- **January 18, 2025**: Updated to start projections from September 2025 - all months now show active calculations
 - **January 06, 2025**: Added time frame selector to Cash Flow Analysis chart (5, 10, 15, 20, 25, 30 years)
 - **January 06, 2025**: Cash flow chart now dynamically adjusts grid lines and labels based on selected time frame
 - **January 06, 2025**: Added stacked income source visualization to Cash Flow Analysis chart
@@ -173,6 +174,7 @@ Preferred communication style: Simple, everyday language.
 - **January 18, 2025**: Updated target payoff months default to 10 months
 - **January 18, 2025**: Updated Jessica's work income duration to 12 months
 - **January 18, 2025**: Updated Paul's birth month to September (9/25 starting date)
+- **January 18, 2025**: Updated retirement calculations to start from September 2025 instead of January 2025
 
 ## Changelog
 
