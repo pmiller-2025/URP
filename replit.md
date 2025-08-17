@@ -4,6 +4,9 @@
 URP (Ultimate Retirement Planner) is a comprehensive web application designed to provide detailed 30-year retirement cash flow projections, offering both annual and monthly views. This full-stack TypeScript application, featuring a React frontend and Express backend, includes AI-powered financial analysis and scenario comparison capabilities. The vision is to empower users with clear, actionable insights into their financial future, enabling informed decision-making for retirement planning.
 
 ## Recent Changes (August 2025)
+- **Chart Toggle Implementation Complete**: Successfully added Annual/Monthly view toggle buttons to all three chart types (Savings, Cash Flow, Income Timeline) with proper error handling and data validation
+- **Fixed Runtime Errors**: Resolved undefined variable issues in SavingsChart and completely rewrote CashFlowChart component for stability
+- **Enhanced Chart Functionality**: All charts now support dual-mode visualization with independent toggle controls and proper data switching
 - **Fixed Critical Social Security Bug**: Resolved issue where Paul's Social Security benefits incorrectly stopped in January 2033 due to End of Life age being set to 70 instead of 100
 - **Enhanced Birth Month Logic**: Implemented proper Social Security benefit timing based on birth months - Jessica's Tier 1 starts January 2031 (age 62), increases to Tier 1+Tier 2 when Paul starts August 2032 (age 70)
 - **Mortgage Calculations**: Finalized $37,400 balance with 10-month accelerated payoff saving $1,030.98 in interest
