@@ -302,7 +302,7 @@ export function getDefaultState(): CalculatorState {
       jessicaEndOfLifeAge: 100 // Default to age 100
     },
     socialSecurity: {
-      paulAmount: 0, // User will set custom amount
+      paulAmount: 3968, // Paul's SS benefit at age 70
       jessicaAmount: 872, // Jessica's Tier 1 SS benefit
       jessicaSpousalAmount: 263, // Jessica's Tier 2 spousal benefit
       cola: 3.0,
