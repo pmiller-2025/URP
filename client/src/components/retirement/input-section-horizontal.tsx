@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 import { BenefitsSection } from './benefits-section';
 import type { CalculatorState } from '@/lib/calculator';
 
@@ -13,6 +14,19 @@ interface InputSectionProps {
 }
 
 export function InputSectionHorizontal({ state, onUpdate }: InputSectionProps) {
+  const [expandedSections, setExpandedSections] = useState({
+    personal: true,
+    income: true,
+    benefits: true
+  });
+
+  const toggleSection = (section: keyof typeof expandedSections) => {
+    setExpandedSections(prev => ({
+      ...prev,
+      [section]: !prev[section]
+    }));
+  };
+
   const formatCurrency = (value: number): string => {
     return value.toLocaleString();
   };
@@ -67,18 +81,29 @@ export function InputSectionHorizontal({ state, onUpdate }: InputSectionProps) {
         
         {/* Row 1: Personal Information - Full Width */}
         <Card className="bg-white rounded-xl shadow-sm border border-gray-200">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between mb-6">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between mb-4">
               <div className="flex items-center">
                 <i className="fas fa-users text-finance-blue mr-3"></i>
                 <h2 className="text-xl font-semibold text-gray-900">Personal Information</h2>
+                <div className="text-sm text-gray-500 ml-4">
+                  Current: {currentDate.month}/{currentDate.year}
+                </div>
               </div>
-              <div className="text-sm text-gray-500">
-                Current: {currentDate.month}/{currentDate.year}
-              </div>
+              <button
+                onClick={() => toggleSection('personal')}
+                className="flex items-center text-gray-500 hover:text-gray-700 transition-colors"
+              >
+                {expandedSections.personal ? (
+                  <ChevronUp className="h-5 w-5" />
+                ) : (
+                  <ChevronDown className="h-5 w-5" />
+                )}
+              </button>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+            {expandedSections.personal && (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
               {/* Projection Years */}
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                 <Label className="block text-sm font-medium text-blue-800 mb-2">Projection Years</Label>
@@ -211,18 +236,33 @@ export function InputSectionHorizontal({ state, onUpdate }: InputSectionProps) {
                 <p className="text-xs text-gray-500">Current age: {state.personalInfo.lukeAge}</p>
               </div>
             </div>
+            )}
           </CardContent>
         </Card>
 
         {/* Row 2: Income - Full Width */}
         <Card className="bg-white rounded-xl shadow-sm border border-gray-200">
-          <CardContent className="p-6">
-            <div className="flex items-center mb-6">
-              <i className="fas fa-money-bill-wave text-finance-blue mr-3"></i>
-              <h2 className="text-xl font-semibold text-gray-900">Income</h2>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center">
+                <i className="fas fa-money-bill-wave text-finance-blue mr-3"></i>
+                <h2 className="text-xl font-semibold text-gray-900">Income</h2>
+              </div>
+              <button
+                onClick={() => toggleSection('income')}
+                className="flex items-center text-gray-500 hover:text-gray-700 transition-colors"
+              >
+                {expandedSections.income ? (
+                  <ChevronUp className="h-5 w-5" />
+                ) : (
+                  <ChevronDown className="h-5 w-5" />
+                )}
+              </button>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {expandedSections.income && (
+              <>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {/* Business Income */}
               <div className="space-y-4">
                 <div>
@@ -450,14 +490,41 @@ export function InputSectionHorizontal({ state, onUpdate }: InputSectionProps) {
                 )}
               </div>
             </div>
+            </>
+            )}
           </CardContent>
         </Card>
 
         {/* Row 3: Benefits Section - Full Width */}
-        <BenefitsSection 
-          state={state} 
-          onUpdate={onUpdate}
-        />
+        <Card className="bg-white rounded-xl shadow-sm border border-gray-200">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center">
+                <i className="fas fa-shield-alt text-finance-blue mr-3"></i>
+                <h2 className="text-xl font-semibold text-gray-900">Benefits & Social Security</h2>
+              </div>
+              <button
+                onClick={() => toggleSection('benefits')}
+                className="flex items-center text-gray-500 hover:text-gray-700 transition-colors"
+              >
+                {expandedSections.benefits ? (
+                  <ChevronUp className="h-5 w-5" />
+                ) : (
+                  <ChevronDown className="h-5 w-5" />
+                )}
+              </button>
+            </div>
+            
+            {expandedSections.benefits && (
+              <div className="mt-4">
+                <BenefitsSection 
+                  state={state} 
+                  onUpdate={onUpdate}
+                />
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
     </>
   );
