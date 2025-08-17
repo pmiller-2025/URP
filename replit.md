@@ -185,6 +185,7 @@ Preferred communication style: Simple, everyday language.
 - **January 18, 2025**: Changed default view mode from annual to monthly
 - **January 18, 2025**: Fixed mortgage payment logic to properly end payments after 10-month target payoff period
 - **January 18, 2025**: Fixed monthly view savings balance calculation to properly carry over year-end balances
+- **January 18, 2025**: Fixed mortgage balance carryover in monthly view to properly show zero balance after 10-month payoff
 
 ## Changelog
 

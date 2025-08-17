@@ -691,7 +691,7 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
     yearStartMortgageBalance = Math.max(0, yearStartMortgageBalance - state.housing.lumpSumAmount);
     
     // Also account for mortgage payments made in previous years
-    const mortgageStartMonth = 5; // June 2025 is month 5 (0-indexed from Jan 2025)
+    const mortgageStartMonth = 0; // September 2025 is month 0 (start of projections)
     for (let prevMonthOffset = mortgageStartMonth; prevMonthOffset < yearStartMonthOffset; prevMonthOffset++) {
       if (yearStartMortgageBalance > 0) {
         const monthsSinceMortgageStart = prevMonthOffset - mortgageStartMonth;
@@ -702,12 +702,12 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
           let monthlyPrincipal;
           
           if (state.housing.acceleratePayoff && monthsSinceMortgageStart < state.housing.targetPayoffMonths) {
-            // Calculate accelerated payment using the same conservative logic
+            // Calculate accelerated payment using same logic as monthly calculation
             const remainingTargetMonths = Math.max(1, state.housing.targetPayoffMonths - monthsSinceMortgageStart);
             const requiredPayment = calculateMortgagePayment(yearStartMortgageBalance, state.housing.interestRate, remainingTargetMonths);
-            const regularPayment = state.housing.monthlyPayment;
-            const maxExtraPayment = Math.min(requiredPayment - regularPayment, yearStartMortgageBalance * 0.1);
-            const targetPayment = regularPayment + Math.max(0, maxExtraPayment);
+            
+            // Use the full required payment to ensure payoff in target months
+            const targetPayment = requiredPayment;
             monthlyPrincipal = Math.min(targetPayment - monthlyInterest, yearStartMortgageBalance);
           } else {
             monthlyPrincipal = Math.min(state.housing.monthlyPayment - monthlyInterest, yearStartMortgageBalance);
@@ -715,6 +715,7 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
           
           yearStartMortgageBalance = Math.max(0, yearStartMortgageBalance - monthlyPrincipal);
         } else {
+          // Target payoff period has passed - mortgage should be paid off
           yearStartMortgageBalance = 0;
           break;
         }
