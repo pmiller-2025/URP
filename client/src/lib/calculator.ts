@@ -710,19 +710,33 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
     const isBeforeJune2025 = false; // No longer applicable - all months are active
     
     // Calculate income sources for this specific month
-    // Convert start dates to our timeline (Sep 2025 = offset 0)
+    // Business income starts September 2025 (offset 0), so it should show in Year 1
     const businessStartMonthOffset = (state.otherIncome.businessStartYear - 2025) * 12 + (state.otherIncome.businessStartMonth - 9);
     const businessMonthsElapsed = currentMonthOffset - businessStartMonthOffset;
     const businessMonthly = (businessMonthsElapsed >= 0 && businessMonthsElapsed < state.otherIncome.businessDuration) 
       ? state.otherIncome.businessIncome 
       : 0;
     
+    // Debug logging for Year 2 January
+    if (year === 2 && month === 0) {
+      console.log('Business Debug Year 2 Jan:', {
+        currentMonthOffset,
+        businessStartMonthOffset,
+        businessMonthsElapsed,
+        businessDuration: state.otherIncome.businessDuration,
+        businessIncome: state.otherIncome.businessIncome,
+        businessMonthly
+      });
+    }
+    
+    // Jessica work starts September 2025 (offset 0), so it should show in Year 1
     const jessicaStartMonthOffset = (state.otherIncome.jessicaStartYear - 2025) * 12 + (state.otherIncome.jessicaStartMonth - 9);
     const jessicaMonthsElapsed = currentMonthOffset - jessicaStartMonthOffset;
     const jessicaWorkMonthly = (jessicaMonthsElapsed >= 0 && jessicaMonthsElapsed < state.otherIncome.jessicaDuration) 
       ? state.otherIncome.jessicaIncome 
       : 0;
     
+    // Chapter 35 starts September 2025 (offset 0), so it should show in Year 1
     const chapter35StartMonthOffset = (state.otherIncome.chapter35StartYear - 2025) * 12 + (state.otherIncome.chapter35StartMonth - 9);
     const chapter35MonthsElapsed = currentMonthOffset - chapter35StartMonthOffset;
     const chapter35Monthly = (chapter35MonthsElapsed >= 0 && chapter35MonthsElapsed < state.otherIncome.chapter35Duration) 
