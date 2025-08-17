@@ -992,9 +992,9 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
     });
   }
   
-  // For the first year, only show September-December months
+  // For the first year, only show September-December months (first 4 months of the calculation)
   if (year === 1) {
-    return monthlyData.filter((month, index) => index >= 8); // Keep only months 8-11 (Sep-Dec)
+    return monthlyData.slice(0, 4); // Keep only first 4 months (Sep, Oct, Nov, Dec 2025)
   }
   
   return monthlyData;
