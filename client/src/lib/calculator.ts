@@ -290,7 +290,7 @@ export function getDefaultState(): CalculatorState {
     personalInfo: {
       paulAge: 62,
       jessicaAge: 56,
-      paulBirthMonth: 7,
+      paulBirthMonth: 9,
       paulBirthYear: 1962,
       jessicaBirthMonth: 12,
       jessicaBirthYear: 1968,
