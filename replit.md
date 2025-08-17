@@ -176,6 +176,7 @@ Preferred communication style: Simple, everyday language.
 - **January 18, 2025**: Corrected Jessica's birth month to December 1968 (original correct date)
 - **January 18, 2025**: Updated retirement calculations to start from September 2025 instead of January 2025
 - **January 18, 2025**: Updated initial savings balance default to $30,000
+- **January 18, 2025**: Fixed mortgage payment calculations to start from September 2025 - payments now apply correctly from month 1
 
 ## Changelog
 

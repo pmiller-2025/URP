@@ -812,7 +812,8 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
     let paulSSMonthly = 0;
     let jessicaSSMonthly = 0;
     
-    if (!isBeforeJune2025) {
+    // All months are active starting from September 2025
+    if (true) {
       if (paulAlive && jessicaAlive) {
         // Paul's benefit calculation
         const paulEligible = paulAgeThisMonth >= state.socialSecurity.paulStartAge && 
@@ -858,7 +859,8 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
     
     // Calculate VA Disability with inflation and survivor benefits
     let vaDisabilityMonthly = 0;
-    if (!isBeforeJune2025) {
+    // All months are active starting from September 2025
+    if (true) {
       if (paulAlive) {
         // Paul alive: gets full VA Disability
         vaDisabilityMonthly = calculateInflationAdjusted(state.otherIncome.vaDisability, state.expenses.inflationRate, yearIndex);
@@ -901,8 +903,8 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
     // Calculate monthly mortgage payment based on current balance and remaining months
     let currentMortgageMonthly = 0;
     if (currentMortgageBalance > 0) {
-      // Calculate remaining months from the start of mortgage payments (June 2025)
-      const mortgageStartMonth = 5; // June 2025 is month 5 (0-indexed from Jan 2025)
+      // Calculate remaining months from the start of mortgage payments (September 2025)
+      const mortgageStartMonth = 0; // September 2025 is month 0 (start of projections)
       const monthsSinceMortgageStart = Math.max(0, currentMonthOffset - mortgageStartMonth);
       const remainingMonths = Math.max(0, state.housing.targetPayoffMonths - monthsSinceMortgageStart);
       
@@ -951,19 +953,19 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
       }
     }
     
-    // Apply zero values for months before June 2025, or use calculated values
-    const actualBusinessMonthly = isBeforeJune2025 ? 0 : businessMonthly;
-    const actualJessicaWorkMonthly = isBeforeJune2025 ? 0 : jessicaWorkMonthly;
-    const actualChapter35Monthly = isBeforeJune2025 ? 0 : chapter35Monthly;
-    const actualIncome1Monthly = isBeforeJune2025 ? 0 : income1Monthly;
-    const actualIncome2Monthly = isBeforeJune2025 ? 0 : income2Monthly;
-    const actualIncome3Monthly = isBeforeJune2025 ? 0 : income3Monthly;
-    const actualLivingExpMonthly = isBeforeJune2025 ? 0 : livingExpMonthly;
-    const actualInsuranceMonthly = isBeforeJune2025 ? 0 : insuranceMonthly;
-    const actualExpense1Monthly = isBeforeJune2025 ? 0 : expense1Monthly;
-    const actualExpense2Monthly = isBeforeJune2025 ? 0 : expense2Monthly;
-    const actualExpense3Monthly = isBeforeJune2025 ? 0 : expense3Monthly;
-    const actualMortgageMonthly = isBeforeJune2025 ? 0 : currentMortgageMonthly;
+    // All months are now active since we start from September 2025
+    const actualBusinessMonthly = businessMonthly;
+    const actualJessicaWorkMonthly = jessicaWorkMonthly;
+    const actualChapter35Monthly = chapter35Monthly;
+    const actualIncome1Monthly = income1Monthly;
+    const actualIncome2Monthly = income2Monthly;
+    const actualIncome3Monthly = income3Monthly;
+    const actualLivingExpMonthly = livingExpMonthly;
+    const actualInsuranceMonthly = insuranceMonthly;
+    const actualExpense1Monthly = expense1Monthly;
+    const actualExpense2Monthly = expense2Monthly;
+    const actualExpense3Monthly = expense3Monthly;
+    const actualMortgageMonthly = currentMortgageMonthly;
     
     const grossIncome = paulSSMonthly + jessicaSSMonthly + vaDisabilityMonthly + actualBusinessMonthly + actualJessicaWorkMonthly + actualChapter35Monthly + actualIncome1Monthly + actualIncome2Monthly + actualIncome3Monthly;
     
