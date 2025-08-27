@@ -4,9 +4,9 @@
 URP (Ultimate Retirement Planner) is a comprehensive web application designed to provide detailed 30-year retirement cash flow projections, offering both annual and monthly views. This full-stack TypeScript application, featuring a React frontend and Express backend, includes AI-powered financial analysis and scenario comparison capabilities. The vision is to empower users with clear, actionable insights into their financial future, enabling informed decision-making for retirement planning.
 
 ## Recent Changes (August 2025)
-- **Real Estate Assets Functionality Complete**: Successfully implemented comprehensive real estate investment tracking with 3 property slots, including property values, mortgages, rental income, monthly payments, and appreciation rates
-- **Fixed Real Estate Migration Bug**: Added localStorage migration logic to prevent runtime errors for existing users when accessing new real estate properties
-- **Real Estate Integration**: Rental income and property payments now properly integrated into monthly and annual cash flow calculations and net worth projections
+- **Home Value Section Complete**: Replaced complex real estate assets with simplified Home Value section focusing on primary residence tracking with current value, mortgage balance, monthly payment, and appreciation rate
+- **Net Worth Integration**: Home value with appreciation properly integrated into monthly and annual net worth calculations (Home Value + Savings - Mortgage Balance)
+- **Migration Logic Updated**: Seamlessly migrates from realEstate section to homeValue section using existing housing data
 - **Chart Toggle Implementation Complete**: Successfully added Annual/Monthly view toggle buttons to all three chart types (Savings, Cash Flow, Income Timeline) with proper error handling and data validation
 - **Fixed Runtime Errors**: Resolved undefined variable issues in SavingsChart and completely rewrote CashFlowChart component for stability
 - **Enhanced Chart Functionality**: All charts now support dual-mode visualization with independent toggle controls and proper data switching
