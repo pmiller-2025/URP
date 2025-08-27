@@ -73,6 +73,28 @@ export default function RetirementCalculator() {
         needsUpdate = true;
       }
       
+      // Add realEstate section if it doesn't exist
+      if (!parsed.realEstate) {
+        parsed.realEstate = {
+          property1Value: 0,
+          property1Mortgage: 0,
+          property1MonthlyPayment: 0,
+          property1RentalIncome: 0,
+          property1Appreciation: 3.0,
+          property2Value: 0,
+          property2Mortgage: 0,
+          property2MonthlyPayment: 0,
+          property2RentalIncome: 0,
+          property2Appreciation: 3.0,
+          property3Value: 0,
+          property3Mortgage: 0,
+          property3MonthlyPayment: 0,
+          property3RentalIncome: 0,
+          property3Appreciation: 3.0
+        };
+        needsUpdate = true;
+      }
+      
       // Update lump sum payment to new default
       if (parsed.housing?.lumpSumAmount !== 0) {
         parsed.housing.lumpSumAmount = 0;
