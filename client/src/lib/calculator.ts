@@ -83,6 +83,24 @@ export interface Housing {
   lumpSumYear: number;
 }
 
+export interface RealEstate {
+  property1Value: number;
+  property1Mortgage: number;
+  property1MonthlyPayment: number;
+  property1RentalIncome: number;
+  property1Appreciation: number;
+  property2Value: number;
+  property2Mortgage: number;
+  property2MonthlyPayment: number;
+  property2RentalIncome: number;
+  property2Appreciation: number;
+  property3Value: number;
+  property3Mortgage: number;
+  property3MonthlyPayment: number;
+  property3RentalIncome: number;
+  property3Appreciation: number;
+}
+
 export interface Savings {
   initialAmount: number;
   annualReturn: number;
@@ -137,6 +155,7 @@ export interface CalculatorState {
   socialSecurity: SocialSecurity;
   otherIncome: OtherIncome;
   housing: Housing;
+  realEstate: RealEstate;
   savings: Savings;
   expenses: Expenses;
   taxRates: TaxRates;
@@ -150,6 +169,7 @@ export interface MonthlyData {
   business: number;
   jessicaWork: number;
   chapter35: number;
+  rentalIncome: number;
   grossIncome: number;
   taxes: number;
   netIncome: number;
@@ -159,10 +179,14 @@ export interface MonthlyData {
   expense2: number;
   expense3: number;
   mortgage: number;
+  propertyPayments: number;
+  totalExpenses: number;
   mortgageBalance: number;
   netCashFlow: number;
   returnOnInvestments: number;
   savingsBalance: number;
+  totalRealEstateValue: number;
+  totalRealEstateMortgages: number;
 }
 
 export interface AnnualData {
@@ -175,21 +199,25 @@ export interface AnnualData {
   business: number;
   jessicaWork: number;
   chapter35: number;
+  rentalIncome: number;
   totalIncome: number;
   totalTaxes: number;
   afterTaxIncome: number;
-  livingExp: number;
+  livingExpenses: number;
   insurance: number;
   expense1: number;
   expense2: number;
   expense3: number;
   mortgage: number;
+  propertyPayments: number;
   netCashFlow: number;
   returnOnInvestments: number;
   investmentReturn: number;
   savingsBalance: number;
   homeValue: number;
   mortgageBalance: number;
+  totalRealEstateValue: number;
+  totalRealEstateMortgages: number;
   netWorth: number;
 }
 
@@ -349,6 +377,23 @@ export function getDefaultState(): CalculatorState {
       lumpSumAmount: 0,
       lumpSumMonth: 1,
       lumpSumYear: 1
+    },
+    realEstate: {
+      property1Value: 0,
+      property1Mortgage: 0,
+      property1MonthlyPayment: 0,
+      property1RentalIncome: 0,
+      property1Appreciation: 3.0,
+      property2Value: 0,
+      property2Mortgage: 0,
+      property2MonthlyPayment: 0,
+      property2RentalIncome: 0,
+      property2Appreciation: 3.0,
+      property3Value: 0,
+      property3Mortgage: 0,
+      property3MonthlyPayment: 0,
+      property3RentalIncome: 0,
+      property3Appreciation: 3.0
     },
     savings: {
       initialAmount: 30000,
@@ -927,7 +972,13 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
     const actualExpense3Monthly = expense3Monthly;
     const actualMortgageMonthly = currentMortgageMonthly;
     
-    const grossIncome = paulSSMonthly + jessicaSSMonthly + vaDisabilityMonthly + actualBusinessMonthly + actualJessicaWorkMonthly + actualChapter35Monthly + actualIncome1Monthly + actualIncome2Monthly + actualIncome3Monthly;
+    // Calculate real estate rental income and payments
+    const rentalIncome = state.realEstate.property1RentalIncome + state.realEstate.property2RentalIncome + state.realEstate.property3RentalIncome;
+    const propertyPayments = state.realEstate.property1MonthlyPayment + state.realEstate.property2MonthlyPayment + state.realEstate.property3MonthlyPayment;
+    const totalRealEstateValue = state.realEstate.property1Value + state.realEstate.property2Value + state.realEstate.property3Value;
+    const totalRealEstateMortgages = state.realEstate.property1Mortgage + state.realEstate.property2Mortgage + state.realEstate.property3Mortgage;
+    
+    const grossIncome = paulSSMonthly + jessicaSSMonthly + vaDisabilityMonthly + actualBusinessMonthly + actualJessicaWorkMonthly + actualChapter35Monthly + actualIncome1Monthly + actualIncome2Monthly + actualIncome3Monthly + rentalIncome;
     
     const taxes = 
       calculateTaxes(paulSSMonthly, state.taxRates.socialSecurity, state.socialSecurity.paulTaxable) +
@@ -936,7 +987,8 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
       calculateTaxes(actualJessicaWorkMonthly, state.taxRates.jessica, true);
     
     const netIncome = grossIncome - taxes;
-    const netCashFlow = netIncome - actualLivingExpMonthly - actualInsuranceMonthly - actualExpense1Monthly - actualExpense2Monthly - actualExpense3Monthly - actualMortgageMonthly;
+    const totalExpenses = actualLivingExpMonthly + actualInsuranceMonthly + actualExpense1Monthly + actualExpense2Monthly + actualExpense3Monthly + actualMortgageMonthly + propertyPayments;
+    const netCashFlow = netIncome - totalExpenses;
     
     // All positive cash flow goes to savings, negative cash flow comes from savings
     runningBalance += netCashFlow;
@@ -976,6 +1028,7 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
       business: isNaN(actualBusinessMonthly) ? 0 : actualBusinessMonthly,
       jessicaWork: isNaN(actualJessicaWorkMonthly) ? 0 : actualJessicaWorkMonthly,
       chapter35: isNaN(actualChapter35Monthly) ? 0 : actualChapter35Monthly,
+      rentalIncome: isNaN(rentalIncome) ? 0 : rentalIncome,
       grossIncome: isNaN(grossIncome) ? 0 : grossIncome,
       taxes: isNaN(totalTaxes) ? 0 : totalTaxes, // Now includes investment taxes
       netIncome: isNaN(finalNetIncome) ? 0 : finalNetIncome,
@@ -985,10 +1038,14 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
       expense2: isNaN(actualExpense2Monthly) ? 0 : actualExpense2Monthly,
       expense3: isNaN(actualExpense3Monthly) ? 0 : actualExpense3Monthly,
       mortgage: isNaN(actualMortgageMonthly) ? 0 : actualMortgageMonthly,
+      propertyPayments: isNaN(propertyPayments) ? 0 : propertyPayments,
+      totalExpenses: isNaN(totalExpenses) ? 0 : totalExpenses,
       mortgageBalance: isNaN(beginningMortgageBalance) ? 0 : beginningMortgageBalance,
       netCashFlow: isNaN(netCashFlow) ? 0 : netCashFlow,
       returnOnInvestments: isNaN(monthlyInvestmentReturn) ? 0 : monthlyInvestmentReturn, // Gross return before taxes
-      savingsBalance: isNaN(runningBalance) ? 0 : runningBalance
+      savingsBalance: isNaN(runningBalance) ? 0 : runningBalance,
+      totalRealEstateValue: isNaN(totalRealEstateValue) ? 0 : totalRealEstateValue,
+      totalRealEstateMortgages: isNaN(totalRealEstateMortgages) ? 0 : totalRealEstateMortgages
     });
   }
   
@@ -1341,6 +1398,12 @@ export function calculateAnnualProjections(state: CalculatorState): AnnualData[]
     // Calculate net worth
     const netWorth = homeValue + currentSavingsBalance - currentMortgageBalance;
     
+    // Calculate total real estate values and mortgages with appreciation
+    const totalRealEstateValue = calculateInflationAdjusted(state.realEstate.property1Value, state.realEstate.property1Appreciation, yearIndex) + 
+      calculateInflationAdjusted(state.realEstate.property2Value, state.realEstate.property2Appreciation, yearIndex) + 
+      calculateInflationAdjusted(state.realEstate.property3Value, state.realEstate.property3Appreciation, yearIndex);
+    const totalRealEstateMortgages = state.realEstate.property1Mortgage + state.realEstate.property2Mortgage + state.realEstate.property3Mortgage;
+
     annualData.push({
       year: 2025 + yearIndex,
       paulAge: isNaN(paulAge) ? 0 : paulAge,
@@ -1351,22 +1414,26 @@ export function calculateAnnualProjections(state: CalculatorState): AnnualData[]
       business: isNaN(businessAnnual) ? 0 : businessAnnual,
       jessicaWork: isNaN(jessicaAnnual) ? 0 : jessicaAnnual,
       chapter35: isNaN(chapter35Annual) ? 0 : chapter35Annual,
+      rentalIncome: (state.realEstate.property1RentalIncome + state.realEstate.property2RentalIncome + state.realEstate.property3RentalIncome) * 12,
       totalIncome: isNaN(totalIncome) ? 0 : totalIncome,
       totalTaxes: isNaN(finalTotalTaxes) ? 0 : finalTotalTaxes, // Include investment taxes
       afterTaxIncome: isNaN(afterTaxIncome) ? 0 : afterTaxIncome,
-      livingExp: isNaN(livingExpAnnual) ? 0 : livingExpAnnual,
+      livingExpenses: isNaN(livingExpAnnual) ? 0 : livingExpAnnual,
       insurance: isNaN(insuranceAnnual) ? 0 : insuranceAnnual,
       expense1: isNaN(expense1Annual) ? 0 : expense1Annual,
       expense2: isNaN(expense2Annual) ? 0 : expense2Annual,
       expense3: isNaN(expense3Annual) ? 0 : expense3Annual,
       mortgage: isNaN(mortgageAnnual + lumpSumAnnual) ? 0 : mortgageAnnual + lumpSumAnnual,
+      propertyPayments: (state.realEstate.property1MonthlyPayment + state.realEstate.property2MonthlyPayment + state.realEstate.property3MonthlyPayment) * 12,
       netCashFlow: isNaN(netCashFlow) ? 0 : netCashFlow,
       returnOnInvestments: isNaN(investmentReturn) ? 0 : investmentReturn, // Gross return before taxes
       investmentReturn: isNaN(netInvestmentReturn) ? 0 : netInvestmentReturn,
       savingsBalance: isNaN(currentSavingsBalance) ? 0 : currentSavingsBalance,
       homeValue: isNaN(homeValue) ? 0 : homeValue,
       mortgageBalance: isNaN(currentMortgageBalance) ? 0 : currentMortgageBalance,
-      netWorth: isNaN(netWorth) ? 0 : netWorth
+      totalRealEstateValue: isNaN(totalRealEstateValue) ? 0 : totalRealEstateValue,
+      totalRealEstateMortgages: isNaN(totalRealEstateMortgages) ? 0 : totalRealEstateMortgages,
+      netWorth: isNaN(netWorth + totalRealEstateValue - totalRealEstateMortgages) ? 0 : netWorth + totalRealEstateValue - totalRealEstateMortgages
     });
   }
   

@@ -18,6 +18,7 @@ export function InputSectionHorizontal({ state, onUpdate }: InputSectionProps) {
     personal: true,
     income: true,
     benefits: true,
+    realEstate: false,
     expenses: true
   });
 
@@ -527,7 +528,293 @@ export function InputSectionHorizontal({ state, onUpdate }: InputSectionProps) {
           </CardContent>
         </Card>
 
-        {/* Row 4: Living Expenses - Full Width */}
+        {/* Row 4: Real Estate Assets */}
+        <Card className="bg-white rounded-xl shadow-sm border border-gray-200">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center">
+                <i className="fas fa-home text-finance-blue mr-3"></i>
+                <h2 className="text-xl font-semibold text-gray-900">Real Estate Assets</h2>
+                <div className="text-sm text-gray-500 ml-4">
+                  Investment Properties
+                </div>
+              </div>
+              <button
+                onClick={() => toggleSection('realEstate')}
+                className="flex items-center text-gray-500 hover:text-gray-700 transition-colors"
+              >
+                {expandedSections.realEstate ? (
+                  <ChevronUp className="h-5 w-5" />
+                ) : (
+                  <ChevronDown className="h-5 w-5" />
+                )}
+              </button>
+            </div>
+            
+            {expandedSections.realEstate && (
+              <div className="space-y-8">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {/* Property 1 */}
+                  <div className="bg-gray-50 rounded-lg p-4 border">
+                    <h3 className="text-lg font-medium text-gray-800 mb-4 flex items-center">
+                      <i className="fas fa-building text-gray-600 mr-2"></i>
+                      Property 1
+                    </h3>
+                    <div className="space-y-3">
+                      <div>
+                        <Label className="block text-sm font-medium text-gray-700 mb-1">Property Value</Label>
+                        <div className="relative">
+                          <span className="absolute left-3 top-2 text-gray-500">$</span>
+                          <Input 
+                            type="text" 
+                            value={formatCurrency(state.realEstate.property1Value)}
+                            onChange={(e) => onUpdate('realEstate', { property1Value: parseCurrency(e.target.value) })}
+                            className="pl-8 focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <Label className="block text-sm font-medium text-gray-700 mb-1">Mortgage Balance</Label>
+                        <div className="relative">
+                          <span className="absolute left-3 top-2 text-gray-500">$</span>
+                          <Input 
+                            type="text" 
+                            value={formatCurrency(state.realEstate.property1Mortgage)}
+                            onChange={(e) => onUpdate('realEstate', { property1Mortgage: parseCurrency(e.target.value) })}
+                            className="pl-8 focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <Label className="block text-sm font-medium text-gray-700 mb-1">Monthly Payment</Label>
+                        <div className="relative">
+                          <span className="absolute left-3 top-2 text-gray-500">$</span>
+                          <Input 
+                            type="text" 
+                            value={formatCurrency(state.realEstate.property1MonthlyPayment)}
+                            onChange={(e) => onUpdate('realEstate', { property1MonthlyPayment: parseCurrency(e.target.value) })}
+                            className="pl-8 focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <Label className="block text-sm font-medium text-gray-700 mb-1">Monthly Rental Income</Label>
+                        <div className="relative">
+                          <span className="absolute left-3 top-2 text-gray-500">$</span>
+                          <Input 
+                            type="text" 
+                            value={formatCurrency(state.realEstate.property1RentalIncome)}
+                            onChange={(e) => onUpdate('realEstate', { property1RentalIncome: parseCurrency(e.target.value) })}
+                            className="pl-8 focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <Label className="block text-sm font-medium text-gray-700 mb-1">Appreciation Rate</Label>
+                        <div className="relative">
+                          <Input 
+                            type="number"
+                            step="0.1"
+                            min="0"
+                            max="10"
+                            value={state.realEstate.property1Appreciation}
+                            onChange={(e) => onUpdate('realEstate', { property1Appreciation: parseFloat(e.target.value) || 3.0 })}
+                            className="pr-8 focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                          />
+                          <span className="absolute right-3 top-2 text-gray-500">%</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Property 2 */}
+                  <div className="bg-gray-50 rounded-lg p-4 border">
+                    <h3 className="text-lg font-medium text-gray-800 mb-4 flex items-center">
+                      <i className="fas fa-building text-gray-600 mr-2"></i>
+                      Property 2
+                    </h3>
+                    <div className="space-y-3">
+                      <div>
+                        <Label className="block text-sm font-medium text-gray-700 mb-1">Property Value</Label>
+                        <div className="relative">
+                          <span className="absolute left-3 top-2 text-gray-500">$</span>
+                          <Input 
+                            type="text" 
+                            value={formatCurrency(state.realEstate.property2Value)}
+                            onChange={(e) => onUpdate('realEstate', { property2Value: parseCurrency(e.target.value) })}
+                            className="pl-8 focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <Label className="block text-sm font-medium text-gray-700 mb-1">Mortgage Balance</Label>
+                        <div className="relative">
+                          <span className="absolute left-3 top-2 text-gray-500">$</span>
+                          <Input 
+                            type="text" 
+                            value={formatCurrency(state.realEstate.property2Mortgage)}
+                            onChange={(e) => onUpdate('realEstate', { property2Mortgage: parseCurrency(e.target.value) })}
+                            className="pl-8 focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <Label className="block text-sm font-medium text-gray-700 mb-1">Monthly Payment</Label>
+                        <div className="relative">
+                          <span className="absolute left-3 top-2 text-gray-500">$</span>
+                          <Input 
+                            type="text" 
+                            value={formatCurrency(state.realEstate.property2MonthlyPayment)}
+                            onChange={(e) => onUpdate('realEstate', { property2MonthlyPayment: parseCurrency(e.target.value) })}
+                            className="pl-8 focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <Label className="block text-sm font-medium text-gray-700 mb-1">Monthly Rental Income</Label>
+                        <div className="relative">
+                          <span className="absolute left-3 top-2 text-gray-500">$</span>
+                          <Input 
+                            type="text" 
+                            value={formatCurrency(state.realEstate.property2RentalIncome)}
+                            onChange={(e) => onUpdate('realEstate', { property2RentalIncome: parseCurrency(e.target.value) })}
+                            className="pl-8 focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <Label className="block text-sm font-medium text-gray-700 mb-1">Appreciation Rate</Label>
+                        <div className="relative">
+                          <Input 
+                            type="number"
+                            step="0.1"
+                            min="0"
+                            max="10"
+                            value={state.realEstate.property2Appreciation}
+                            onChange={(e) => onUpdate('realEstate', { property2Appreciation: parseFloat(e.target.value) || 3.0 })}
+                            className="pr-8 focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                          />
+                          <span className="absolute right-3 top-2 text-gray-500">%</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Property 3 */}
+                  <div className="bg-gray-50 rounded-lg p-4 border">
+                    <h3 className="text-lg font-medium text-gray-800 mb-4 flex items-center">
+                      <i className="fas fa-building text-gray-600 mr-2"></i>
+                      Property 3
+                    </h3>
+                    <div className="space-y-3">
+                      <div>
+                        <Label className="block text-sm font-medium text-gray-700 mb-1">Property Value</Label>
+                        <div className="relative">
+                          <span className="absolute left-3 top-2 text-gray-500">$</span>
+                          <Input 
+                            type="text" 
+                            value={formatCurrency(state.realEstate.property3Value)}
+                            onChange={(e) => onUpdate('realEstate', { property3Value: parseCurrency(e.target.value) })}
+                            className="pl-8 focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <Label className="block text-sm font-medium text-gray-700 mb-1">Mortgage Balance</Label>
+                        <div className="relative">
+                          <span className="absolute left-3 top-2 text-gray-500">$</span>
+                          <Input 
+                            type="text" 
+                            value={formatCurrency(state.realEstate.property3Mortgage)}
+                            onChange={(e) => onUpdate('realEstate', { property3Mortgage: parseCurrency(e.target.value) })}
+                            className="pl-8 focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <Label className="block text-sm font-medium text-gray-700 mb-1">Monthly Payment</Label>
+                        <div className="relative">
+                          <span className="absolute left-3 top-2 text-gray-500">$</span>
+                          <Input 
+                            type="text" 
+                            value={formatCurrency(state.realEstate.property3MonthlyPayment)}
+                            onChange={(e) => onUpdate('realEstate', { property3MonthlyPayment: parseCurrency(e.target.value) })}
+                            className="pl-8 focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <Label className="block text-sm font-medium text-gray-700 mb-1">Monthly Rental Income</Label>
+                        <div className="relative">
+                          <span className="absolute left-3 top-2 text-gray-500">$</span>
+                          <Input 
+                            type="text" 
+                            value={formatCurrency(state.realEstate.property3RentalIncome)}
+                            onChange={(e) => onUpdate('realEstate', { property3RentalIncome: parseCurrency(e.target.value) })}
+                            className="pl-8 focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <Label className="block text-sm font-medium text-gray-700 mb-1">Appreciation Rate</Label>
+                        <div className="relative">
+                          <Input 
+                            type="number"
+                            step="0.1"
+                            min="0"
+                            max="10"
+                            value={state.realEstate.property3Appreciation}
+                            onChange={(e) => onUpdate('realEstate', { property3Appreciation: parseFloat(e.target.value) || 3.0 })}
+                            className="pr-8 focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                          />
+                          <span className="absolute right-3 top-2 text-gray-500">%</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Real Estate Summary */}
+                <div className="border-t border-gray-200 pt-6">
+                  <div className="bg-green-50 rounded-lg border border-green-200 p-4">
+                    <div className="flex items-center mb-2">
+                      <i className="fas fa-chart-line text-green-600 mr-2"></i>
+                      <h3 className="text-lg font-medium text-green-800">Real Estate Portfolio Summary</h3>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
+                      <div>
+                        <p className="text-green-700 font-medium">Total Property Value:</p>
+                        <p className="text-green-800 text-lg font-bold">
+                          ${formatCurrency(state.realEstate.property1Value + state.realEstate.property2Value + state.realEstate.property3Value)}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-green-700 font-medium">Total Mortgages:</p>
+                        <p className="text-green-800 text-lg font-bold">
+                          ${formatCurrency(state.realEstate.property1Mortgage + state.realEstate.property2Mortgage + state.realEstate.property3Mortgage)}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-green-700 font-medium">Monthly Rental Income:</p>
+                        <p className="text-green-800 text-lg font-bold">
+                          ${formatCurrency(state.realEstate.property1RentalIncome + state.realEstate.property2RentalIncome + state.realEstate.property3RentalIncome)}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-green-700 font-medium">Monthly Payments:</p>
+                        <p className="text-green-800 text-lg font-bold">
+                          ${formatCurrency(state.realEstate.property1MonthlyPayment + state.realEstate.property2MonthlyPayment + state.realEstate.property3MonthlyPayment)}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Row 5: Living Expenses - Full Width */}
         <Card className="bg-white rounded-xl shadow-sm border border-gray-200">
           <CardContent className="p-4">
             <div className="flex items-center justify-between mb-4">
