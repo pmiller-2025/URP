@@ -55,7 +55,6 @@ const getAnnualColumns = (data: AnnualData[]) => {
     { key: 'investmentReturn', label: 'Investment Return', visible: true },
     { key: 'savingsBalance', label: 'Savings Balance', visible: true },
     { key: 'homeValue', label: 'Home Value', visible: true },
-    { key: 'homeEquity', label: 'Home Equity', visible: true },
     { key: 'netWorth', label: 'Net Worth', visible: true }
   );
   
@@ -98,8 +97,7 @@ const getMonthlyColumns = (data: MonthlyData[]) => {
     { key: 'netCashFlow', label: 'Net Cash Flow', visible: true },
     { key: 'returnOnInvestments', label: 'Return on Investments', visible: true },
     { key: 'savingsBalance', label: 'Savings Balance', visible: true },
-    { key: 'homeValue', label: 'Home Value', visible: true },
-    { key: 'homeEquity', label: 'Home Equity', visible: true }
+    { key: 'homeValue', label: 'Home Value', visible: true }
   );
   
   return columns;
