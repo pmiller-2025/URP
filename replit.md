@@ -6,6 +6,7 @@ URP (Ultimate Retirement Planner) is a comprehensive web application designed to
 ## Recent Changes (August 2025)
 - **Home Value Section Complete**: Replaced complex real estate assets with simplified Home Value section focusing on primary residence tracking with current value, mortgage balance, monthly payment, and appreciation rate
 - **Net Worth Integration**: Home value with appreciation properly integrated into monthly and annual net worth calculations (Home Value + Savings - Mortgage Balance)
+- **Home Equity Column Added**: Home Equity now appears as a separate column in both monthly and annual results tables, showing real-time equity calculation (Home Value - Mortgage Balance)
 - **Migration Logic Updated**: Seamlessly migrates from realEstate section to homeValue section using existing housing data
 - **Chart Toggle Implementation Complete**: Successfully added Annual/Monthly view toggle buttons to all three chart types (Savings, Cash Flow, Income Timeline) with proper error handling and data validation
 - **Fixed Runtime Errors**: Resolved undefined variable issues in SavingsChart and completely rewrote CashFlowChart component for stability

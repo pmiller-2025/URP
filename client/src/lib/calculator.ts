@@ -167,6 +167,7 @@ export interface MonthlyData {
   mortgage: number;
   mortgageBalance: number;
   homeValue: number;
+  homeEquity: number;
   netCashFlow: number;
   returnOnInvestments: number;
   savingsBalance: number;
@@ -197,6 +198,7 @@ export interface AnnualData {
   savingsBalance: number;
   homeValue: number;
   mortgageBalance: number;
+  homeEquity: number;
   netWorth: number;
 }
 
@@ -986,6 +988,9 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
     const totalTaxes = safeTaxes + safeMonthlyTaxOnGains;
     const finalNetIncome = grossIncome - totalTaxes;
 
+    // Calculate home equity
+    const currentHomeEquity = Math.max(0, currentHomeValue - beginningMortgageBalance);
+
     monthlyData.push({
       month: monthName,
       paulSS: isNaN(paulSSMonthly) ? 0 : paulSSMonthly,
@@ -1005,6 +1010,7 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
       mortgage: isNaN(actualMortgageMonthly) ? 0 : actualMortgageMonthly,
       mortgageBalance: isNaN(beginningMortgageBalance) ? 0 : beginningMortgageBalance,
       homeValue: isNaN(currentHomeValue) ? 0 : currentHomeValue,
+      homeEquity: isNaN(currentHomeEquity) ? 0 : currentHomeEquity,
       netCashFlow: isNaN(netCashFlow) ? 0 : netCashFlow,
       returnOnInvestments: isNaN(monthlyInvestmentReturn) ? 0 : monthlyInvestmentReturn, // Gross return before taxes
       savingsBalance: isNaN(runningBalance) ? 0 : runningBalance
@@ -1359,7 +1365,8 @@ export function calculateAnnualProjections(state: CalculatorState): AnnualData[]
     const homeAppreciation = state.homeValue?.appreciation || 2.5;
     const homeValue = calculateInflationAdjusted(homeValueBase, homeAppreciation, yearIndex);
     
-    // Calculate net worth (home value + savings - mortgage)
+    // Calculate home equity and net worth
+    const homeEquity = Math.max(0, homeValue - currentMortgageBalance);
     const netWorth = homeValue + currentSavingsBalance - currentMortgageBalance;
 
     annualData.push({
@@ -1387,6 +1394,7 @@ export function calculateAnnualProjections(state: CalculatorState): AnnualData[]
       savingsBalance: isNaN(currentSavingsBalance) ? 0 : currentSavingsBalance,
       homeValue: isNaN(homeValue) ? 0 : homeValue,
       mortgageBalance: isNaN(currentMortgageBalance) ? 0 : currentMortgageBalance,
+      homeEquity: isNaN(homeEquity) ? 0 : homeEquity,
       netWorth: isNaN(netWorth) ? 0 : netWorth
     });
   }
