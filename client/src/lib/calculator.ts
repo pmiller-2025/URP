@@ -939,9 +939,8 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
     const actualMortgageMonthly = currentMortgageMonthly;
     
     // Calculate home value with appreciation for this specific month
-    // Calculate total months elapsed from start of projection (September 2025)
-    const totalMonthsFromStart = (month - 1); // month is 1-based, make it 0-based
-    const yearsElapsed = totalMonthsFromStart / 12;
+    // Use currentMonthOffset which correctly tracks total months from start of projection
+    const yearsElapsed = currentMonthOffset / 12;
     const homeValueBase = state.homeValue?.currentValue || 1000000;
     const homeAppreciation = state.homeValue?.appreciation || 2.5;
     const currentHomeValue = homeValueBase * Math.pow(1 + homeAppreciation / 100, yearsElapsed);
