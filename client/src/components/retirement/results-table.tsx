@@ -34,7 +34,7 @@ const getAnnualColumns = (data: AnnualData[]) => {
     { key: 'totalIncome', label: 'Total Income', visible: true },
     { key: 'totalTaxes', label: 'Total Taxes', visible: true },
     { key: 'afterTaxIncome', label: 'After-Tax', visible: true },
-    { key: 'livingExp', label: 'Living Exp', visible: true },
+    { key: 'livingExpenses', label: 'Living Exp', visible: true },
     { key: 'insurance', label: 'Insurance', visible: true }
   ];
   
@@ -182,6 +182,7 @@ export function ResultsTable({
       case 'totalTaxes':
       case 'taxes':
       case 'livingExp':
+      case 'livingExpenses':
         return formatCurrency(data[columnKey]);
       case 'insurance':
         return data[columnKey] > 0 ? formatCurrency(data[columnKey]) : '$0';
@@ -209,7 +210,7 @@ export function ResultsTable({
       return `${baseClass} font-medium text-gray-900 sticky left-0 bg-white border-r border-gray-200`;
     }
     
-    if (['totalTaxes', 'taxes', 'livingExp', 'insurance', 'expense1', 'expense2', 'expense3', 'mortgage'].includes(columnKey)) {
+    if (['totalTaxes', 'taxes', 'livingExp', 'livingExpenses', 'insurance', 'expense1', 'expense2', 'expense3', 'mortgage'].includes(columnKey)) {
       return `${baseClass} text-finance-red`;
     }
     
