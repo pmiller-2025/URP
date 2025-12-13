@@ -38,13 +38,13 @@ export function InputSectionHorizontal({ state, onUpdate }: InputSectionProps) {
   };
 
   const currentDate = {
-    month: 9,
-    year: 2025
+    month: state.personalInfo.projectionStartMonth,
+    year: state.personalInfo.projectionStartYear
   };
 
   const calculateAge = (birthMonth: number, birthYear: number): number => {
-    const currentMonth = 9;
-    const currentYear = 2025;
+    const currentMonth = state.personalInfo.projectionStartMonth;
+    const currentYear = state.personalInfo.projectionStartYear;
     let age = currentYear - birthYear;
     if (currentMonth < birthMonth) {
       age -= 1;
@@ -106,16 +106,59 @@ export function InputSectionHorizontal({ state, onUpdate }: InputSectionProps) {
             
             {expandedSections.personal && (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-              {/* Projection Years */}
+              {/* Projection Start & Duration */}
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <Label className="block text-sm font-medium text-blue-800 mb-2">Projection Years</Label>
-                <Input 
-                  type="number" 
-                  value={state.personalInfo.projectionYears}
-                  onChange={(e) => onUpdate('personalInfo', { projectionYears: parseInt(e.target.value) || 0 })}
-                  className="focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
-                />
-                <p className="text-xs text-blue-600 mt-1">Years to project into retirement</p>
+                <Label className="block text-sm font-medium text-blue-800 mb-2">Projection Start & Duration</Label>
+                <div className="grid grid-cols-3 gap-2 mb-2">
+                  <div>
+                    <Label className="block text-xs text-blue-600 mb-1">Month</Label>
+                    <Select 
+                      value={String(state.personalInfo.projectionStartMonth)}
+                      onValueChange={(value) => onUpdate('personalInfo', { projectionStartMonth: parseInt(value) })}
+                    >
+                      <SelectTrigger className="bg-white" data-testid="select-projection-start-month">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="1">Jan</SelectItem>
+                        <SelectItem value="2">Feb</SelectItem>
+                        <SelectItem value="3">Mar</SelectItem>
+                        <SelectItem value="4">Apr</SelectItem>
+                        <SelectItem value="5">May</SelectItem>
+                        <SelectItem value="6">Jun</SelectItem>
+                        <SelectItem value="7">Jul</SelectItem>
+                        <SelectItem value="8">Aug</SelectItem>
+                        <SelectItem value="9">Sep</SelectItem>
+                        <SelectItem value="10">Oct</SelectItem>
+                        <SelectItem value="11">Nov</SelectItem>
+                        <SelectItem value="12">Dec</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label className="block text-xs text-blue-600 mb-1">Year</Label>
+                    <Input 
+                      type="number" 
+                      min="2020"
+                      max="2050"
+                      value={state.personalInfo.projectionStartYear}
+                      onChange={(e) => onUpdate('personalInfo', { projectionStartYear: parseInt(e.target.value) || 2025 })}
+                      className="focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                      data-testid="input-projection-start-year"
+                    />
+                  </div>
+                  <div>
+                    <Label className="block text-xs text-blue-600 mb-1">Years</Label>
+                    <Input 
+                      type="number" 
+                      value={state.personalInfo.projectionYears}
+                      onChange={(e) => onUpdate('personalInfo', { projectionYears: parseInt(e.target.value) || 0 })}
+                      className="focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                      data-testid="input-projection-years"
+                    />
+                  </div>
+                </div>
+                <p className="text-xs text-blue-600">Starting point for retirement projections</p>
               </div>
 
               {/* Paul's Information */}

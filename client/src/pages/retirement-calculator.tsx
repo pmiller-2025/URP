@@ -166,6 +166,16 @@ export default function RetirementCalculator() {
         needsUpdate = true;
       }
       
+      // Add projection start month/year if not present
+      if (!parsed.personalInfo?.projectionStartMonth) {
+        parsed.personalInfo.projectionStartMonth = 9;
+        needsUpdate = true;
+      }
+      if (!parsed.personalInfo?.projectionStartYear) {
+        parsed.personalInfo.projectionStartYear = 2025;
+        needsUpdate = true;
+      }
+      
       // Save the updated defaults back if any changes were made
       if (needsUpdate) {
         localStorage.setItem('urp-default-state', JSON.stringify(parsed));
@@ -218,7 +228,11 @@ export default function RetirementCalculator() {
   );
   
   const actualPayoffMonths = state.housing.acceleratePayoff ? state.housing.targetPayoffMonths : standardPayoffMonths;
-  const payoffDate = getPayoffDate(actualPayoffMonths);
+  const payoffDate = getPayoffDate(
+    actualPayoffMonths,
+    state.personalInfo.projectionStartMonth,
+    state.personalInfo.projectionStartYear
+  );
 
   // No automatic updates needed - SS amounts are now set by age selection
 

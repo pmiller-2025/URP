@@ -9,6 +9,8 @@ export interface PersonalInfo {
   lukeBirthMonth: number;
   lukeBirthYear: number;
   projectionYears: number;
+  projectionStartMonth: number;
+  projectionStartYear: number;
   paulEndOfLifeAge: number;
   jessicaEndOfLifeAge: number;
 }
@@ -305,6 +307,8 @@ export function getDefaultState(): CalculatorState {
       lukeBirthMonth: 11,
       lukeBirthYear: 2004,
       projectionYears: 30,
+      projectionStartMonth: 9,
+      projectionStartYear: 2025,
       paulEndOfLifeAge: 100, // Default to age 100
       jessicaEndOfLifeAge: 100 // Default to age 100
     },
@@ -479,9 +483,8 @@ export function calculateStandardPayoffMonths(balance: number, rate: number, pay
   return Math.ceil(numerator / denominator);
 }
 
-export function getPayoffDate(months: number): string {
-  const currentDate = new Date(); // Use actual current date
-  const payoffDate = new Date(currentDate);
+export function getPayoffDate(months: number, startMonth: number = 9, startYear: number = 2025): string {
+  const payoffDate = new Date(startYear, startMonth - 1); // startMonth is 1-indexed
   payoffDate.setMonth(payoffDate.getMonth() + months);
   
   return payoffDate.toLocaleDateString('en-US', { 
@@ -699,11 +702,14 @@ export function calculateMonthlyProjections(state: CalculatorState, year: number
   
   let currentMortgageBalance = yearStartMortgageBalance;
   
+  const startMonthIndex = state.personalInfo.projectionStartMonth - 1; // 0-indexed
+  const startYear = state.personalInfo.projectionStartYear;
+  
   for (let month = 0; month < 12; month++) {
     const currentMonthOffset = yearIndex * 12 + month;
-    // Start from September 2025 (month 8 in 0-indexed system)
-    const actualMonth = (month + 8) % 12; // Start from September (month 8)
-    const actualYear = 2025 + yearIndex + Math.floor((month + 8) / 12);
+    // Start from projection start month/year
+    const actualMonth = (month + startMonthIndex) % 12;
+    const actualYear = startYear + yearIndex + Math.floor((month + startMonthIndex) / 12);
     const monthName = new Date(actualYear, actualMonth).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
     
     // All months from September 2025 onwards are active (no zero-value months)
