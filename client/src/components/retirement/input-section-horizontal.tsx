@@ -158,15 +158,31 @@ export function InputSectionHorizontal({ state, onUpdate }: InputSectionProps) {
                     />
                   </div>
                 </div>
-                <div className="mt-2">
-                  <Label className="block text-xs text-blue-600 mb-1">Current Savings Balance</Label>
-                  <Input 
-                    type="text"
-                    value={formatCurrency(state.savings.initialAmount)}
-                    onChange={(e) => onUpdate('savings', { initialAmount: parseCurrency(e.target.value) })}
-                    className="focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
-                    data-testid="input-initial-savings"
-                  />
+                <div className="grid grid-cols-2 gap-2 mt-2">
+                  <div>
+                    <Label className="block text-xs text-blue-600 mb-1">Current Savings</Label>
+                    <Input 
+                      type="text"
+                      value={formatCurrency(state.savings.initialAmount)}
+                      onChange={(e) => onUpdate('savings', { initialAmount: parseCurrency(e.target.value) })}
+                      className="focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                      data-testid="input-initial-savings"
+                    />
+                  </div>
+                  <div>
+                    <Label className="block text-xs text-blue-600 mb-1">Annual Return</Label>
+                    <div className="relative">
+                      <Input 
+                        type="number"
+                        step="0.1"
+                        value={state.savings.annualReturn}
+                        onChange={(e) => onUpdate('savings', { annualReturn: parseFloat(e.target.value) || 0 })}
+                        className="pr-8 focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                        data-testid="input-annual-return"
+                      />
+                      <span className="absolute right-3 top-2 text-gray-500">%</span>
+                    </div>
+                  </div>
                 </div>
               </div>
 
