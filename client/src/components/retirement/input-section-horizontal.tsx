@@ -105,207 +105,236 @@ export function InputSectionHorizontal({ state, onUpdate }: InputSectionProps) {
             </div>
             
             {expandedSections.personal && (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-              {/* Projection Start & Duration */}
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <Label className="block text-sm font-medium text-blue-800 mb-2">Projection Setup</Label>
-                <div className="grid grid-cols-3 gap-2 mb-2">
-                  <div>
-                    <Label className="block text-xs text-blue-600 mb-1">Start Month</Label>
-                    <Select 
-                      value={String(state.personalInfo.projectionStartMonth)}
-                      onValueChange={(value) => onUpdate('personalInfo', { projectionStartMonth: parseInt(value) })}
-                    >
-                      <SelectTrigger className="bg-white" data-testid="select-projection-start-month">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="1">Jan</SelectItem>
-                        <SelectItem value="2">Feb</SelectItem>
-                        <SelectItem value="3">Mar</SelectItem>
-                        <SelectItem value="4">Apr</SelectItem>
-                        <SelectItem value="5">May</SelectItem>
-                        <SelectItem value="6">Jun</SelectItem>
-                        <SelectItem value="7">Jul</SelectItem>
-                        <SelectItem value="8">Aug</SelectItem>
-                        <SelectItem value="9">Sep</SelectItem>
-                        <SelectItem value="10">Oct</SelectItem>
-                        <SelectItem value="11">Nov</SelectItem>
-                        <SelectItem value="12">Dec</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label className="block text-xs text-blue-600 mb-1">Start Year</Label>
-                    <Input 
-                      type="number" 
-                      min="2020"
-                      max="2050"
-                      value={state.personalInfo.projectionStartYear}
-                      onChange={(e) => onUpdate('personalInfo', { projectionStartYear: parseInt(e.target.value) || 2025 })}
-                      className="focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
-                      data-testid="input-projection-start-year"
-                    />
-                  </div>
-                  <div>
-                    <Label className="block text-xs text-blue-600 mb-1">Years</Label>
-                    <Input 
-                      type="number" 
-                      value={state.personalInfo.projectionYears}
-                      onChange={(e) => onUpdate('personalInfo', { projectionYears: parseInt(e.target.value) || 0 })}
-                      className="focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
-                      data-testid="input-projection-years"
-                    />
+              <div className="space-y-4">
+                {/* Row 1: Projection Setup */}
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <Label className="block text-sm font-medium text-blue-800 mb-3">Projection Setup</Label>
+                  <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                    <div>
+                      <Label className="block text-xs text-blue-600 mb-1">Start Month</Label>
+                      <Select 
+                        value={String(state.personalInfo.projectionStartMonth)}
+                        onValueChange={(value) => onUpdate('personalInfo', { projectionStartMonth: parseInt(value) })}
+                      >
+                        <SelectTrigger className="bg-white" data-testid="select-projection-start-month">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="1">Jan</SelectItem>
+                          <SelectItem value="2">Feb</SelectItem>
+                          <SelectItem value="3">Mar</SelectItem>
+                          <SelectItem value="4">Apr</SelectItem>
+                          <SelectItem value="5">May</SelectItem>
+                          <SelectItem value="6">Jun</SelectItem>
+                          <SelectItem value="7">Jul</SelectItem>
+                          <SelectItem value="8">Aug</SelectItem>
+                          <SelectItem value="9">Sep</SelectItem>
+                          <SelectItem value="10">Oct</SelectItem>
+                          <SelectItem value="11">Nov</SelectItem>
+                          <SelectItem value="12">Dec</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label className="block text-xs text-blue-600 mb-1">Start Year</Label>
+                      <Input 
+                        type="number" 
+                        min="2020"
+                        max="2050"
+                        value={state.personalInfo.projectionStartYear}
+                        onChange={(e) => onUpdate('personalInfo', { projectionStartYear: parseInt(e.target.value) || 2025 })}
+                        className="focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                        data-testid="input-projection-start-year"
+                      />
+                    </div>
+                    <div>
+                      <Label className="block text-xs text-blue-600 mb-1">Years</Label>
+                      <Input 
+                        type="number" 
+                        value={state.personalInfo.projectionYears}
+                        onChange={(e) => onUpdate('personalInfo', { projectionYears: parseInt(e.target.value) || 0 })}
+                        className="focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                        data-testid="input-projection-years"
+                      />
+                    </div>
+                    <div>
+                      <Label className="block text-xs text-blue-600 mb-1">Current Savings</Label>
+                      <div className="relative">
+                        <span className="absolute left-2 top-2 text-gray-500 text-sm">$</span>
+                        <Input 
+                          type="text"
+                          value={formatCurrency(state.savings.initialAmount)}
+                          onChange={(e) => onUpdate('savings', { initialAmount: parseCurrency(e.target.value) })}
+                          className="pl-6 focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                          data-testid="input-initial-savings"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <Label className="block text-xs text-blue-600 mb-1">Annual Return</Label>
+                      <div className="relative">
+                        <Input 
+                          type="number"
+                          step="0.1"
+                          value={state.savings.annualReturn}
+                          onChange={(e) => onUpdate('savings', { annualReturn: parseFloat(e.target.value) || 0 })}
+                          className="pr-8 focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                          data-testid="input-annual-return"
+                        />
+                        <span className="absolute right-3 top-2 text-gray-500">%</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <div className="grid grid-cols-2 gap-2 mt-2">
-                  <div>
-                    <Label className="block text-xs text-blue-600 mb-1">Current Savings</Label>
-                    <Input 
-                      type="text"
-                      value={formatCurrency(state.savings.initialAmount)}
-                      onChange={(e) => onUpdate('savings', { initialAmount: parseCurrency(e.target.value) })}
-                      className="focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
-                      data-testid="input-initial-savings"
-                    />
+
+                {/* Row 2: Family Members */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  {/* Paul */}
+                  <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
+                    <Label className="block text-sm font-medium text-gray-700 mb-2">Paul</Label>
+                    <div className="grid grid-cols-2 gap-2 mb-2">
+                      <div>
+                        <Label className="block text-xs text-gray-500 mb-1">Birth Month</Label>
+                        <Input 
+                          type="number" 
+                          min="1"
+                          max="12"
+                          value={state.personalInfo.paulBirthMonth}
+                          onChange={(e) => handleBirthdayUpdate('paul', parseInt(e.target.value) || 1, state.personalInfo.paulBirthYear)}
+                          className="text-sm"
+                        />
+                      </div>
+                      <div>
+                        <Label className="block text-xs text-gray-500 mb-1">Birth Year</Label>
+                        <Input 
+                          type="number" 
+                          min="1930"
+                          max="2010"
+                          value={state.personalInfo.paulBirthYear}
+                          onChange={(e) => handleBirthdayUpdate('paul', state.personalInfo.paulBirthMonth, parseInt(e.target.value) || 1961)}
+                          className="text-sm"
+                        />
+                      </div>
+                    </div>
+                    <div className="flex justify-between text-xs text-gray-500">
+                      <span>Age: {state.personalInfo.paulAge}</span>
+                      <div className="flex items-center gap-1">
+                        <span>EOL:</span>
+                        <Input 
+                          type="number" 
+                          min="70"
+                          max="120"
+                          value={state.personalInfo.paulEndOfLifeAge}
+                          onChange={(e) => onUpdate('personalInfo', { paulEndOfLifeAge: parseInt(e.target.value) || 100 })}
+                          className="w-14 h-6 text-xs p-1"
+                        />
+                      </div>
+                    </div>
                   </div>
-                  <div>
-                    <Label className="block text-xs text-blue-600 mb-1">Annual Return</Label>
-                    <div className="relative">
-                      <Input 
-                        type="number"
-                        step="0.1"
-                        value={state.savings.annualReturn}
-                        onChange={(e) => onUpdate('savings', { annualReturn: parseFloat(e.target.value) || 0 })}
-                        className="pr-8 focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
-                        data-testid="input-annual-return"
-                      />
-                      <span className="absolute right-3 top-2 text-gray-500">%</span>
+
+                  {/* Jessica */}
+                  <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
+                    <Label className="block text-sm font-medium text-gray-700 mb-2">Jessica</Label>
+                    <div className="grid grid-cols-2 gap-2 mb-2">
+                      <div>
+                        <Label className="block text-xs text-gray-500 mb-1">Birth Month</Label>
+                        <Input 
+                          type="number" 
+                          min="1"
+                          max="12"
+                          value={state.personalInfo.jessicaBirthMonth}
+                          onChange={(e) => handleBirthdayUpdate('jessica', parseInt(e.target.value) || 1, state.personalInfo.jessicaBirthYear)}
+                          className="text-sm"
+                        />
+                      </div>
+                      <div>
+                        <Label className="block text-xs text-gray-500 mb-1">Birth Year</Label>
+                        <Input 
+                          type="number" 
+                          min="1930"
+                          max="2010"
+                          value={state.personalInfo.jessicaBirthYear}
+                          onChange={(e) => handleBirthdayUpdate('jessica', state.personalInfo.jessicaBirthMonth, parseInt(e.target.value) || 1968)}
+                          className="text-sm"
+                        />
+                      </div>
+                    </div>
+                    <div className="flex justify-between text-xs text-gray-500">
+                      <span>Age: {state.personalInfo.jessicaAge}</span>
+                      <div className="flex items-center gap-1">
+                        <span>EOL:</span>
+                        <Input 
+                          type="number" 
+                          min="70"
+                          max="120"
+                          value={state.personalInfo.jessicaEndOfLifeAge}
+                          onChange={(e) => onUpdate('personalInfo', { jessicaEndOfLifeAge: parseInt(e.target.value) || 100 })}
+                          className="w-14 h-6 text-xs p-1"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Luke */}
+                  <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
+                    <Label className="block text-sm font-medium text-gray-700 mb-2">Luke</Label>
+                    <div className="grid grid-cols-2 gap-2 mb-2">
+                      <div>
+                        <Label className="block text-xs text-gray-500 mb-1">Birth Month</Label>
+                        <Input 
+                          type="number" 
+                          min="1"
+                          max="12"
+                          value={state.personalInfo.lukeBirthMonth}
+                          onChange={(e) => handleBirthdayUpdate('luke', parseInt(e.target.value) || 1, state.personalInfo.lukeBirthYear)}
+                          className="text-sm"
+                        />
+                      </div>
+                      <div>
+                        <Label className="block text-xs text-gray-500 mb-1">Birth Year</Label>
+                        <Input 
+                          type="number" 
+                          min="1990"
+                          max="2020"
+                          value={state.personalInfo.lukeBirthYear}
+                          onChange={(e) => handleBirthdayUpdate('luke', state.personalInfo.lukeBirthMonth, parseInt(e.target.value) || 2009)}
+                          className="text-sm"
+                        />
+                      </div>
+                    </div>
+                    <div className="text-xs text-gray-500">
+                      <span>Age: {state.personalInfo.lukeAge}</span>
+                    </div>
+                  </div>
+
+                  {/* Summary Card */}
+                  <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-3">
+                    <Label className="block text-sm font-medium text-indigo-700 mb-2">Summary</Label>
+                    <div className="space-y-1 text-xs">
+                      <div className="flex justify-between">
+                        <span className="text-indigo-600">Start Date:</span>
+                        <span className="font-medium text-indigo-800">
+                          {new Date(state.personalInfo.projectionStartYear, state.personalInfo.projectionStartMonth - 1).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-indigo-600">End Date:</span>
+                        <span className="font-medium text-indigo-800">
+                          {new Date(state.personalInfo.projectionStartYear + state.personalInfo.projectionYears, state.personalInfo.projectionStartMonth - 1).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-indigo-600">Initial Savings:</span>
+                        <span className="font-medium text-indigo-800">${formatCurrency(state.savings.initialAmount)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-indigo-600">Return Rate:</span>
+                        <span className="font-medium text-indigo-800">{state.savings.annualReturn}%</span>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-
-              {/* Paul's Information */}
-              <div className="space-y-3">
-                <Label className="block text-sm font-medium text-gray-700">Paul's Birthday</Label>
-                <div className="grid grid-cols-2 gap-2">
-                  <div>
-                    <Label className="block text-xs text-gray-600 mb-1">Month</Label>
-                    <Input 
-                      type="number" 
-                      min="1"
-                      max="12"
-                      value={state.personalInfo.paulBirthMonth}
-                      onChange={(e) => handleBirthdayUpdate('paul', parseInt(e.target.value) || 1, state.personalInfo.paulBirthYear)}
-                      className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
-                    />
-                  </div>
-                  <div>
-                    <Label className="block text-xs text-gray-600 mb-1">Year</Label>
-                    <Input 
-                      type="number" 
-                      min="1930"
-                      max="2010"
-                      value={state.personalInfo.paulBirthYear}
-                      onChange={(e) => handleBirthdayUpdate('paul', state.personalInfo.paulBirthMonth, parseInt(e.target.value) || 1961)}
-                      className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
-                    />
-                  </div>
-                </div>
-                <p className="text-xs text-gray-500">Current age: {state.personalInfo.paulAge}</p>
-              </div>
-
-              {/* Jessica's Information */}
-              <div className="space-y-3">
-                <Label className="block text-sm font-medium text-gray-700">Jessica's Birthday</Label>
-                <div className="grid grid-cols-2 gap-2">
-                  <div>
-                    <Label className="block text-xs text-gray-600 mb-1">Month</Label>
-                    <Input 
-                      type="number" 
-                      min="1"
-                      max="12"
-                      value={state.personalInfo.jessicaBirthMonth}
-                      onChange={(e) => handleBirthdayUpdate('jessica', parseInt(e.target.value) || 1, state.personalInfo.jessicaBirthYear)}
-                      className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
-                    />
-                  </div>
-                  <div>
-                    <Label className="block text-xs text-gray-600 mb-1">Year</Label>
-                    <Input 
-                      type="number" 
-                      min="1930"
-                      max="2010"
-                      value={state.personalInfo.jessicaBirthYear}
-                      onChange={(e) => handleBirthdayUpdate('jessica', state.personalInfo.jessicaBirthMonth, parseInt(e.target.value) || 1968)}
-                      className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
-                    />
-                  </div>
-                </div>
-                <p className="text-xs text-gray-500">Current age: {state.personalInfo.jessicaAge}</p>
-              </div>
-
-              {/* End of Life Planning */}
-              <div className="space-y-3">
-                <Label className="block text-sm font-medium text-gray-700">End of Life Planning</Label>
-                <div className="grid grid-cols-2 gap-2">
-                  <div>
-                    <Label className="block text-xs text-gray-600 mb-1">Paul's Age</Label>
-                    <Input 
-                      type="number" 
-                      min="70"
-                      max="120"
-                      value={state.personalInfo.paulEndOfLifeAge}
-                      onChange={(e) => onUpdate('personalInfo', { paulEndOfLifeAge: parseInt(e.target.value) || 100 })}
-                      className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
-                    />
-                  </div>
-                  <div>
-                    <Label className="block text-xs text-gray-600 mb-1">Jessica's Age</Label>
-                    <Input 
-                      type="number" 
-                      min="70"
-                      max="120"
-                      value={state.personalInfo.jessicaEndOfLifeAge}
-                      onChange={(e) => onUpdate('personalInfo', { jessicaEndOfLifeAge: parseInt(e.target.value) || 100 })}
-                      className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
-                    />
-                  </div>
-                </div>
-                <p className="text-xs text-gray-500">Planning scenarios when income stops</p>
-              </div>
-
-              {/* Luke's Information */}
-              <div className="space-y-3">
-                <Label className="block text-sm font-medium text-gray-700">Luke's Birthday</Label>
-                <div className="grid grid-cols-2 gap-2">
-                  <div>
-                    <Label className="block text-xs text-gray-600 mb-1">Month</Label>
-                    <Input 
-                      type="number" 
-                      min="1"
-                      max="12"
-                      value={state.personalInfo.lukeBirthMonth}
-                      onChange={(e) => handleBirthdayUpdate('luke', parseInt(e.target.value) || 1, state.personalInfo.lukeBirthYear)}
-                      className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
-                    />
-                  </div>
-                  <div>
-                    <Label className="block text-xs text-gray-600 mb-1">Year</Label>
-                    <Input 
-                      type="number" 
-                      min="1990"
-                      max="2020"
-                      value={state.personalInfo.lukeBirthYear}
-                      onChange={(e) => handleBirthdayUpdate('luke', state.personalInfo.lukeBirthMonth, parseInt(e.target.value) || 2009)}
-                      className="text-sm focus:ring-2 focus:ring-finance-blue focus:border-transparent"
-                    />
-                  </div>
-                </div>
-                <p className="text-xs text-gray-500">Current age: {state.personalInfo.lukeAge}</p>
-              </div>
-            </div>
             )}
           </CardContent>
         </Card>
