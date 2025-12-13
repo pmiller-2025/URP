@@ -67,9 +67,9 @@ export default function RetirementCalculator() {
         needsUpdate = true;
       }
       
-      // Update mortgage balance to new default
-      if (parsed.housing?.mortgageBalance !== 37400) {
-        parsed.housing.mortgageBalance = 37400;
+      // Update mortgage balance to new default (0 = paid off)
+      if (parsed.housing?.mortgageBalance !== 0) {
+        parsed.housing.mortgageBalance = 0;
         needsUpdate = true;
       }
       
