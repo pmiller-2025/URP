@@ -152,7 +152,7 @@ export function ResultsTable({
 
   const currentColumns = viewMode === 'annual' ? annualColumns : monthlyColumns;
   const visibleColumns = viewMode === 'annual' ? visibleAnnualColumns : visibleMonthlyColumns;
-  const filteredColumns = currentColumns.filter((col: any) => visibleColumns[col.key]);
+  const filteredColumns = currentColumns.filter((col: any) => visibleColumns[col.key] !== false);
 
   const renderCellValue = (columnKey: string, data: any) => {
     switch (columnKey) {
