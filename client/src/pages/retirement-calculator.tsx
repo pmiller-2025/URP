@@ -381,6 +381,7 @@ export default function RetirementCalculator() {
           selectedYear={selectedYear}
           onYearChange={setSelectedYear}
           projectionYears={state.personalInfo.projectionYears}
+          startYear={state.personalInfo.projectionStartYear}
         />
       </div>
     </div>

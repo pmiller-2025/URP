@@ -14,6 +14,7 @@ interface ResultsTableProps {
   selectedYear: number;
   onYearChange: (year: number) => void;
   projectionYears: number;
+  startYear: number;
 }
 
 const getAnnualColumns = (data: AnnualData[]) => {
@@ -109,7 +110,8 @@ export function ResultsTable({
   monthlyData, 
   selectedYear, 
   onYearChange,
-  projectionYears 
+  projectionYears,
+  startYear
 }: ResultsTableProps) {
   const annualColumns = getAnnualColumns(annualData);
   const monthlyColumns = getMonthlyColumns(monthlyData);
@@ -280,7 +282,7 @@ export function ResultsTable({
                   <SelectContent>
                     {yearOptions.map(year => (
                       <SelectItem key={year} value={year.toString()}>
-                        Year {year} ({2025 + year - 1})
+                        Year {year} ({startYear + year - 1})
                       </SelectItem>
                     ))}
                   </SelectContent>
