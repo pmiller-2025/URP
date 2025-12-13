@@ -108,10 +108,10 @@ export function InputSectionHorizontal({ state, onUpdate }: InputSectionProps) {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
               {/* Projection Start & Duration */}
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <Label className="block text-sm font-medium text-blue-800 mb-2">Projection Start & Duration</Label>
+                <Label className="block text-sm font-medium text-blue-800 mb-2">Projection Setup</Label>
                 <div className="grid grid-cols-3 gap-2 mb-2">
                   <div>
-                    <Label className="block text-xs text-blue-600 mb-1">Month</Label>
+                    <Label className="block text-xs text-blue-600 mb-1">Start Month</Label>
                     <Select 
                       value={String(state.personalInfo.projectionStartMonth)}
                       onValueChange={(value) => onUpdate('personalInfo', { projectionStartMonth: parseInt(value) })}
@@ -136,7 +136,7 @@ export function InputSectionHorizontal({ state, onUpdate }: InputSectionProps) {
                     </Select>
                   </div>
                   <div>
-                    <Label className="block text-xs text-blue-600 mb-1">Year</Label>
+                    <Label className="block text-xs text-blue-600 mb-1">Start Year</Label>
                     <Input 
                       type="number" 
                       min="2020"
@@ -158,7 +158,16 @@ export function InputSectionHorizontal({ state, onUpdate }: InputSectionProps) {
                     />
                   </div>
                 </div>
-                <p className="text-xs text-blue-600">Starting point for retirement projections</p>
+                <div className="mt-2">
+                  <Label className="block text-xs text-blue-600 mb-1">Current Savings Balance</Label>
+                  <Input 
+                    type="text"
+                    value={formatCurrency(state.savings.initialAmount)}
+                    onChange={(e) => onUpdate('savings', { initialAmount: parseCurrency(e.target.value) })}
+                    className="focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                    data-testid="input-initial-savings"
+                  />
+                </div>
               </div>
 
               {/* Paul's Information */}
