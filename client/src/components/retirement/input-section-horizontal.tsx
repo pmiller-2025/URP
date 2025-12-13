@@ -604,111 +604,38 @@ export function InputSectionHorizontal({ state, onUpdate }: InputSectionProps) {
             </div>
             
             {expandedSections.homeValue && (
-              <div className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                    <Label className="block text-sm font-medium text-green-800 mb-2">Current Home Value</Label>
-                    <div className="relative">
-                      <span className="absolute left-3 top-2 text-gray-500">$</span>
-                      <Input 
-                        type="text" 
-                        value={formatCurrency(state.homeValue?.currentValue || 1000000)}
-                        onChange={(e) => onUpdate('homeValue', { currentValue: parseCurrency(e.target.value) })}
-                        className="pl-8 focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white text-lg"
-                      />
-                    </div>
-                    <p className="text-xs text-green-600 mt-1">Estimated market value of your home</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                  <Label className="block text-sm font-medium text-green-800 mb-2">Current Home Value</Label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-2 text-gray-500">$</span>
+                    <Input 
+                      type="text" 
+                      value={formatCurrency(state.homeValue?.currentValue || 1000000)}
+                      onChange={(e) => onUpdate('homeValue', { currentValue: parseCurrency(e.target.value) })}
+                      className="pl-8 focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white text-lg"
+                      data-testid="input-home-value"
+                    />
                   </div>
-
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                    <Label className="block text-sm font-medium text-blue-800 mb-2">Mortgage Balance</Label>
-                    <div className="relative">
-                      <span className="absolute left-3 top-2 text-gray-500">$</span>
-                      <Input 
-                        type="text" 
-                        value={formatCurrency(state.housing.mortgageBalance)}
-                        onChange={(e) => onUpdate('housing', { mortgageBalance: parseCurrency(e.target.value) })}
-                        className="pl-8 focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-lg"
-                      />
-                    </div>
-                    <p className="text-xs text-blue-600 mt-1">Remaining mortgage balance</p>
-                  </div>
-
-                  <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
-                    <Label className="block text-sm font-medium text-purple-800 mb-2">Monthly Mortgage Payment</Label>
-                    <div className="relative">
-                      <span className="absolute left-3 top-2 text-gray-500">$</span>
-                      <Input 
-                        type="text" 
-                        value={formatCurrency(state.housing.monthlyPayment)}
-                        onChange={(e) => onUpdate('housing', { monthlyPayment: parseCurrency(e.target.value) })}
-                        className="pl-8 focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white text-lg"
-                      />
-                    </div>
-                    <p className="text-xs text-purple-600 mt-1">Total monthly payment (P&I)</p>
-                  </div>
+                  <p className="text-xs text-green-600 mt-1">Estimated market value of your home</p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <Label className="block text-sm font-medium text-gray-700 mb-2">Home Appreciation Rate</Label>
-                    <div className="relative">
-                      <Input 
-                        type="number"
-                        step="0.1"
-                        min="0"
-                        max="10"
-                        value={state.homeValue?.appreciation || 2.5}
-                        onChange={(e) => onUpdate('homeValue', { appreciation: parseFloat(e.target.value) || 2.5 })}
-                        className="pr-8 focus:ring-2 focus:ring-finance-blue focus:border-transparent"
-                      />
-                      <span className="absolute right-3 top-2 text-gray-500">%</span>
-                    </div>
-                    <p className="text-xs text-gray-500 mt-1">Expected annual home value appreciation</p>
+                <div>
+                  <Label className="block text-sm font-medium text-gray-700 mb-2">Home Appreciation Rate</Label>
+                  <div className="relative">
+                    <Input 
+                      type="number"
+                      step="0.1"
+                      min="0"
+                      max="10"
+                      value={state.homeValue?.appreciation || 2.5}
+                      onChange={(e) => onUpdate('homeValue', { appreciation: parseFloat(e.target.value) || 2.5 })}
+                      className="pr-8 focus:ring-2 focus:ring-finance-blue focus:border-transparent"
+                      data-testid="input-home-appreciation"
+                    />
+                    <span className="absolute right-3 top-2 text-gray-500">%</span>
                   </div>
-
-                  <div>
-                    <Label className="block text-sm font-medium text-gray-700 mb-2">Current Equity</Label>
-                    <div className="bg-gray-50 rounded-lg p-3">
-                      <div className="text-2xl font-bold text-gray-900">
-                        ${formatCurrency(Math.max(0, (state.homeValue?.currentValue || 1000000) - state.housing.mortgageBalance))}
-                      </div>
-                      <p className="text-xs text-gray-500">Home Value - Mortgage Balance</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Home Summary */}
-                <div className="border-t border-gray-200 pt-6">
-                  <div className="bg-indigo-50 rounded-lg border border-indigo-200 p-4">
-                    <div className="flex items-center mb-2">
-                      <i className="fas fa-calculator text-indigo-600 mr-2"></i>
-                      <h3 className="text-lg font-medium text-indigo-800">Home Summary</h3>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                      <div>
-                        <p className="text-indigo-700 font-medium">Current Value:</p>
-                        <p className="text-indigo-800 text-lg font-bold">
-                          ${formatCurrency(state.homeValue?.currentValue || 1000000)}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-indigo-700 font-medium">Mortgage Balance:</p>
-                        <p className="text-indigo-800 text-lg font-bold">
-                          ${formatCurrency(state.housing.mortgageBalance)}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-indigo-700 font-medium">Net Equity:</p>
-                        <p className="text-indigo-800 text-lg font-bold">
-                          ${formatCurrency(Math.max(0, (state.homeValue?.currentValue || 1000000) - state.housing.mortgageBalance))}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="mt-3 text-xs text-indigo-600">
-                      Your home equity is included in net worth calculations and grows with appreciation over time.
-                    </div>
-                  </div>
+                  <p className="text-xs text-gray-500 mt-1">Expected annual home value appreciation</p>
                 </div>
               </div>
             )}
