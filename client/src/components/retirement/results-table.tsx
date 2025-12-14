@@ -49,8 +49,6 @@ const getAnnualColumns = (data: AnnualData[]) => {
   }
   
   columns.push(
-    { key: 'mortgage', label: 'Mortgage Payments', visible: true },
-    { key: 'mortgageBalance', label: 'Mortgage Balance', visible: true },
     { key: 'netCashFlow', label: 'Net Cash Flow', visible: true },
     { key: 'returnOnInvestments', label: 'Return on Investments', visible: true },
     { key: 'investmentReturn', label: 'Investment Return', visible: true },
@@ -93,8 +91,6 @@ const getMonthlyColumns = (data: MonthlyData[]) => {
   }
   
   columns.push(
-    { key: 'mortgage', label: 'Mortgage Payment', visible: true },
-    { key: 'mortgageBalance', label: 'Mortgage Balance', visible: true },
     { key: 'netCashFlow', label: 'Net Cash Flow', visible: true },
     { key: 'returnOnInvestments', label: 'Return on Investments', visible: true },
     { key: 'savingsBalance', label: 'Savings Balance', visible: true },
@@ -177,7 +173,6 @@ export function ResultsTable({
       case 'investmentReturn':
       case 'savingsBalance':
       case 'homeValue':
-      case 'mortgageBalance':
         return formatCurrency(data[columnKey]);
       case 'totalTaxes':
       case 'taxes':
@@ -189,8 +184,6 @@ export function ResultsTable({
       case 'expense1':
       case 'expense2':
       case 'expense3':
-        return data[columnKey] > 0 ? formatCurrency(data[columnKey]) : '$0';
-      case 'mortgage':
         return data[columnKey] > 0 ? formatCurrency(data[columnKey]) : '$0';
       case 'netCashFlow':
         return formatCurrency(data[columnKey]);
@@ -210,7 +203,7 @@ export function ResultsTable({
       return `${baseClass} font-medium text-gray-900 sticky left-0 bg-white border-r border-gray-200`;
     }
     
-    if (['totalTaxes', 'taxes', 'livingExp', 'livingExpenses', 'insurance', 'expense1', 'expense2', 'expense3', 'mortgage'].includes(columnKey)) {
+    if (['totalTaxes', 'taxes', 'livingExp', 'livingExpenses', 'insurance', 'expense1', 'expense2', 'expense3'].includes(columnKey)) {
       return `${baseClass} text-finance-red`;
     }
     
