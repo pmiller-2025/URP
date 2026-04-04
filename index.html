@@ -14,8 +14,64 @@
   input[type=number]::-webkit-inner-spin-button,
   input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
 </style>
+<style>
+  #pw-gate {
+    position: fixed; inset: 0; background: #1e3a5f;
+    display: flex; align-items: center; justify-content: center; z-index: 9999;
+  }
+  #pw-box {
+    background: white; border-radius: 14px; padding: 40px 48px;
+    text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,.4); width: 340px;
+  }
+  #pw-box h1 { font-size: 22px; font-weight: 700; color: #1e3a5f; margin-bottom: 6px; }
+  #pw-box p { font-size: 13px; color: #64748b; margin-bottom: 24px; }
+  #pw-input {
+    width: 100%; padding: 11px 14px; border: 2px solid #e2e8f0; border-radius: 8px;
+    font-size: 15px; text-align: center; letter-spacing: 3px; outline: none;
+    transition: border-color .2s;
+  }
+  #pw-input:focus { border-color: #2563eb; }
+  #pw-btn {
+    width: 100%; margin-top: 12px; padding: 11px; background: #1e3a5f; color: white;
+    border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer;
+    transition: background .2s;
+  }
+  #pw-btn:hover { background: #1e40af; }
+  #pw-error { color: #dc2626; font-size: 12px; margin-top: 10px; min-height: 18px; }
+</style>
 </head>
 <body>
+<div id="pw-gate">
+  <div id="pw-box">
+    <div style="font-size:36px;margin-bottom:12px">📊</div>
+    <h1>Retirement Planner</h1>
+    <p>Paul & Jessica · Private Access</p>
+    <input id="pw-input" type="password" placeholder="Enter password" autofocus
+      onkeydown="if(event.key==='Enter')checkPw()" />
+    <button id="pw-btn" onclick="checkPw()">Unlock</button>
+    <div id="pw-error"></div>
+  </div>
+</div>
+<script>
+  function checkPw() {
+    const val = document.getElementById('pw-input').value;
+    if (val === 'chillers') {
+      document.getElementById('pw-gate').style.display = 'none';
+      sessionStorage.setItem('urp-auth','1');
+    } else {
+      const err = document.getElementById('pw-error');
+      err.textContent = 'Incorrect password. Try again.';
+      document.getElementById('pw-input').value = '';
+      document.getElementById('pw-input').focus();
+      setTimeout(() => err.textContent = '', 3000);
+    }
+  }
+  if (sessionStorage.getItem('urp-auth') === '1') {
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('pw-gate').style.display = 'none';
+    });
+  }
+</script>
 <div id="root"></div>
 <script type="text/babel" data-presets="react">
 const { useState, useEffect, useMemo, useRef } = React;
