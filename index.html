@@ -3,864 +3,629 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ultimate Retirement Planner — Paul & Jessica</title>
-<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-<script src="https://unpkg.com/recharts@2.5.0/umd/Recharts.js"></script>
-<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<title>Ultimate Retirement Planner</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: system-ui, -apple-system, sans-serif; }
-  input[type=number]::-webkit-inner-spin-button,
-  input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
-</style>
-<style>
-  #pw-gate {
-    position: fixed; inset: 0; background: #1e3a5f;
-    display: flex; align-items: center; justify-content: center; z-index: 9999;
-  }
-  #pw-box {
-    background: white; border-radius: 14px; padding: 40px 48px;
-    text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,.4); width: 340px;
-  }
-  #pw-box h1 { font-size: 22px; font-weight: 700; color: #1e3a5f; margin-bottom: 6px; }
-  #pw-box p { font-size: 13px; color: #64748b; margin-bottom: 24px; }
-  #pw-input {
-    width: 100%; padding: 11px 14px; border: 2px solid #e2e8f0; border-radius: 8px;
-    font-size: 15px; text-align: center; letter-spacing: 3px; outline: none;
-    transition: border-color .2s;
-  }
-  #pw-input:focus { border-color: #2563eb; }
-  #pw-btn {
-    width: 100%; margin-top: 12px; padding: 11px; background: #1e3a5f; color: white;
-    border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer;
-    transition: background .2s;
-  }
-  #pw-btn:hover { background: #1e40af; }
-  #pw-error { color: #dc2626; font-size: 12px; margin-top: 10px; min-height: 18px; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: system-ui, -apple-system, sans-serif; }
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
+#pw-gate {
+  position: fixed; inset: 0; background: #1e3a5f;
+  display: flex; align-items: center; justify-content: center; z-index: 9999;
+}
+#pw-box {
+  background: white; border-radius: 14px; padding: 40px 48px;
+  text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,.4); width: 340px;
+}
+#pw-box h1 { font-size: 22px; font-weight: 700; color: #1e3a5f; margin-bottom: 6px; }
+#pw-box p { font-size: 13px; color: #64748b; margin-bottom: 24px; }
+#pw-input {
+  width: 100%; padding: 11px 14px; border: 2px solid #e2e8f0; border-radius: 8px;
+  font-size: 15px; text-align: center; letter-spacing: 3px; outline: none;
+}
+#pw-input:focus { border-color: #2563eb; }
+#pw-btn {
+  width: 100%; margin-top: 12px; padding: 11px; background: #1e3a5f; color: white;
+  border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer;
+}
+#pw-error { color: #dc2626; font-size: 12px; margin-top: 10px; min-height: 18px; }
 </style>
 </head>
 <body>
 <div id="pw-gate">
   <div id="pw-box">
-    <div style="font-size:36px;margin-bottom:12px">📊</div>
+    <div style="font-size:42px;margin-bottom:12px">&#128202;</div>
     <h1>Retirement Planner</h1>
-    <p>Paul & Jessica · Private Access</p>
-    <input id="pw-input" type="password" placeholder="Enter password" autofocus
-      onkeydown="if(event.key==='Enter')checkPw()" />
+    <p>Paul &amp; Jessica &middot; Private Access</p>
+    <input id="pw-input" type="password" placeholder="Enter password" autofocus />
     <button id="pw-btn" onclick="checkPw()">Unlock</button>
     <div id="pw-error"></div>
   </div>
 </div>
+<div id="root"></div>
 <script>
+
   function checkPw() {
-    const val = document.getElementById('pw-input').value;
+    var val = document.getElementById('pw-input').value;
     if (val === 'chillers') {
       document.getElementById('pw-gate').style.display = 'none';
-      sessionStorage.setItem('urp-auth','1');
+      try { sessionStorage.setItem('urp-auth','1'); } catch(e){}
     } else {
-      const err = document.getElementById('pw-error');
+      var err = document.getElementById('pw-error');
       err.textContent = 'Incorrect password. Try again.';
       document.getElementById('pw-input').value = '';
       document.getElementById('pw-input').focus();
-      setTimeout(() => err.textContent = '', 3000);
+      setTimeout(function(){ err.textContent = ''; }, 3000);
     }
   }
-  if (sessionStorage.getItem('urp-auth') === '1') {
-    document.addEventListener('DOMContentLoaded', () => {
+  try {
+    if (sessionStorage.getItem('urp-auth') === '1') {
       document.getElementById('pw-gate').style.display = 'none';
-    });
-  }
+    }
+  } catch(e){}
+
+document.getElementById('pw-input').addEventListener('keydown', function(e){
+  if(e.key==='Enter') checkPw();
+});
 </script>
-<div id="root"></div>
-<script type="text/babel" data-presets="react">
-const { useState, useEffect, useMemo, useRef } = React;
-const { AreaChart, Area, ComposedChart, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Line } = Recharts;
-
-
-  AreaChart, Area, ComposedChart, BarChart, Bar,
-  XAxis, YAxis, CartesianGrid, Tooltip, Legend,
-  ResponsiveContainer, Line
-} from "recharts";
-
-// ─── DATA CONSTANTS ───────────────────────────────────────────────────
-const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-const MO = MONTHS.map((m, i) => ({ v: String(i + 1), l: m }));
-
-const SS_OPT = [
-  { age: 62, amt: 2211, desc: "Age 62 — $2,211 (69%)" },
-  { age: 63, amt: 2406, desc: "Age 63 — $2,406 (73%)" },
-  { age: 64, amt: 2686, desc: "Age 64 — $2,686 (79%)" },
-  { age: 65, amt: 3005, desc: "Age 65 — $3,005 (86%)" },
-  { age: 66, amt: 3341, desc: "Age 66 — $3,341 (93%)" },
-  { age: 67, amt: 3697, desc: "Age 67 — $3,697 (100% FRA)" },
-  { age: 68, amt: 4199, desc: "Age 68 — $4,199 (104%)" },
-  { age: 69, amt: 4537, desc: "Age 69 — $4,537 (113%)" },
-  { age: 70, amt: 5034, desc: "Age 70 — $5,034 (125% max)" },
-];
-
-const DEF_BUDGET = [
-  { id: "housing", name: "Housing & Utilities", amount: 1500 },
-  { id: "food", name: "Food & Dining", amount: 800 },
-  { id: "transport", name: "Transportation", amount: 600 },
-  { id: "health", name: "Healthcare", amount: 400 },
-  { id: "entertain", name: "Entertainment", amount: 300 },
-  { id: "personal", name: "Personal Care", amount: 200 },
-  { id: "clothing", name: "Clothing", amount: 150 },
-  { id: "gifts", name: "Gifts & Donations", amount: 250 },
-  { id: "misc", name: "Miscellaneous", amount: 300 },
-];
-
-function getDefault() {
-  return {
-    pi: { paulAge: 63, jessAge: 56, paulBM: 7, paulBY: 1962, jessBM: 12, jessBY: 1968, lukeBM: 11, lukeBY: 2004, projYears: 30, startM: 9, startY: 2025, paulEOL: 100, jessEOL: 100 },
-    ss: { paulAmt: 3968, jessAmt: 872, jessSpousal: 263, cola: 3.0, paulTax: true, jessTax: true, paulStart: 70, jessStart: 62 },
-    oi: { va: 4050, biz: 4000, bizDur: 60, bizSM: 1, bizSY: 1, jess: 2000, jessDur: 12, jessSM: 1, jessSY: 1, ch35: 1000, ch35Dur: 24, ch35SM: 1, ch35SY: 1, i1: 0, i1Dur: 12, i1SM: 1, i1SY: 1, i2: 0, i2Dur: 12, i2SM: 1, i2SY: 1, i3: 0, i3Dur: 12, i3SM: 1, i3SY: 1 },
-    h: { homeVal: 1000000, mortBal: 0, mortPmt: 1816.92, intRate: 5.5, targetMo: 10, appreciation: 2.5, accel: true, lsAmt: 0, lsSM: 1, lsSY: 1 },
-    sav: { init: 30000, ret: 5.0, addl: 0, taxGains: true, gainsTax: 15, strategy: "balanced" },
-    exp: { type: "fixed", basic: 5000, detailed: DEF_BUDGET.map(c => ({ ...c })), ins: 500, insSM: 10, insSY: 3, insEM: 4, insEY: 11, e1: 0, e1Name: "Expense 1", e1Dur: 12, e1SM: 1, e1SY: 1, e2: 0, e2Name: "Expense 2", e2Dur: 12, e2SM: 1, e2SY: 1, e3: 0, e3Name: "Expense 3", e3Dur: 12, e3SM: 1, e3SY: 1, infl: 3.0 },
-    tr: { ss: 12, biz: 22, jess: 12 },
+<script>
+var URP = (() => {
+  // urp-app.jsx
+  var MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  var MO = MONTHS.map((m, i) => ({ v: String(i + 1), l: m }));
+  var SS_OPT = [
+    { age: 62, amt: 2211, desc: "Age 62 \u2014 $2,211 (69%)" },
+    { age: 63, amt: 2406, desc: "Age 63 \u2014 $2,406 (73%)" },
+    { age: 64, amt: 2686, desc: "Age 64 \u2014 $2,686 (79%)" },
+    { age: 65, amt: 3005, desc: "Age 65 \u2014 $3,005 (86%)" },
+    { age: 66, amt: 3341, desc: "Age 66 \u2014 $3,341 (93%)" },
+    { age: 67, amt: 3697, desc: "Age 67 \u2014 $3,697 (100% FRA)" },
+    { age: 68, amt: 4199, desc: "Age 68 \u2014 $4,199 (104%)" },
+    { age: 69, amt: 4537, desc: "Age 69 \u2014 $4,537 (113%)" },
+    { age: 70, amt: 5034, desc: "Age 70 \u2014 $5,034 (125% max)" }
+  ];
+  var DEF_BUDGET = [
+    { id: "housing", name: "Housing & Utilities", amount: 1500 },
+    { id: "food", name: "Food & Dining", amount: 800 },
+    { id: "transport", name: "Transportation", amount: 600 },
+    { id: "health", name: "Healthcare", amount: 400 },
+    { id: "entertain", name: "Entertainment", amount: 300 },
+    { id: "personal", name: "Personal Care", amount: 200 },
+    { id: "clothing", name: "Clothing", amount: 150 },
+    { id: "gifts", name: "Gifts & Donations", amount: 250 },
+    { id: "misc", name: "Miscellaneous", amount: 300 }
+  ];
+  function getDefault() {
+    return {
+      pi: { paulAge: 63, jessAge: 56, paulBM: 7, paulBY: 1962, jessBM: 12, jessBY: 1968, lukeBM: 11, lukeBY: 2004, projYears: 30, startM: 9, startY: 2025, paulEOL: 100, jessEOL: 100 },
+      ss: { paulAmt: 3968, jessAmt: 872, jessSpousal: 263, cola: 3, paulTax: true, jessTax: true, paulStart: 70, jessStart: 62 },
+      oi: { va: 4050, biz: 4e3, bizDur: 60, bizSM: 1, bizSY: 1, jess: 2e3, jessDur: 12, jessSM: 1, jessSY: 1, ch35: 1e3, ch35Dur: 24, ch35SM: 1, ch35SY: 1, i1: 0, i1Dur: 12, i1SM: 1, i1SY: 1, i2: 0, i2Dur: 12, i2SM: 1, i2SY: 1, i3: 0, i3Dur: 12, i3SM: 1, i3SY: 1 },
+      h: { homeVal: 1e6, mortBal: 0, mortPmt: 1816.92, intRate: 5.5, targetMo: 10, appreciation: 2.5, accel: true, lsAmt: 0, lsSM: 1, lsSY: 1 },
+      sav: { init: 3e4, ret: 5, addl: 0, taxGains: true, gainsTax: 15, strategy: "balanced" },
+      exp: { type: "fixed", basic: 5e3, detailed: DEF_BUDGET.map((c) => ({ ...c })), ins: 500, insSM: 10, insSY: 3, insEM: 4, insEY: 11, e1: 0, e1Name: "Expense 1", e1Dur: 12, e1SM: 1, e1SY: 1, e2: 0, e2Name: "Expense 2", e2Dur: 12, e2SM: 1, e2SY: 1, e3: 0, e3Name: "Expense 3", e3Dur: 12, e3SM: 1, e3SY: 1, infl: 3 },
+      tr: { ss: 12, biz: 22, jess: 12 }
+    };
+  }
+  var inf = (b, r, y) => !isFinite(b) || !isFinite(r) || !isFinite(y) ? b || 0 : b * Math.pow(1 + r / 100, y);
+  var txAmt = (inc, rate, taxable) => !taxable || !inc ? 0 : inc * rate / 100;
+  var safe = (n) => !isFinite(n) || isNaN(n) ? 0 : n;
+  var getLiving = (exp) => exp.type === "fixed" ? exp.basic : exp.detailed.reduce((t, c) => t + c.amount, 0);
+  var isActive = (sY, sM, dur, off) => {
+    const s = (sY - 1) * 12 + (sM - 1);
+    const e = off - s;
+    return e >= 0 && e < dur;
   };
-}
-
-// ─── CALCULATOR HELPERS ───────────────────────────────────────────────
-const inf = (b, r, y) => (!isFinite(b) || !isFinite(r) || !isFinite(y)) ? (b || 0) : b * Math.pow(1 + r / 100, y);
-const txAmt = (inc, rate, taxable) => (!taxable || !inc) ? 0 : inc * rate / 100;
-const safe = (n) => (!isFinite(n) || isNaN(n)) ? 0 : n;
-const getLiving = (exp) => exp.type === "fixed" ? exp.basic : exp.detailed.reduce((t, c) => t + c.amount, 0);
-const isActive = (sY, sM, dur, off) => { const s = (sY - 1) * 12 + (sM - 1); const e = off - s; return e >= 0 && e < dur; };
-const mortCalc = (bal, rate, months) => { if (bal <= 0 || months <= 0) return 0; const r = rate / 100 / 12; if (r === 0) return bal / months; return bal * (r * Math.pow(1 + r, months)) / (Math.pow(1 + r, months) - 1); };
-const calcAge = (bm, by, cm, cy) => { let a = cy - by; if (cm < bm) a--; return a; };
-const getPaulDeath = (s) => { for (let y = 1; y <= s.pi.projYears; y++) if (s.pi.paulAge + y - 1 >= s.pi.paulEOL) return 2025 + y - 1; return null; };
-
-function calcAnnual(s) {
-  const res = []; let savBal = s.sav.init, mortBal = s.h.mortBal;
-  const pDeath = getPaulDeath(s);
-  for (let yr = 1; yr <= s.pi.projYears; yr++) {
-    const yi = yr - 1, mo = yi * 12;
-    const pAge = s.pi.paulAge + yi, jAge = s.pi.jessAge + yi;
-    const pA = pAge < s.pi.paulEOL, jA = jAge < s.pi.jessEOL;
-    let pSS = 0, jSS = 0;
-    if (pA && jA) {
-      const pE = pAge >= s.ss.paulStart, jE = jAge >= s.ss.jessStart;
-      pSS = pE ? inf(s.ss.paulAmt * 12, s.ss.cola, yi) : 0;
-      if (jE && !pE) jSS = inf(s.ss.jessAmt * 12, s.ss.cola, yi);
-      else if (jE && pE) jSS = inf((s.ss.jessAmt + s.ss.jessSpousal) * 12, s.ss.cola, yi);
-    } else if (!pA && jA) { jSS = jAge >= s.ss.jessStart ? inf(s.ss.paulAmt * 12, s.ss.cola, yi) : 0; }
-    else if (pA && !jA) { pSS = pAge >= s.ss.paulStart ? inf(s.ss.paulAmt * 12, s.ss.cola, yi) : 0; }
-    let va = 0;
-    if (pA) va = inf(s.oi.va * 12, s.exp.infl, yi);
-    else if (!pA && jA && pDeath && pDeath >= 2035) va = inf(s.oi.va * 12 * 0.5, s.exp.infl, yi);
-    const yInc = (amt, sy, sm, dur) => { const sOff = (sy - 1) * 12 + (sm - 1), el = mo - sOff; let m = 0; if (el >= 0 && el < dur) m = Math.min(12, dur - el); else if (el < 0 && -el < 12) m = Math.min(12 - (-el), dur); return amt * m; };
-    const biz = yInc(s.oi.biz, s.oi.bizSY, s.oi.bizSM, s.oi.bizDur);
-    const jw = yInc(s.oi.jess, s.oi.jessSY, s.oi.jessSM, s.oi.jessDur);
-    const c35 = yInc(s.oi.ch35, s.oi.ch35SY, s.oi.ch35SM, s.oi.ch35Dur);
-    const i1 = s.oi.i1 > 0 ? yInc(s.oi.i1, s.oi.i1SY, s.oi.i1SM, s.oi.i1Dur) : 0;
-    const i2 = s.oi.i2 > 0 ? yInc(s.oi.i2, s.oi.i2SY, s.oi.i2SM, s.oi.i2Dur) : 0;
-    const i3 = s.oi.i3 > 0 ? yInc(s.oi.i3, s.oi.i3SY, s.oi.i3SM, s.oi.i3Dur) : 0;
-    const totInc = pSS + jSS + va + biz + jw + c35 + i1 + i2 + i3;
-    const taxes = txAmt(pSS, s.tr.ss, s.ss.paulTax) + txAmt(jSS, s.tr.ss, s.ss.jessTax) + txAmt(biz, s.tr.biz, true) + txAmt(jw, s.tr.jess, true);
-    const ati = totInc - taxes;
-    const livExp = inf(getLiving(s.exp) * 12, s.exp.infl, yi);
-    const liSO = (s.exp.insSY - 1) * 12 + (s.exp.insSM - 1), liEO = (s.exp.insEY - 1) * 12 + (s.exp.insEM - 1);
-    let liMo = 0; for (let m = 0; m < 12; m++) { const o = mo + m; if (o >= liSO && o <= liEO) liMo++; }
-    const insAnn = s.exp.ins * liMo;
-    const e1A = s.exp.e1 > 0 ? yInc(s.exp.e1, s.exp.e1SY, s.exp.e1SM, s.exp.e1Dur) : 0;
-    const e2A = s.exp.e2 > 0 ? yInc(s.exp.e2, s.exp.e2SY, s.exp.e2SM, s.exp.e2Dur) : 0;
-    const e3A = s.exp.e3 > 0 ? yInc(s.exp.e3, s.exp.e3SY, s.exp.e3SM, s.exp.e3Dur) : 0;
-    let mortAnn = 0, lsAnn = 0, wb = mortBal;
-    const lsO = (s.h.lsSY - 1) * 12 + (s.h.lsSM - 1);
-    if (s.h.lsAmt > 0 && lsO >= mo && lsO <= mo + 11) { const lp = Math.min(s.h.lsAmt, wb); lsAnn += lp; wb = Math.max(0, wb - lp); }
-    for (let m = 0; m < 12; m++) {
-      if (wb > 0) {
-        const o = mo + m, r = s.h.intRate / 100 / 12, mi = wb * r;
-        let mp; if (s.h.accel && o < s.h.targetMo) { const rm = Math.max(1, s.h.targetMo - o); const req = mortCalc(wb, s.h.intRate, rm); mp = Math.min(req - mi, wb); }
-        else mp = Math.min(s.h.mortPmt - mi, wb);
-        mp = Math.max(0, mp); mortAnn += mi + mp; wb = Math.max(0, wb - mp);
+  var mortCalc = (bal, rate, months) => {
+    if (bal <= 0 || months <= 0) return 0;
+    const r = rate / 100 / 12;
+    if (r === 0) return bal / months;
+    return bal * (r * Math.pow(1 + r, months)) / (Math.pow(1 + r, months) - 1);
+  };
+  var calcAge = (bm, by, cm, cy) => {
+    let a = cy - by;
+    if (cm < bm) a--;
+    return a;
+  };
+  var getPaulDeath = (s) => {
+    for (let y = 1; y <= s.pi.projYears; y++) if (s.pi.paulAge + y - 1 >= s.pi.paulEOL) return 2025 + y - 1;
+    return null;
+  };
+  function calcAnnual(s) {
+    const res = [];
+    let savBal = s.sav.init, mortBal = s.h.mortBal;
+    const pDeath = getPaulDeath(s);
+    for (let yr = 1; yr <= s.pi.projYears; yr++) {
+      const yi = yr - 1, mo = yi * 12;
+      const pAge = s.pi.paulAge + yi, jAge = s.pi.jessAge + yi;
+      const pA = pAge < s.pi.paulEOL, jA = jAge < s.pi.jessEOL;
+      let pSS = 0, jSS = 0;
+      if (pA && jA) {
+        const pE = pAge >= s.ss.paulStart, jE = jAge >= s.ss.jessStart;
+        pSS = pE ? inf(s.ss.paulAmt * 12, s.ss.cola, yi) : 0;
+        if (jE && !pE) jSS = inf(s.ss.jessAmt * 12, s.ss.cola, yi);
+        else if (jE && pE) jSS = inf((s.ss.jessAmt + s.ss.jessSpousal) * 12, s.ss.cola, yi);
+      } else if (!pA && jA) {
+        jSS = jAge >= s.ss.jessStart ? inf(s.ss.paulAmt * 12, s.ss.cola, yi) : 0;
+      } else if (pA && !jA) {
+        pSS = pAge >= s.ss.paulStart ? inf(s.ss.paulAmt * 12, s.ss.cola, yi) : 0;
       }
+      let va = 0;
+      if (pA) va = inf(s.oi.va * 12, s.exp.infl, yi);
+      else if (!pA && jA && pDeath && pDeath >= 2035) va = inf(s.oi.va * 12 * 0.5, s.exp.infl, yi);
+      const yInc = (amt, sy, sm, dur) => {
+        const sOff = (sy - 1) * 12 + (sm - 1), el = mo - sOff;
+        let m = 0;
+        if (el >= 0 && el < dur) m = Math.min(12, dur - el);
+        else if (el < 0 && -el < 12) m = Math.min(12 - -el, dur);
+        return amt * m;
+      };
+      const biz = yInc(s.oi.biz, s.oi.bizSY, s.oi.bizSM, s.oi.bizDur);
+      const jw = yInc(s.oi.jess, s.oi.jessSY, s.oi.jessSM, s.oi.jessDur);
+      const c35 = yInc(s.oi.ch35, s.oi.ch35SY, s.oi.ch35SM, s.oi.ch35Dur);
+      const i1 = s.oi.i1 > 0 ? yInc(s.oi.i1, s.oi.i1SY, s.oi.i1SM, s.oi.i1Dur) : 0;
+      const i2 = s.oi.i2 > 0 ? yInc(s.oi.i2, s.oi.i2SY, s.oi.i2SM, s.oi.i2Dur) : 0;
+      const i3 = s.oi.i3 > 0 ? yInc(s.oi.i3, s.oi.i3SY, s.oi.i3SM, s.oi.i3Dur) : 0;
+      const totInc = pSS + jSS + va + biz + jw + c35 + i1 + i2 + i3;
+      const taxes = txAmt(pSS, s.tr.ss, s.ss.paulTax) + txAmt(jSS, s.tr.ss, s.ss.jessTax) + txAmt(biz, s.tr.biz, true) + txAmt(jw, s.tr.jess, true);
+      const ati = totInc - taxes;
+      const livExp = inf(getLiving(s.exp) * 12, s.exp.infl, yi);
+      const liSO = (s.exp.insSY - 1) * 12 + (s.exp.insSM - 1), liEO = (s.exp.insEY - 1) * 12 + (s.exp.insEM - 1);
+      let liMo = 0;
+      for (let m = 0; m < 12; m++) {
+        const o = mo + m;
+        if (o >= liSO && o <= liEO) liMo++;
+      }
+      const insAnn = s.exp.ins * liMo;
+      const e1A = s.exp.e1 > 0 ? yInc(s.exp.e1, s.exp.e1SY, s.exp.e1SM, s.exp.e1Dur) : 0;
+      const e2A = s.exp.e2 > 0 ? yInc(s.exp.e2, s.exp.e2SY, s.exp.e2SM, s.exp.e2Dur) : 0;
+      const e3A = s.exp.e3 > 0 ? yInc(s.exp.e3, s.exp.e3SY, s.exp.e3SM, s.exp.e3Dur) : 0;
+      let mortAnn = 0, lsAnn = 0, wb = mortBal;
+      const lsO = (s.h.lsSY - 1) * 12 + (s.h.lsSM - 1);
+      if (s.h.lsAmt > 0 && lsO >= mo && lsO <= mo + 11) {
+        const lp = Math.min(s.h.lsAmt, wb);
+        lsAnn += lp;
+        wb = Math.max(0, wb - lp);
+      }
+      for (let m = 0; m < 12; m++) {
+        if (wb > 0) {
+          const o = mo + m, r = s.h.intRate / 100 / 12, mi = wb * r;
+          let mp;
+          if (s.h.accel && o < s.h.targetMo) {
+            const rm = Math.max(1, s.h.targetMo - o);
+            const req = mortCalc(wb, s.h.intRate, rm);
+            mp = Math.min(req - mi, wb);
+          } else mp = Math.min(s.h.mortPmt - mi, wb);
+          mp = Math.max(0, mp);
+          mortAnn += mi + mp;
+          wb = Math.max(0, wb - mp);
+        }
+      }
+      mortBal = wb;
+      const ncf = ati - livExp - insAnn - mortAnn - lsAnn - e1A - e2A - e3A;
+      savBal += ncf + s.sav.addl;
+      const inv = Math.max(0, savBal) * s.sav.ret / 100;
+      const invTax = s.sav.taxGains && inv > 0 ? inv * s.sav.gainsTax / 100 : 0;
+      savBal = safe(savBal + inv - invTax);
+      const totTax = safe(taxes) + safe(invTax);
+      const hv = inf(s.h.homeVal, s.h.appreciation, yi);
+      res.push({ yr: 2025 + yi, pAge: safe(pAge), jAge: safe(jAge), pSS: safe(pSS), jSS: safe(jSS), va: safe(va), biz: safe(biz), jw: safe(jw), c35: safe(c35), totInc: safe(totInc), totTax: safe(totTax), ati: safe(ati), livExp: safe(livExp), ins: safe(insAnn), e1: safe(e1A), e2: safe(e2A), e3: safe(e3A), mort: safe(mortAnn + lsAnn), ncf: safe(ncf), invRet: safe(inv), netInv: safe(inv - invTax), sav: safe(savBal), hv: safe(hv), mortBal: safe(mortBal), nw: safe(hv + savBal - mortBal) });
     }
-    mortBal = wb;
-    const ncf = ati - livExp - insAnn - mortAnn - lsAnn - e1A - e2A - e3A;
-    savBal += ncf + s.sav.addl;
-    const inv = Math.max(0, savBal) * s.sav.ret / 100;
-    const invTax = s.sav.taxGains && inv > 0 ? inv * s.sav.gainsTax / 100 : 0;
-    savBal = safe(savBal + inv - invTax);
-    const totTax = safe(taxes) + safe(invTax);
-    const hv = inf(s.h.homeVal, s.h.appreciation, yi);
-    res.push({ yr: 2025 + yi, pAge: safe(pAge), jAge: safe(jAge), pSS: safe(pSS), jSS: safe(jSS), va: safe(va), biz: safe(biz), jw: safe(jw), c35: safe(c35), totInc: safe(totInc), totTax: safe(totTax), ati: safe(ati), livExp: safe(livExp), ins: safe(insAnn), e1: safe(e1A), e2: safe(e2A), e3: safe(e3A), mort: safe(mortAnn + lsAnn), ncf: safe(ncf), invRet: safe(inv), netInv: safe(inv - invTax), sav: safe(savBal), hv: safe(hv), mortBal: safe(mortBal), nw: safe(hv + savBal - mortBal) });
+    return res;
   }
-  return res;
-}
-
-function calcMonthly(s, year) {
-  const res = []; const yi = year - 1;
-  const ann = calcAnnual(s);
-  let runBal = yi > 0 && ann[yi - 2] ? ann[yi - 2].sav : s.sav.init;
-  let mortBal = yi > 0 && ann[yi - 2] ? ann[yi - 2].mortBal : s.h.mortBal;
-  const livM = inf(getLiving(s.exp), s.exp.infl, yi);
-  const pDeath = getPaulDeath(s);
-  for (let m = 0; m < 12; m++) {
-    const off = yi * 12 + m;
-    const aM = (m + (s.pi.startM - 1)) % 12, aY = s.pi.startY + yi + Math.floor((m + s.pi.startM - 1) / 12);
-    const mn = new Date(aY, aM).toLocaleDateString("en-US", { month: "short", year: "numeric" });
-    const pAgeM = calcAge(s.pi.paulBM, s.pi.paulBY, aM + 1, aY);
-    const jAgeM = calcAge(s.pi.jessBM, s.pi.jessBY, aM + 1, aY);
-    const pA = pAgeM < s.pi.paulEOL, jA = jAgeM < s.pi.jessEOL;
-    let pSS = 0, jSS = 0;
-    if (pA && jA) {
-      const pE = pAgeM >= s.ss.paulStart && (pAgeM > s.ss.paulStart || aM + 1 > s.pi.paulBM);
-      const jE = jAgeM >= s.ss.jessStart && (jAgeM > s.ss.jessStart || aM + 1 > s.pi.jessBM);
-      pSS = pE ? inf(s.ss.paulAmt, s.ss.cola, yi) : 0;
-      if (jE && !pE) jSS = inf(s.ss.jessAmt, s.ss.cola, yi);
-      else if (jE && pE) jSS = inf(s.ss.jessAmt + s.ss.jessSpousal, s.ss.cola, yi);
-    } else if (!pA && jA) { jSS = jAgeM >= s.ss.jessStart ? inf(s.ss.paulAmt, s.ss.cola, yi) : 0; }
-    else if (pA && !jA) { pSS = pAgeM >= s.ss.paulStart ? inf(s.ss.paulAmt, s.ss.cola, yi) : 0; }
-    let va = 0;
-    if (pA) va = inf(s.oi.va, s.exp.infl, yi);
-    else if (!pA && jA && pDeath && pDeath >= 2035) va = inf(s.oi.va * 0.5, s.exp.infl, yi);
-    const biz = isActive(s.oi.bizSY, s.oi.bizSM, s.oi.bizDur, off) ? s.oi.biz : 0;
-    const jw = isActive(s.oi.jessSY, s.oi.jessSM, s.oi.jessDur, off) ? s.oi.jess : 0;
-    const c35 = isActive(s.oi.ch35SY, s.oi.ch35SM, s.oi.ch35Dur, off) ? s.oi.ch35 : 0;
-    const i1 = s.oi.i1 > 0 && isActive(s.oi.i1SY, s.oi.i1SM, s.oi.i1Dur, off) ? s.oi.i1 : 0;
-    const i2 = s.oi.i2 > 0 && isActive(s.oi.i2SY, s.oi.i2SM, s.oi.i2Dur, off) ? s.oi.i2 : 0;
-    const i3 = s.oi.i3 > 0 && isActive(s.oi.i3SY, s.oi.i3SM, s.oi.i3Dur, off) ? s.oi.i3 : 0;
-    const liSO = (s.exp.insSY - 1) * 12 + (s.exp.insSM - 1), liEO = (s.exp.insEY - 1) * 12 + (s.exp.insEM - 1);
-    const ins = (off >= liSO && off <= liEO) ? s.exp.ins : 0;
-    const e1 = s.exp.e1 > 0 && isActive(s.exp.e1SY, s.exp.e1SM, s.exp.e1Dur, off) ? s.exp.e1 : 0;
-    const e2 = s.exp.e2 > 0 && isActive(s.exp.e2SY, s.exp.e2SM, s.exp.e2Dur, off) ? s.exp.e2 : 0;
-    const e3 = s.exp.e3 > 0 && isActive(s.exp.e3SY, s.exp.e3SM, s.exp.e3Dur, off) ? s.exp.e3 : 0;
-    const lsO = (s.h.lsSY - 1) * 12 + (s.h.lsSM - 1);
-    if (s.h.lsAmt > 0 && off === lsO) { mortBal = Math.max(0, mortBal - s.h.lsAmt); runBal -= s.h.lsAmt; }
-    let mortM = 0;
-    if (mortBal > 0) {
-      const r = s.h.intRate / 100 / 12, rm = Math.max(0, s.h.targetMo - off);
-      if (rm > 0 && s.h.accel) { if (rm === 1) { mortM = mortBal + mortBal * r; mortBal = 0; } else { const req = mortCalc(mortBal, s.h.intRate, rm); const mi = mortBal * r; mortM = req; mortBal = Math.max(0, mortBal - Math.min(req - mi, mortBal)); } }
-      else if (rm > 0) { const mi = mortBal * r; const mp = Math.min(s.h.mortPmt - mi, mortBal); mortM = mi + mp; mortBal = Math.max(0, mortBal - mp); }
+  function calcMonthly(s, year) {
+    const res = [];
+    const yi = year - 1;
+    const ann = calcAnnual(s);
+    let runBal = yi > 0 && ann[yi - 2] ? ann[yi - 2].sav : s.sav.init;
+    let mortBal = yi > 0 && ann[yi - 2] ? ann[yi - 2].mortBal : s.h.mortBal;
+    const livM = inf(getLiving(s.exp), s.exp.infl, yi);
+    const pDeath = getPaulDeath(s);
+    for (let m = 0; m < 12; m++) {
+      const off = yi * 12 + m;
+      const aM = (m + (s.pi.startM - 1)) % 12, aY = s.pi.startY + yi + Math.floor((m + s.pi.startM - 1) / 12);
+      const mn = new Date(aY, aM).toLocaleDateString("en-US", { month: "short", year: "numeric" });
+      const pAgeM = calcAge(s.pi.paulBM, s.pi.paulBY, aM + 1, aY);
+      const jAgeM = calcAge(s.pi.jessBM, s.pi.jessBY, aM + 1, aY);
+      const pA = pAgeM < s.pi.paulEOL, jA = jAgeM < s.pi.jessEOL;
+      let pSS = 0, jSS = 0;
+      if (pA && jA) {
+        const pE = pAgeM >= s.ss.paulStart && (pAgeM > s.ss.paulStart || aM + 1 > s.pi.paulBM);
+        const jE = jAgeM >= s.ss.jessStart && (jAgeM > s.ss.jessStart || aM + 1 > s.pi.jessBM);
+        pSS = pE ? inf(s.ss.paulAmt, s.ss.cola, yi) : 0;
+        if (jE && !pE) jSS = inf(s.ss.jessAmt, s.ss.cola, yi);
+        else if (jE && pE) jSS = inf(s.ss.jessAmt + s.ss.jessSpousal, s.ss.cola, yi);
+      } else if (!pA && jA) {
+        jSS = jAgeM >= s.ss.jessStart ? inf(s.ss.paulAmt, s.ss.cola, yi) : 0;
+      } else if (pA && !jA) {
+        pSS = pAgeM >= s.ss.paulStart ? inf(s.ss.paulAmt, s.ss.cola, yi) : 0;
+      }
+      let va = 0;
+      if (pA) va = inf(s.oi.va, s.exp.infl, yi);
+      else if (!pA && jA && pDeath && pDeath >= 2035) va = inf(s.oi.va * 0.5, s.exp.infl, yi);
+      const biz = isActive(s.oi.bizSY, s.oi.bizSM, s.oi.bizDur, off) ? s.oi.biz : 0;
+      const jw = isActive(s.oi.jessSY, s.oi.jessSM, s.oi.jessDur, off) ? s.oi.jess : 0;
+      const c35 = isActive(s.oi.ch35SY, s.oi.ch35SM, s.oi.ch35Dur, off) ? s.oi.ch35 : 0;
+      const i1 = s.oi.i1 > 0 && isActive(s.oi.i1SY, s.oi.i1SM, s.oi.i1Dur, off) ? s.oi.i1 : 0;
+      const i2 = s.oi.i2 > 0 && isActive(s.oi.i2SY, s.oi.i2SM, s.oi.i2Dur, off) ? s.oi.i2 : 0;
+      const i3 = s.oi.i3 > 0 && isActive(s.oi.i3SY, s.oi.i3SM, s.oi.i3Dur, off) ? s.oi.i3 : 0;
+      const liSO = (s.exp.insSY - 1) * 12 + (s.exp.insSM - 1), liEO = (s.exp.insEY - 1) * 12 + (s.exp.insEM - 1);
+      const ins = off >= liSO && off <= liEO ? s.exp.ins : 0;
+      const e1 = s.exp.e1 > 0 && isActive(s.exp.e1SY, s.exp.e1SM, s.exp.e1Dur, off) ? s.exp.e1 : 0;
+      const e2 = s.exp.e2 > 0 && isActive(s.exp.e2SY, s.exp.e2SM, s.exp.e2Dur, off) ? s.exp.e2 : 0;
+      const e3 = s.exp.e3 > 0 && isActive(s.exp.e3SY, s.exp.e3SM, s.exp.e3Dur, off) ? s.exp.e3 : 0;
+      const lsO = (s.h.lsSY - 1) * 12 + (s.h.lsSM - 1);
+      if (s.h.lsAmt > 0 && off === lsO) {
+        mortBal = Math.max(0, mortBal - s.h.lsAmt);
+        runBal -= s.h.lsAmt;
+      }
+      let mortM = 0;
+      if (mortBal > 0) {
+        const r = s.h.intRate / 100 / 12, rm = Math.max(0, s.h.targetMo - off);
+        if (rm > 0 && s.h.accel) {
+          if (rm === 1) {
+            mortM = mortBal + mortBal * r;
+            mortBal = 0;
+          } else {
+            const req = mortCalc(mortBal, s.h.intRate, rm);
+            const mi = mortBal * r;
+            mortM = req;
+            mortBal = Math.max(0, mortBal - Math.min(req - mi, mortBal));
+          }
+        } else if (rm > 0) {
+          const mi = mortBal * r;
+          const mp = Math.min(s.h.mortPmt - mi, mortBal);
+          mortM = mi + mp;
+          mortBal = Math.max(0, mortBal - mp);
+        }
+      }
+      const gross = pSS + jSS + va + biz + jw + c35 + i1 + i2 + i3;
+      const taxes = txAmt(pSS, s.tr.ss, s.ss.paulTax) + txAmt(jSS, s.tr.ss, s.ss.jessTax) + txAmt(biz, s.tr.biz, true) + txAmt(jw, s.tr.jess, true);
+      const ncf = gross - taxes - livM - ins - e1 - e2 - e3 - mortM;
+      runBal += ncf;
+      const inv = Math.max(0, runBal) * s.sav.ret / 100 / 12;
+      const invT = s.sav.taxGains && inv > 0 ? inv * s.sav.gainsTax / 100 : 0;
+      runBal = safe(runBal + inv - invT);
+      const hv = inf(s.h.homeVal, s.h.appreciation, off / 12);
+      res.push({ mn, pSS: safe(pSS), jSS: safe(jSS), va: safe(va), biz: safe(biz), jw: safe(jw), gross: safe(gross), taxes: safe(taxes + invT), livM: safe(livM), ins: safe(ins), mort: safe(mortM), mortBal: safe(mortBal), ncf: safe(ncf), invRet: safe(inv), sav: safe(runBal), hv: safe(hv) });
     }
-    const gross = pSS + jSS + va + biz + jw + c35 + i1 + i2 + i3;
-    const taxes = txAmt(pSS, s.tr.ss, s.ss.paulTax) + txAmt(jSS, s.tr.ss, s.ss.jessTax) + txAmt(biz, s.tr.biz, true) + txAmt(jw, s.tr.jess, true);
-    const ncf = gross - taxes - livM - ins - e1 - e2 - e3 - mortM;
-    runBal += ncf;
-    const inv = Math.max(0, runBal) * s.sav.ret / 100 / 12;
-    const invT = s.sav.taxGains && inv > 0 ? inv * s.sav.gainsTax / 100 : 0;
-    runBal = safe(runBal + inv - invT);
-    const hv = inf(s.h.homeVal, s.h.appreciation, off / 12);
-    res.push({ mn, pSS: safe(pSS), jSS: safe(jSS), va: safe(va), biz: safe(biz), jw: safe(jw), gross: safe(gross), taxes: safe(taxes + invT), livM: safe(livM), ins: safe(ins), mort: safe(mortM), mortBal: safe(mortBal), ncf: safe(ncf), invRet: safe(inv), sav: safe(runBal), hv: safe(hv) });
+    return res;
   }
-  return res;
-}
-
-function calcMetrics(ann, s) {
-  if (!ann.length) return { nw: 0, tax: 0, cf: 0, growth: 0 };
-  const f = ann[ann.length - 1];
-  const totTax = ann.reduce((a, d) => a + d.totTax, 0);
-  const totCF = ann.reduce((a, d) => a + d.ncf, 0);
-  const avgCF = totCF / (s.pi.projYears * 12);
-  const initNW = s.h.homeVal + s.sav.init - s.h.mortBal;
-  const growth = ((f.nw - initNW) / Math.abs(initNW || 1)) * 100;
-  return { nw: f.nw, tax: totTax, cf: avgCF, growth };
-}
-
-// ─── FORMATTING ───────────────────────────────────────────────────────
-const fmt = (n) => new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(n || 0);
-const fmtM = (n) => { const v = n || 0; if (Math.abs(v) >= 1e6) return "$" + (v / 1e6).toFixed(1) + "M"; if (Math.abs(v) >= 1e3) return "$" + (v / 1e3).toFixed(0) + "K"; return fmt(v); };
-
-// ─── TINY COMPONENTS ──────────────────────────────────────────────────
-const $ = { navy: "#1e3a5f", green: "#059669", red: "#dc2626", blue: "#2563eb", amber: "#d97706" };
-
-function Lbl({ t }) {
-  return <span style={{ display: "block", fontSize: 11, fontWeight: 600, color: "#64748b", textTransform: "uppercase", letterSpacing: ".04em", marginBottom: 4 }}>{t}</span>;
-}
-
-function Inp({ label, v, onChange, pfx, sfx, step, min, max, type = "number" }) {
-  const s = { width: "100%", padding: "5px 9px", border: "1px solid #e2e8f0", borderRadius: 6, fontSize: 12, background: "#fff", color: "#1e293b", paddingLeft: pfx ? 18 : 9, paddingRight: sfx ? 24 : 9 };
-  return (
-    <div>
-      {label && <Lbl t={label} />}
-      <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
-        {pfx && <span style={{ position: "absolute", left: 7, color: "#94a3b8", fontSize: 12, pointerEvents: "none" }}>{pfx}</span>}
-        <input type={type} value={v} step={step || "any"} min={min} max={max}
-          onChange={e => onChange(type === "number" ? parseFloat(e.target.value) || 0 : e.target.value)}
-          style={s} />
-        {sfx && <span style={{ position: "absolute", right: 7, color: "#94a3b8", fontSize: 12, pointerEvents: "none" }}>{sfx}</span>}
-      </div>
-    </div>
-  );
-}
-
-function Sel({ label, v, onChange, opts }) {
-  return (
-    <div>
-      {label && <Lbl t={label} />}
-      <select value={v} onChange={e => onChange(e.target.value)}
-        style={{ width: "100%", padding: "5px 22px 5px 9px", border: "1px solid #e2e8f0", borderRadius: 6, fontSize: 12, background: "#fff", color: "#1e293b", appearance: "none" }}>
-        {opts.map(o => <option key={o.v} value={o.v}>{o.l}</option>)}
-      </select>
-    </div>
-  );
-}
-
-function Chk({ label, v, onChange }) {
-  return (
-    <label style={{ display: "flex", alignItems: "center", gap: 7, cursor: "pointer", fontSize: 12, color: "#374151" }}>
-      <input type="checkbox" checked={v} onChange={e => onChange(e.target.checked)} style={{ width: 14, height: 14, accentColor: $.blue, cursor: "pointer" }} />
-      {label}
-    </label>
-  );
-}
-
-function Card({ children, style }) {
-  return <div style={{ background: "#fff", border: "1px solid #e8ecf0", borderRadius: 10, ...style }}>{children}</div>;
-}
-
-function Sec({ title, icon, children, defaultOpen = true }) {
-  const [open, setOpen] = useState(defaultOpen);
-  return (
-    <Card style={{ marginBottom: 10, overflow: "hidden" }}>
-      <button onClick={() => setOpen(!open)}
-        style={{ width: "100%", padding: "11px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", background: "none", border: "none", cursor: "pointer", textAlign: "left" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13, fontWeight: 600, color: "#1e293b" }}>
-          <span style={{ fontSize: 14 }}>{icon}</span>{title}
-        </div>
-        <span style={{ color: "#94a3b8", fontSize: 11 }}>{open ? "▲" : "▼"}</span>
-      </button>
-      {open && <div style={{ padding: "0 16px 14px" }}>{children}</div>}
-    </Card>
-  );
-}
-
-function MetCard({ label, value, sub, color }) {
-  return (
-    <Card style={{ padding: "16px 18px", textAlign: "center" }}>
-      <div style={{ fontSize: 22, fontWeight: 700, color: color || $.blue, fontFamily: "monospace" }}>{value}</div>
-      <div style={{ fontSize: 12, color: "#475569", marginTop: 4 }}>{label}</div>
-      {sub && <div style={{ fontSize: 11, color: "#94a3b8", marginTop: 2 }}>{sub}</div>}
-    </Card>
-  );
-}
-
-function G2({ children, gap = 10 }) { return <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap }}>{children}</div>; }
-function G3({ children, gap = 10 }) { return <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap }}>{children}</div>; }
-function G4({ children, gap = 10 }) { return <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap }}>{children}</div>; }
-
-function Btn({ children, onClick, active, sm, style: xs }) {
-  return (
-    <button onClick={onClick}
-      style={{ padding: sm ? "3px 10px" : "6px 14px", border: "1px solid", borderRadius: 6, fontSize: sm ? 11 : 12, fontWeight: 500, cursor: "pointer", background: active ? $.navy : "transparent", color: active ? "#fff" : "#475569", borderColor: active ? $.navy : "#cbd5e1", transition: "all .15s", ...xs }}>
-      {children}
-    </button>
-  );
-}
-
-// ─── INPUT PANEL ──────────────────────────────────────────────────────
-function InputPanel({ s, up }) {
-  const pi = s.pi, ss = s.ss, oi = s.oi, h = s.h, sav = s.sav, exp = s.exp, tr = s.tr;
-  const upi = u => up("pi", u), uss = u => up("ss", u), uoi = u => up("oi", u);
-  const uh = u => up("h", u), usav = u => up("sav", u), uexp = u => up("exp", u), utr = u => up("tr", u);
-
-  return (
-    <div style={{ marginBottom: 20 }}>
-      {/* Personal */}
-      <Sec title="Personal Information" icon="👥">
-        <div style={{ background: "#eff6ff", border: "1px solid #bfdbfe", borderRadius: 7, padding: 10, marginBottom: 12 }}>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr 1fr", gap: 10 }}>
-            <Sel label="Start Month" v={String(pi.startM)} onChange={v => upi({ startM: parseInt(v) })} opts={MO} />
-            <Inp label="Start Year" v={pi.startY} onChange={v => upi({ startY: v })} min={2020} max={2050} />
-            <Inp label="Projection Years" v={pi.projYears} onChange={v => upi({ projYears: v })} min={1} max={50} />
-            <div /><div />
-          </div>
-        </div>
-        <G3 gap={12}>
-          {[
-            { name: "Paul", bm: "paulBM", by: "paulBY", eol: "paulEOL" },
-            { name: "Jessica", bm: "jessBM", by: "jessBY", eol: "jessEOL" },
-            { name: "Luke", bm: "lukeBM", by: "lukeBY", eol: null },
-          ].map(p => (
-            <div key={p.name} style={{ border: "1px solid #e8ecf0", borderRadius: 7, padding: 10 }}>
-              <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 8, color: "#1e293b" }}>{p.name}</div>
-              <G2 style={{ marginBottom: 8 }}>
-                <Sel label="Birth Month" v={String(pi[p.bm])} onChange={v => { const bm = parseInt(v); const a = pi.startY - pi[p.by] - (pi.startM < bm ? 1 : 0); upi({ [p.bm]: bm }); }} opts={MO} />
-                <Inp label="Birth Year" v={pi[p.by]} onChange={v => upi({ [p.by]: v })} min={1940} max={2015} />
-              </G2>
-              {p.eol && <Inp label="End of Life Age" v={pi[p.eol]} onChange={v => upi({ [p.eol]: v })} min={50} max={120} />}
-            </div>
-          ))}
-        </G3>
-      </Sec>
-
-      {/* SS */}
-      <Sec title="Social Security Benefits" icon="🏛️">
-        <G2 gap={16}>
-          <div>
-            <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 8 }}>Paul's Benefit</div>
-            <Sel label="Start Age" v={String(ss.paulStart)} onChange={v => { const age = parseInt(v); const opt = SS_OPT.find(o => o.age === age); uss({ paulStart: age, paulAmt: opt ? opt.amt : ss.paulAmt }); }} opts={SS_OPT.map(o => ({ v: String(o.age), l: o.desc }))} />
-            <div style={{ marginTop: 8 }}><Inp label="Monthly Benefit" v={ss.paulAmt} onChange={v => uss({ paulAmt: v })} pfx="$" /></div>
-            <div style={{ marginTop: 8 }}><Chk label="Paul's SS is taxable" v={ss.paulTax} onChange={v => uss({ paulTax: v })} /></div>
-          </div>
-          <div>
-            <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 8 }}>Jessica's Benefit (Two-Tier)</div>
-            <Sel label="Start Age" v={String(ss.jessStart)} onChange={v => uss({ jessStart: parseInt(v) })} opts={[62, 63, 64, 65, 66, 67, 68, 69, 70].map(a => ({ v: String(a), l: `Age ${a}` }))} />
-            <div style={{ marginTop: 8 }}><G2><Inp label="Tier 1 — Own" v={ss.jessAmt} onChange={v => uss({ jessAmt: v })} pfx="$" /><Inp label="Tier 2 — Spousal" v={ss.jessSpousal} onChange={v => uss({ jessSpousal: v })} pfx="$" /></G2></div>
-            <div style={{ marginTop: 8 }}><Chk label="Jessica's SS is taxable" v={ss.jessTax} onChange={v => uss({ jessTax: v })} /></div>
-          </div>
-        </G2>
-        <div style={{ marginTop: 10, maxWidth: 160 }}><Inp label="COLA Rate (%)" v={ss.cola} onChange={v => uss({ cola: v })} sfx="%" step="0.1" /></div>
-      </Sec>
-
-      {/* Income */}
-      <Sec title="Other Income" icon="💰">
-        <G2 gap={12} style={{ marginBottom: 12 }}>
-          <div style={{ border: "1px solid #e8ecf0", borderRadius: 7, padding: 10 }}>
-            <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 8 }}>VA Disability</div>
-            <Inp label="Monthly" v={oi.va} onChange={v => uoi({ va: v })} pfx="$" />
-            <div style={{ marginTop: 6, fontSize: 11, color: "#64748b" }}>Tax-free · COLA adjusted · 50% survivor ≥2035</div>
-          </div>
-          <div style={{ border: "1px solid #e8ecf0", borderRadius: 7, padding: 10 }}>
-            <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 8 }}>Business (CozyPhones)</div>
-            <G2 style={{ marginBottom: 8 }}><Inp label="Monthly" v={oi.biz} onChange={v => uoi({ biz: v })} pfx="$" /><Inp label="Duration (mo)" v={oi.bizDur} onChange={v => uoi({ bizDur: v })} /></G2>
-            <G2><Sel label="Start Month" v={String(oi.bizSM)} onChange={v => uoi({ bizSM: parseInt(v) })} opts={MO} /><Inp label="Start Yr (offset)" v={oi.bizSY} onChange={v => uoi({ bizSY: v })} min={1} /></G2>
-          </div>
-        </G2>
-        <G2 gap={12} style={{ marginBottom: 12 }}>
-          <div style={{ border: "1px solid #e8ecf0", borderRadius: 7, padding: 10 }}>
-            <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 8 }}>Jessica's Work</div>
-            <G2 style={{ marginBottom: 8 }}><Inp label="Monthly" v={oi.jess} onChange={v => uoi({ jess: v })} pfx="$" /><Inp label="Duration (mo)" v={oi.jessDur} onChange={v => uoi({ jessDur: v })} /></G2>
-            <G2><Sel label="Start Month" v={String(oi.jessSM)} onChange={v => uoi({ jessSM: parseInt(v) })} opts={MO} /><Inp label="Start Yr" v={oi.jessSY} onChange={v => uoi({ jessSY: v })} min={1} /></G2>
-          </div>
-          <div style={{ border: "1px solid #e8ecf0", borderRadius: 7, padding: 10 }}>
-            <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 8 }}>Chapter 35 Benefits</div>
-            <G2 style={{ marginBottom: 8 }}><Inp label="Monthly" v={oi.ch35} onChange={v => uoi({ ch35: v })} pfx="$" /><Inp label="Duration (mo)" v={oi.ch35Dur} onChange={v => uoi({ ch35Dur: v })} /></G2>
-            <G2><Sel label="Start Month" v={String(oi.ch35SM)} onChange={v => uoi({ ch35SM: parseInt(v) })} opts={MO} /><Inp label="Start Yr" v={oi.ch35SY} onChange={v => uoi({ ch35SY: v })} min={1} /></G2>
-          </div>
-        </G2>
-        <div style={{ border: "1px solid #e8ecf0", borderRadius: 7, padding: 10 }}>
-          <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 8 }}>Additional Income Streams</div>
-          <G3>
-            {[1, 2, 3].map(n => (
-              <div key={n}>
-                <div style={{ fontSize: 11, color: "#64748b", marginBottom: 4 }}>Income {n}</div>
-                <Inp label="Monthly" v={oi[`i${n}`]} onChange={v => uoi({ [`i${n}`]: v })} pfx="$" />
-                <div style={{ marginTop: 6 }}><G2><Inp label="Duration" v={oi[`i${n}Dur`]} onChange={v => uoi({ [`i${n}Dur`]: v })} /><Inp label="Start Yr" v={oi[`i${n}SY`]} onChange={v => uoi({ [`i${n}SY`]: v })} min={1} /></G2></div>
-              </div>
-            ))}
-          </G3>
-        </div>
-      </Sec>
-
-      {/* Expenses */}
-      <Sec title="Expenses" icon="💳">
-        <G2 gap={16}>
-          <div>
-            <div style={{ display: "flex", gap: 6, marginBottom: 10 }}>
-              {["fixed", "detailed"].map(t => <Btn key={t} onClick={() => uexp({ type: t })} active={exp.type === t} sm>{t.charAt(0).toUpperCase() + t.slice(1)}</Btn>)}
-            </div>
-            {exp.type === "fixed"
-              ? <Inp label="Monthly Living Expenses" v={exp.basic} onChange={v => uexp({ basic: v })} pfx="$" />
-              : <div style={{ maxHeight: 200, overflowY: "auto", border: "1px solid #e8ecf0", borderRadius: 6, padding: 8 }}>
-                {exp.detailed.map((cat, i) => (
-                  <div key={cat.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "3px 0", borderBottom: "1px solid #f1f5f9" }}>
-                    <span style={{ fontSize: 11 }}>{cat.name}</span>
-                    <input type="number" value={cat.amount} onChange={e => { const nb = [...exp.detailed]; nb[i] = { ...cat, amount: parseFloat(e.target.value) || 0 }; uexp({ detailed: nb }); }}
-                      style={{ width: 70, padding: "2px 6px", border: "1px solid #e2e8f0", borderRadius: 4, textAlign: "right", fontSize: 11 }} />
-                  </div>
-                ))}
-                <div style={{ display: "flex", justifyContent: "space-between", padding: "5px 0", fontWeight: 600, fontSize: 12 }}>
-                  <span>Total:</span><span style={{ fontFamily: "monospace" }}>{fmt(exp.detailed.reduce((t, c) => t + c.amount, 0))}</span>
-                </div>
-              </div>}
-            <div style={{ marginTop: 10 }}><Inp label="Inflation Rate (%)" v={exp.infl} onChange={v => uexp({ infl: v })} sfx="%" step="0.1" /></div>
-          </div>
-          <div>
-            <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 8 }}>Life Insurance</div>
-            <Inp label="Monthly Premium" v={exp.ins} onChange={v => uexp({ ins: v })} pfx="$" />
-            <div style={{ marginTop: 8 }}><G2>
-              <div><Lbl t="Start" /><G2><Sel v={String(exp.insSM)} onChange={v => uexp({ insSM: parseInt(v) })} opts={MO} /><Inp v={exp.insSY} onChange={v => uexp({ insSY: v })} min={1} /></G2></div>
-              <div><Lbl t="End" /><G2><Sel v={String(exp.insEM)} onChange={v => uexp({ insEM: parseInt(v) })} opts={MO} /><Inp v={exp.insEY} onChange={v => uexp({ insEY: v })} min={1} /></G2></div>
-            </G2></div>
-            <div style={{ marginTop: 10, fontSize: 12, fontWeight: 600, marginBottom: 8 }}>Additional Expenses</div>
-            {[1, 2, 3].map(n => (
-              <div key={n} style={{ marginBottom: 8, padding: 8, border: "1px solid #e8ecf0", borderRadius: 6 }}>
-                <G2 style={{ marginBottom: 5 }}>
-                  <input type="text" value={exp[`e${n}Name`]} onChange={e => uexp({ [`e${n}Name`]: e.target.value })} placeholder={`Expense ${n}`}
-                    style={{ width: "100%", padding: "5px 9px", border: "1px solid #e2e8f0", borderRadius: 6, fontSize: 11 }} />
-                  <Inp v={exp[`e${n}`]} onChange={v => uexp({ [`e${n}`]: v })} pfx="$" />
-                </G2>
-                <G3><Inp label="Duration" v={exp[`e${n}Dur`]} onChange={v => uexp({ [`e${n}Dur`]: v })} /><Sel label="Start Mo" v={String(exp[`e${n}SM`])} onChange={v => uexp({ [`e${n}SM`]: parseInt(v) })} opts={MO} /><Inp label="Start Yr" v={exp[`e${n}SY`]} onChange={v => uexp({ [`e${n}SY`]: v })} min={1} /></G3>
-              </div>
-            ))}
-          </div>
-        </G2>
-      </Sec>
-
-      {/* Housing */}
-      <Sec title="Housing & Mortgage" icon="🏠" defaultOpen={false}>
-        <G2 gap={16}>
-          <div>
-            <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 8 }}>Home Value</div>
-            <G2><Inp label="Current Value" v={h.homeVal} onChange={v => uh({ homeVal: v })} pfx="$" /><Inp label="Annual Appreciation" v={h.appreciation} onChange={v => uh({ appreciation: v })} sfx="%" step="0.1" /></G2>
-          </div>
-          <div>
-            <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 8 }}>Mortgage</div>
-            <G2 style={{ marginBottom: 8 }}><Inp label="Current Balance" v={h.mortBal} onChange={v => uh({ mortBal: v })} pfx="$" /><Inp label="Monthly Payment" v={h.mortPmt} onChange={v => uh({ mortPmt: v })} pfx="$" /></G2>
-            <G2 style={{ marginBottom: 8 }}><Inp label="Interest Rate" v={h.intRate} onChange={v => uh({ intRate: v })} sfx="%" step="0.1" /><Inp label="Target Payoff (mo)" v={h.targetMo} onChange={v => uh({ targetMo: v })} /></G2>
-            <Chk label="Accelerated payoff" v={h.accel} onChange={v => uh({ accel: v })} />
-          </div>
-        </G2>
-        <div style={{ marginTop: 12, border: "1px solid #e8ecf0", borderRadius: 7, padding: 10 }}>
-          <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 8 }}>Lump Sum Payment</div>
-          <G3><Inp label="Amount" v={h.lsAmt} onChange={v => uh({ lsAmt: v })} pfx="$" /><Sel label="Month" v={String(h.lsSM)} onChange={v => uh({ lsSM: parseInt(v) })} opts={MO} /><Inp label="Year (offset)" v={h.lsSY} onChange={v => uh({ lsSY: v })} min={1} /></G3>
-        </div>
-      </Sec>
-
-      {/* Savings & Taxes */}
-      <Sec title="Savings & Taxes" icon="📈" defaultOpen={false}>
-        <G2 gap={16}>
-          <div>
-            <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 8 }}>Investment Portfolio</div>
-            <G2 style={{ marginBottom: 8 }}><Inp label="Initial Balance" v={sav.init} onChange={v => usav({ init: v })} pfx="$" /><Inp label="Additional Annual" v={sav.addl} onChange={v => usav({ addl: v })} pfx="$" /></G2>
-            <Inp label="Expected Annual Return (%)" v={sav.ret} onChange={v => usav({ ret: v })} sfx="%" step="0.1" />
-            <div style={{ marginTop: 8 }}>
-              <Sel label="Strategy" v={sav.strategy} onChange={v => { const r = { conservative: 4.5, balanced: 6.5, aggressive: 8.5 }; usav({ strategy: v, ret: r[v] || sav.ret }); }}
-                opts={[{ v: "conservative", l: "Conservative (4.5%)" }, { v: "balanced", l: "Balanced (6.5%)" }, { v: "aggressive", l: "Aggressive (8.5%)" }, { v: "custom", l: "Custom" }]} />
-            </div>
-            <div style={{ marginTop: 8, display: "flex", alignItems: "center", gap: 12 }}>
-              <Chk label="Tax on investment gains" v={sav.taxGains} onChange={v => usav({ taxGains: v })} />
-              {sav.taxGains && <div style={{ maxWidth: 90 }}><Inp v={sav.gainsTax} onChange={v => usav({ gainsTax: v })} sfx="%" /></div>}
-            </div>
-          </div>
-          <div>
-            <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 8 }}>Tax Rates</div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              <Inp label="SS Tax Rate (%)" v={tr.ss} onChange={v => utr({ ss: v })} sfx="%" />
-              <Inp label="Business Income Tax (%)" v={tr.biz} onChange={v => utr({ biz: v })} sfx="%" />
-              <Inp label="Jessica's Income Tax (%)" v={tr.jess} onChange={v => utr({ jess: v })} sfx="%" />
-            </div>
-          </div>
-        </G2>
-      </Sec>
-    </div>
-  );
-}
-
-// ─── CHART TOOLTIP ────────────────────────────────────────────────────
-function CTT({ active, payload, label }) {
-  if (!active || !payload?.length) return null;
-  return (
-    <div style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: 7, padding: "9px 13px", fontSize: 12, boxShadow: "0 4px 12px rgba(0,0,0,.08)" }}>
-      <div style={{ fontWeight: 600, color: "#475569", marginBottom: 5 }}>{label}</div>
-      {payload.map((p, i) => (
-        <div key={i} style={{ display: "flex", justifyContent: "space-between", gap: 14, color: p.color }}>
-          <span>{p.name}</span>
-          <span style={{ fontFamily: "monospace", fontWeight: 500 }}>{fmtM(p.value)}</span>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-// ─── CHARTS PANEL ─────────────────────────────────────────────────────
-function Charts({ ann }) {
-  const [ct, setCt] = useState("savings");
-  const btns = [{ id: "savings", l: "Savings & Net Worth" }, { id: "cashflow", l: "Cash Flow" }, { id: "income", l: "Income Breakdown" }];
-  const sd = ann.map(d => ({ yr: d.yr, "Net Worth": Math.round(d.nw), "Savings": Math.round(d.sav), "Home Value": Math.round(d.hv) }));
-  const cd = ann.map(d => ({ yr: d.yr, "After-Tax Income": Math.round(d.ati), "Expenses": Math.round(d.livExp + d.ins + d.mort), "Cash Flow": Math.round(d.ncf) }));
-  const id = ann.map(d => ({ yr: d.yr, "Paul SS": Math.round(d.pSS), "Jessica SS": Math.round(d.jSS), "VA Disab.": Math.round(d.va), "Business": Math.round(d.biz), "Jess Work": Math.round(d.jw), "Ch.35": Math.round(d.c35) }));
-  return (
-    <Card style={{ padding: 16, marginBottom: 16 }}>
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14, flexWrap: "wrap", gap: 8 }}>
-        <div style={{ fontSize: 13, fontWeight: 600, color: "#1e293b" }}>Financial Analysis</div>
-        <div style={{ display: "flex", gap: 6 }}>
-          {btns.map(b => <Btn key={b.id} onClick={() => setCt(b.id)} active={ct === b.id} sm>{b.l}</Btn>)}
-        </div>
-      </div>
-      <ResponsiveContainer width="100%" height={280}>
-        {ct === "savings"
-          ? <ComposedChart data={sd}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-            <XAxis dataKey="yr" tick={{ fontSize: 10 }} />
-            <YAxis tickFormatter={fmtM} tick={{ fontSize: 10 }} width={62} />
-            <Tooltip content={<CTT />} />
-            <Legend iconSize={10} wrapperStyle={{ fontSize: 11 }} />
-            <Area type="monotone" dataKey="Net Worth" stroke={$.green} fill="rgba(5,150,105,.1)" strokeWidth={2} />
-            <Area type="monotone" dataKey="Savings" stroke={$.blue} fill="rgba(37,99,235,.1)" strokeWidth={2} />
-            <Line type="monotone" dataKey="Home Value" stroke={$.amber} strokeWidth={2} dot={false} />
-          </ComposedChart>
-          : ct === "cashflow"
-            ? <ComposedChart data={cd}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-              <XAxis dataKey="yr" tick={{ fontSize: 10 }} />
-              <YAxis tickFormatter={fmtM} tick={{ fontSize: 10 }} width={62} />
-              <Tooltip content={<CTT />} />
-              <Legend iconSize={10} wrapperStyle={{ fontSize: 11 }} />
-              <Bar dataKey="After-Tax Income" fill={$.blue} opacity={0.8} />
-              <Bar dataKey="Expenses" fill={$.red} opacity={0.8} />
-              <Line type="monotone" dataKey="Cash Flow" stroke={$.green} strokeWidth={2} dot={false} />
-            </ComposedChart>
-            : <AreaChart data={id}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-              <XAxis dataKey="yr" tick={{ fontSize: 10 }} />
-              <YAxis tickFormatter={fmtM} tick={{ fontSize: 10 }} width={62} />
-              <Tooltip content={<CTT />} />
-              <Legend iconSize={10} wrapperStyle={{ fontSize: 11 }} />
-              {[["Paul SS", $.blue], ["Jessica SS", "#7c3aed"], ["VA Disab.", $.green], ["Business", $.amber], ["Jess Work", "#ec4899"], ["Ch.35", "#14b8a6"]].map(([k, c]) =>
-                <Area key={k} type="monotone" dataKey={k} stackId="1" stroke={c} fill={c} fillOpacity={0.7} />
-              )}
-            </AreaChart>}
-      </ResponsiveContainer>
-    </Card>
-  );
-}
-
-// ─── AI DIALOGUE ──────────────────────────────────────────────────────
-function AIDial({ s }) {
-  const [open, setOpen] = useState(false);
-  const [msgs, setMsgs] = useState([]);
-  const [inp, setInp] = useState("");
-  const [loading, setLoading] = useState(false);
-  const botRef = useRef(null);
-  useEffect(() => { botRef.current?.scrollIntoView({ behavior: "smooth" }); }, [msgs]);
-
-  const sys = () => {
-    const ann = calcAnnual(s); const m = calcMetrics(ann, s);
-    return `You are a retirement planning advisor for Paul and Jessica Miller.\nKey snapshot:\n- Paul age ${s.pi.paulAge}, Jessica age ${s.pi.jessAge}, ${s.pi.projYears}-yr projection from ${s.pi.startY}\n- Final Net Worth: ${fmt(m.nw)}, Avg Monthly CF: ${fmt(m.cf)}, Total Taxes: ${fmt(m.tax)}\n- VA Disability: $${s.oi.va}/mo (tax-free, 50% survivor ≥2035)\n- Business (CozyPhones): $${s.oi.biz}/mo for ${s.oi.bizDur} months\n- Paul SS at age ${s.ss.paulStart}: $${s.ss.paulAmt}/mo\n- Jessica SS at age ${s.ss.jessStart}: $${s.ss.jessAmt + s.ss.jessSpousal}/mo combined\n- Chapter 35: $${s.oi.ch35}/mo for ${s.oi.ch35Dur} months\n- Monthly living: $${getLiving(s.exp)} + ${s.exp.infl}% inflation\n- Savings: $${s.sav.init} init at ${s.sav.ret}% annual return\nPaul is a service-disabled Marine veteran and founder of CozyPhones/Halo Acoustic Wear LLC. Answer questions clearly and helpfully.`;
+  function calcMetrics(ann, s) {
+    if (!ann.length) return { nw: 0, tax: 0, cf: 0, growth: 0 };
+    const f = ann[ann.length - 1];
+    const totTax = ann.reduce((a, d) => a + d.totTax, 0);
+    const totCF = ann.reduce((a, d) => a + d.ncf, 0);
+    const avgCF = totCF / (s.pi.projYears * 12);
+    const initNW = s.h.homeVal + s.sav.init - s.h.mortBal;
+    const growth = (f.nw - initNW) / Math.abs(initNW || 1) * 100;
+    return { nw: f.nw, tax: totTax, cf: avgCF, growth };
+  }
+  var fmt = (n) => new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(n || 0);
+  var fmtM = (n) => {
+    const v = n || 0;
+    if (Math.abs(v) >= 1e6) return "$" + (v / 1e6).toFixed(1) + "M";
+    if (Math.abs(v) >= 1e3) return "$" + (v / 1e3).toFixed(0) + "K";
+    return fmt(v);
   };
+  var $ = { navy: "#1e3a5f", green: "#059669", red: "#dc2626", blue: "#2563eb", amber: "#d97706" };
+  function Lbl({ t }) {
+    return /* @__PURE__ */ React.createElement("span", { style: { display: "block", fontSize: 11, fontWeight: 600, color: "#64748b", textTransform: "uppercase", letterSpacing: ".04em", marginBottom: 4 } }, t);
+  }
+  function Inp({ label, v, onChange, pfx, sfx, step, min, max, type = "number" }) {
+    const s = { width: "100%", padding: "5px 9px", border: "1px solid #e2e8f0", borderRadius: 6, fontSize: 12, background: "#fff", color: "#1e293b", paddingLeft: pfx ? 18 : 9, paddingRight: sfx ? 24 : 9 };
+    return /* @__PURE__ */ React.createElement("div", null, label && /* @__PURE__ */ React.createElement(Lbl, { t: label }), /* @__PURE__ */ React.createElement("div", { style: { position: "relative", display: "flex", alignItems: "center" } }, pfx && /* @__PURE__ */ React.createElement("span", { style: { position: "absolute", left: 7, color: "#94a3b8", fontSize: 12, pointerEvents: "none" } }, pfx), /* @__PURE__ */ React.createElement(
+      "input",
+      {
+        type,
+        value: v,
+        step: step || "any",
+        min,
+        max,
+        onChange: (e) => onChange(type === "number" ? parseFloat(e.target.value) || 0 : e.target.value),
+        style: s
+      }
+    ), sfx && /* @__PURE__ */ React.createElement("span", { style: { position: "absolute", right: 7, color: "#94a3b8", fontSize: 12, pointerEvents: "none" } }, sfx)));
+  }
+  function Sel({ label, v, onChange, opts }) {
+    return /* @__PURE__ */ React.createElement("div", null, label && /* @__PURE__ */ React.createElement(Lbl, { t: label }), /* @__PURE__ */ React.createElement(
+      "select",
+      {
+        value: v,
+        onChange: (e) => onChange(e.target.value),
+        style: { width: "100%", padding: "5px 22px 5px 9px", border: "1px solid #e2e8f0", borderRadius: 6, fontSize: 12, background: "#fff", color: "#1e293b", appearance: "none" }
+      },
+      opts.map((o) => /* @__PURE__ */ React.createElement("option", { key: o.v, value: o.v }, o.l))
+    ));
+  }
+  function Chk({ label, v, onChange }) {
+    return /* @__PURE__ */ React.createElement("label", { style: { display: "flex", alignItems: "center", gap: 7, cursor: "pointer", fontSize: 12, color: "#374151" } }, /* @__PURE__ */ React.createElement("input", { type: "checkbox", checked: v, onChange: (e) => onChange(e.target.checked), style: { width: 14, height: 14, accentColor: $.blue, cursor: "pointer" } }), label);
+  }
+  function Card({ children, style }) {
+    return /* @__PURE__ */ React.createElement("div", { style: { background: "#fff", border: "1px solid #e8ecf0", borderRadius: 10, ...style } }, children);
+  }
+  function Sec({ title, icon, children, defaultOpen = true }) {
+    const [open, setOpen] = useState(defaultOpen);
+    return /* @__PURE__ */ React.createElement(Card, { style: { marginBottom: 10, overflow: "hidden" } }, /* @__PURE__ */ React.createElement(
+      "button",
+      {
+        onClick: () => setOpen(!open),
+        style: { width: "100%", padding: "11px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", background: "none", border: "none", cursor: "pointer", textAlign: "left" }
+      },
+      /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 8, fontSize: 13, fontWeight: 600, color: "#1e293b" } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 14 } }, icon), title),
+      /* @__PURE__ */ React.createElement("span", { style: { color: "#94a3b8", fontSize: 11 } }, open ? "\u25B2" : "\u25BC")
+    ), open && /* @__PURE__ */ React.createElement("div", { style: { padding: "0 16px 14px" } }, children));
+  }
+  function MetCard({ label, value, sub, color }) {
+    return /* @__PURE__ */ React.createElement(Card, { style: { padding: "16px 18px", textAlign: "center" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 22, fontWeight: 700, color: color || $.blue, fontFamily: "monospace" } }, value), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, color: "#475569", marginTop: 4 } }, label), sub && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: "#94a3b8", marginTop: 2 } }, sub));
+  }
+  function G2({ children, gap = 10 }) {
+    return /* @__PURE__ */ React.createElement("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap } }, children);
+  }
+  function G3({ children, gap = 10 }) {
+    return /* @__PURE__ */ React.createElement("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap } }, children);
+  }
+  function G4({ children, gap = 10 }) {
+    return /* @__PURE__ */ React.createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap } }, children);
+  }
+  function Btn({ children, onClick, active, sm, style: xs }) {
+    return /* @__PURE__ */ React.createElement(
+      "button",
+      {
+        onClick,
+        style: { padding: sm ? "3px 10px" : "6px 14px", border: "1px solid", borderRadius: 6, fontSize: sm ? 11 : 12, fontWeight: 500, cursor: "pointer", background: active ? $.navy : "transparent", color: active ? "#fff" : "#475569", borderColor: active ? $.navy : "#cbd5e1", transition: "all .15s", ...xs }
+      },
+      children
+    );
+  }
+  function InputPanel({ s, up }) {
+    const pi = s.pi, ss = s.ss, oi = s.oi, h = s.h, sav = s.sav, exp = s.exp, tr = s.tr;
+    const upi = (u) => up("pi", u), uss = (u) => up("ss", u), uoi = (u) => up("oi", u);
+    const uh = (u) => up("h", u), usav = (u) => up("sav", u), uexp = (u) => up("exp", u), utr = (u) => up("tr", u);
+    return /* @__PURE__ */ React.createElement("div", { style: { marginBottom: 20 } }, /* @__PURE__ */ React.createElement(Sec, { title: "Personal Information", icon: "\u{1F465}" }, /* @__PURE__ */ React.createElement("div", { style: { background: "#eff6ff", border: "1px solid #bfdbfe", borderRadius: 7, padding: 10, marginBottom: 12 } }, /* @__PURE__ */ React.createElement("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr 1fr", gap: 10 } }, /* @__PURE__ */ React.createElement(Sel, { label: "Start Month", v: String(pi.startM), onChange: (v) => upi({ startM: parseInt(v) }), opts: MO }), /* @__PURE__ */ React.createElement(Inp, { label: "Start Year", v: pi.startY, onChange: (v) => upi({ startY: v }), min: 2020, max: 2050 }), /* @__PURE__ */ React.createElement(Inp, { label: "Projection Years", v: pi.projYears, onChange: (v) => upi({ projYears: v }), min: 1, max: 50 }), /* @__PURE__ */ React.createElement("div", null), /* @__PURE__ */ React.createElement("div", null))), /* @__PURE__ */ React.createElement(G3, { gap: 12 }, [
+      { name: "Paul", bm: "paulBM", by: "paulBY", eol: "paulEOL" },
+      { name: "Jessica", bm: "jessBM", by: "jessBY", eol: "jessEOL" },
+      { name: "Luke", bm: "lukeBM", by: "lukeBY", eol: null }
+    ].map((p) => /* @__PURE__ */ React.createElement("div", { key: p.name, style: { border: "1px solid #e8ecf0", borderRadius: 7, padding: 10 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, fontWeight: 600, marginBottom: 8, color: "#1e293b" } }, p.name), /* @__PURE__ */ React.createElement(G2, { style: { marginBottom: 8 } }, /* @__PURE__ */ React.createElement(Sel, { label: "Birth Month", v: String(pi[p.bm]), onChange: (v) => {
+      const bm = parseInt(v);
+      const a = pi.startY - pi[p.by] - (pi.startM < bm ? 1 : 0);
+      upi({ [p.bm]: bm });
+    }, opts: MO }), /* @__PURE__ */ React.createElement(Inp, { label: "Birth Year", v: pi[p.by], onChange: (v) => upi({ [p.by]: v }), min: 1940, max: 2015 })), p.eol && /* @__PURE__ */ React.createElement(Inp, { label: "End of Life Age", v: pi[p.eol], onChange: (v) => upi({ [p.eol]: v }), min: 50, max: 120 }))))), /* @__PURE__ */ React.createElement(Sec, { title: "Social Security Benefits", icon: "\u{1F3DB}\uFE0F" }, /* @__PURE__ */ React.createElement(G2, { gap: 16 }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, fontWeight: 600, marginBottom: 8 } }, "Paul's Benefit"), /* @__PURE__ */ React.createElement(Sel, { label: "Start Age", v: String(ss.paulStart), onChange: (v) => {
+      const age = parseInt(v);
+      const opt = SS_OPT.find((o) => o.age === age);
+      uss({ paulStart: age, paulAmt: opt ? opt.amt : ss.paulAmt });
+    }, opts: SS_OPT.map((o) => ({ v: String(o.age), l: o.desc })) }), /* @__PURE__ */ React.createElement("div", { style: { marginTop: 8 } }, /* @__PURE__ */ React.createElement(Inp, { label: "Monthly Benefit", v: ss.paulAmt, onChange: (v) => uss({ paulAmt: v }), pfx: "$" })), /* @__PURE__ */ React.createElement("div", { style: { marginTop: 8 } }, /* @__PURE__ */ React.createElement(Chk, { label: "Paul's SS is taxable", v: ss.paulTax, onChange: (v) => uss({ paulTax: v }) }))), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, fontWeight: 600, marginBottom: 8 } }, "Jessica's Benefit (Two-Tier)"), /* @__PURE__ */ React.createElement(Sel, { label: "Start Age", v: String(ss.jessStart), onChange: (v) => uss({ jessStart: parseInt(v) }), opts: [62, 63, 64, 65, 66, 67, 68, 69, 70].map((a) => ({ v: String(a), l: `Age ${a}` })) }), /* @__PURE__ */ React.createElement("div", { style: { marginTop: 8 } }, /* @__PURE__ */ React.createElement(G2, null, /* @__PURE__ */ React.createElement(Inp, { label: "Tier 1 \u2014 Own", v: ss.jessAmt, onChange: (v) => uss({ jessAmt: v }), pfx: "$" }), /* @__PURE__ */ React.createElement(Inp, { label: "Tier 2 \u2014 Spousal", v: ss.jessSpousal, onChange: (v) => uss({ jessSpousal: v }), pfx: "$" }))), /* @__PURE__ */ React.createElement("div", { style: { marginTop: 8 } }, /* @__PURE__ */ React.createElement(Chk, { label: "Jessica's SS is taxable", v: ss.jessTax, onChange: (v) => uss({ jessTax: v }) })))), /* @__PURE__ */ React.createElement("div", { style: { marginTop: 10, maxWidth: 160 } }, /* @__PURE__ */ React.createElement(Inp, { label: "COLA Rate (%)", v: ss.cola, onChange: (v) => uss({ cola: v }), sfx: "%", step: "0.1" }))), /* @__PURE__ */ React.createElement(Sec, { title: "Other Income", icon: "\u{1F4B0}" }, /* @__PURE__ */ React.createElement(G2, { gap: 12, style: { marginBottom: 12 } }, /* @__PURE__ */ React.createElement("div", { style: { border: "1px solid #e8ecf0", borderRadius: 7, padding: 10 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, fontWeight: 600, marginBottom: 8 } }, "VA Disability"), /* @__PURE__ */ React.createElement(Inp, { label: "Monthly", v: oi.va, onChange: (v) => uoi({ va: v }), pfx: "$" }), /* @__PURE__ */ React.createElement("div", { style: { marginTop: 6, fontSize: 11, color: "#64748b" } }, "Tax-free \xB7 COLA adjusted \xB7 50% survivor \u22652035")), /* @__PURE__ */ React.createElement("div", { style: { border: "1px solid #e8ecf0", borderRadius: 7, padding: 10 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, fontWeight: 600, marginBottom: 8 } }, "Business (CozyPhones)"), /* @__PURE__ */ React.createElement(G2, { style: { marginBottom: 8 } }, /* @__PURE__ */ React.createElement(Inp, { label: "Monthly", v: oi.biz, onChange: (v) => uoi({ biz: v }), pfx: "$" }), /* @__PURE__ */ React.createElement(Inp, { label: "Duration (mo)", v: oi.bizDur, onChange: (v) => uoi({ bizDur: v }) })), /* @__PURE__ */ React.createElement(G2, null, /* @__PURE__ */ React.createElement(Sel, { label: "Start Month", v: String(oi.bizSM), onChange: (v) => uoi({ bizSM: parseInt(v) }), opts: MO }), /* @__PURE__ */ React.createElement(Inp, { label: "Start Yr (offset)", v: oi.bizSY, onChange: (v) => uoi({ bizSY: v }), min: 1 })))), /* @__PURE__ */ React.createElement(G2, { gap: 12, style: { marginBottom: 12 } }, /* @__PURE__ */ React.createElement("div", { style: { border: "1px solid #e8ecf0", borderRadius: 7, padding: 10 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, fontWeight: 600, marginBottom: 8 } }, "Jessica's Work"), /* @__PURE__ */ React.createElement(G2, { style: { marginBottom: 8 } }, /* @__PURE__ */ React.createElement(Inp, { label: "Monthly", v: oi.jess, onChange: (v) => uoi({ jess: v }), pfx: "$" }), /* @__PURE__ */ React.createElement(Inp, { label: "Duration (mo)", v: oi.jessDur, onChange: (v) => uoi({ jessDur: v }) })), /* @__PURE__ */ React.createElement(G2, null, /* @__PURE__ */ React.createElement(Sel, { label: "Start Month", v: String(oi.jessSM), onChange: (v) => uoi({ jessSM: parseInt(v) }), opts: MO }), /* @__PURE__ */ React.createElement(Inp, { label: "Start Yr", v: oi.jessSY, onChange: (v) => uoi({ jessSY: v }), min: 1 }))), /* @__PURE__ */ React.createElement("div", { style: { border: "1px solid #e8ecf0", borderRadius: 7, padding: 10 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, fontWeight: 600, marginBottom: 8 } }, "Chapter 35 Benefits"), /* @__PURE__ */ React.createElement(G2, { style: { marginBottom: 8 } }, /* @__PURE__ */ React.createElement(Inp, { label: "Monthly", v: oi.ch35, onChange: (v) => uoi({ ch35: v }), pfx: "$" }), /* @__PURE__ */ React.createElement(Inp, { label: "Duration (mo)", v: oi.ch35Dur, onChange: (v) => uoi({ ch35Dur: v }) })), /* @__PURE__ */ React.createElement(G2, null, /* @__PURE__ */ React.createElement(Sel, { label: "Start Month", v: String(oi.ch35SM), onChange: (v) => uoi({ ch35SM: parseInt(v) }), opts: MO }), /* @__PURE__ */ React.createElement(Inp, { label: "Start Yr", v: oi.ch35SY, onChange: (v) => uoi({ ch35SY: v }), min: 1 })))), /* @__PURE__ */ React.createElement("div", { style: { border: "1px solid #e8ecf0", borderRadius: 7, padding: 10 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, fontWeight: 600, marginBottom: 8 } }, "Additional Income Streams"), /* @__PURE__ */ React.createElement(G3, null, [1, 2, 3].map((n) => /* @__PURE__ */ React.createElement("div", { key: n }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: "#64748b", marginBottom: 4 } }, "Income ", n), /* @__PURE__ */ React.createElement(Inp, { label: "Monthly", v: oi[`i${n}`], onChange: (v) => uoi({ [`i${n}`]: v }), pfx: "$" }), /* @__PURE__ */ React.createElement("div", { style: { marginTop: 6 } }, /* @__PURE__ */ React.createElement(G2, null, /* @__PURE__ */ React.createElement(Inp, { label: "Duration", v: oi[`i${n}Dur`], onChange: (v) => uoi({ [`i${n}Dur`]: v }) }), /* @__PURE__ */ React.createElement(Inp, { label: "Start Yr", v: oi[`i${n}SY`], onChange: (v) => uoi({ [`i${n}SY`]: v }), min: 1 })))))))), /* @__PURE__ */ React.createElement(Sec, { title: "Expenses", icon: "\u{1F4B3}" }, /* @__PURE__ */ React.createElement(G2, { gap: 16 }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 6, marginBottom: 10 } }, ["fixed", "detailed"].map((t) => /* @__PURE__ */ React.createElement(Btn, { key: t, onClick: () => uexp({ type: t }), active: exp.type === t, sm: true }, t.charAt(0).toUpperCase() + t.slice(1)))), exp.type === "fixed" ? /* @__PURE__ */ React.createElement(Inp, { label: "Monthly Living Expenses", v: exp.basic, onChange: (v) => uexp({ basic: v }), pfx: "$" }) : /* @__PURE__ */ React.createElement("div", { style: { maxHeight: 200, overflowY: "auto", border: "1px solid #e8ecf0", borderRadius: 6, padding: 8 } }, exp.detailed.map((cat, i) => /* @__PURE__ */ React.createElement("div", { key: cat.id, style: { display: "flex", alignItems: "center", justifyContent: "space-between", padding: "3px 0", borderBottom: "1px solid #f1f5f9" } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11 } }, cat.name), /* @__PURE__ */ React.createElement(
+      "input",
+      {
+        type: "number",
+        value: cat.amount,
+        onChange: (e) => {
+          const nb = [...exp.detailed];
+          nb[i] = { ...cat, amount: parseFloat(e.target.value) || 0 };
+          uexp({ detailed: nb });
+        },
+        style: { width: 70, padding: "2px 6px", border: "1px solid #e2e8f0", borderRadius: 4, textAlign: "right", fontSize: 11 }
+      }
+    ))), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", justifyContent: "space-between", padding: "5px 0", fontWeight: 600, fontSize: 12 } }, /* @__PURE__ */ React.createElement("span", null, "Total:"), /* @__PURE__ */ React.createElement("span", { style: { fontFamily: "monospace" } }, fmt(exp.detailed.reduce((t, c) => t + c.amount, 0))))), /* @__PURE__ */ React.createElement("div", { style: { marginTop: 10 } }, /* @__PURE__ */ React.createElement(Inp, { label: "Inflation Rate (%)", v: exp.infl, onChange: (v) => uexp({ infl: v }), sfx: "%", step: "0.1" }))), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, fontWeight: 600, marginBottom: 8 } }, "Life Insurance"), /* @__PURE__ */ React.createElement(Inp, { label: "Monthly Premium", v: exp.ins, onChange: (v) => uexp({ ins: v }), pfx: "$" }), /* @__PURE__ */ React.createElement("div", { style: { marginTop: 8 } }, /* @__PURE__ */ React.createElement(G2, null, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement(Lbl, { t: "Start" }), /* @__PURE__ */ React.createElement(G2, null, /* @__PURE__ */ React.createElement(Sel, { v: String(exp.insSM), onChange: (v) => uexp({ insSM: parseInt(v) }), opts: MO }), /* @__PURE__ */ React.createElement(Inp, { v: exp.insSY, onChange: (v) => uexp({ insSY: v }), min: 1 }))), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement(Lbl, { t: "End" }), /* @__PURE__ */ React.createElement(G2, null, /* @__PURE__ */ React.createElement(Sel, { v: String(exp.insEM), onChange: (v) => uexp({ insEM: parseInt(v) }), opts: MO }), /* @__PURE__ */ React.createElement(Inp, { v: exp.insEY, onChange: (v) => uexp({ insEY: v }), min: 1 }))))), /* @__PURE__ */ React.createElement("div", { style: { marginTop: 10, fontSize: 12, fontWeight: 600, marginBottom: 8 } }, "Additional Expenses"), [1, 2, 3].map((n) => /* @__PURE__ */ React.createElement("div", { key: n, style: { marginBottom: 8, padding: 8, border: "1px solid #e8ecf0", borderRadius: 6 } }, /* @__PURE__ */ React.createElement(G2, { style: { marginBottom: 5 } }, /* @__PURE__ */ React.createElement(
+      "input",
+      {
+        type: "text",
+        value: exp[`e${n}Name`],
+        onChange: (e) => uexp({ [`e${n}Name`]: e.target.value }),
+        placeholder: `Expense ${n}`,
+        style: { width: "100%", padding: "5px 9px", border: "1px solid #e2e8f0", borderRadius: 6, fontSize: 11 }
+      }
+    ), /* @__PURE__ */ React.createElement(Inp, { v: exp[`e${n}`], onChange: (v) => uexp({ [`e${n}`]: v }), pfx: "$" })), /* @__PURE__ */ React.createElement(G3, null, /* @__PURE__ */ React.createElement(Inp, { label: "Duration", v: exp[`e${n}Dur`], onChange: (v) => uexp({ [`e${n}Dur`]: v }) }), /* @__PURE__ */ React.createElement(Sel, { label: "Start Mo", v: String(exp[`e${n}SM`]), onChange: (v) => uexp({ [`e${n}SM`]: parseInt(v) }), opts: MO }), /* @__PURE__ */ React.createElement(Inp, { label: "Start Yr", v: exp[`e${n}SY`], onChange: (v) => uexp({ [`e${n}SY`]: v }), min: 1 }))))))), /* @__PURE__ */ React.createElement(Sec, { title: "Housing & Mortgage", icon: "\u{1F3E0}", defaultOpen: false }, /* @__PURE__ */ React.createElement(G2, { gap: 16 }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, fontWeight: 600, marginBottom: 8 } }, "Home Value"), /* @__PURE__ */ React.createElement(G2, null, /* @__PURE__ */ React.createElement(Inp, { label: "Current Value", v: h.homeVal, onChange: (v) => uh({ homeVal: v }), pfx: "$" }), /* @__PURE__ */ React.createElement(Inp, { label: "Annual Appreciation", v: h.appreciation, onChange: (v) => uh({ appreciation: v }), sfx: "%", step: "0.1" }))), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, fontWeight: 600, marginBottom: 8 } }, "Mortgage"), /* @__PURE__ */ React.createElement(G2, { style: { marginBottom: 8 } }, /* @__PURE__ */ React.createElement(Inp, { label: "Current Balance", v: h.mortBal, onChange: (v) => uh({ mortBal: v }), pfx: "$" }), /* @__PURE__ */ React.createElement(Inp, { label: "Monthly Payment", v: h.mortPmt, onChange: (v) => uh({ mortPmt: v }), pfx: "$" })), /* @__PURE__ */ React.createElement(G2, { style: { marginBottom: 8 } }, /* @__PURE__ */ React.createElement(Inp, { label: "Interest Rate", v: h.intRate, onChange: (v) => uh({ intRate: v }), sfx: "%", step: "0.1" }), /* @__PURE__ */ React.createElement(Inp, { label: "Target Payoff (mo)", v: h.targetMo, onChange: (v) => uh({ targetMo: v }) })), /* @__PURE__ */ React.createElement(Chk, { label: "Accelerated payoff", v: h.accel, onChange: (v) => uh({ accel: v }) }))), /* @__PURE__ */ React.createElement("div", { style: { marginTop: 12, border: "1px solid #e8ecf0", borderRadius: 7, padding: 10 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, fontWeight: 600, marginBottom: 8 } }, "Lump Sum Payment"), /* @__PURE__ */ React.createElement(G3, null, /* @__PURE__ */ React.createElement(Inp, { label: "Amount", v: h.lsAmt, onChange: (v) => uh({ lsAmt: v }), pfx: "$" }), /* @__PURE__ */ React.createElement(Sel, { label: "Month", v: String(h.lsSM), onChange: (v) => uh({ lsSM: parseInt(v) }), opts: MO }), /* @__PURE__ */ React.createElement(Inp, { label: "Year (offset)", v: h.lsSY, onChange: (v) => uh({ lsSY: v }), min: 1 })))), /* @__PURE__ */ React.createElement(Sec, { title: "Savings & Taxes", icon: "\u{1F4C8}", defaultOpen: false }, /* @__PURE__ */ React.createElement(G2, { gap: 16 }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, fontWeight: 600, marginBottom: 8 } }, "Investment Portfolio"), /* @__PURE__ */ React.createElement(G2, { style: { marginBottom: 8 } }, /* @__PURE__ */ React.createElement(Inp, { label: "Initial Balance", v: sav.init, onChange: (v) => usav({ init: v }), pfx: "$" }), /* @__PURE__ */ React.createElement(Inp, { label: "Additional Annual", v: sav.addl, onChange: (v) => usav({ addl: v }), pfx: "$" })), /* @__PURE__ */ React.createElement(Inp, { label: "Expected Annual Return (%)", v: sav.ret, onChange: (v) => usav({ ret: v }), sfx: "%", step: "0.1" }), /* @__PURE__ */ React.createElement("div", { style: { marginTop: 8 } }, /* @__PURE__ */ React.createElement(
+      Sel,
+      {
+        label: "Strategy",
+        v: sav.strategy,
+        onChange: (v) => {
+          const r = { conservative: 4.5, balanced: 6.5, aggressive: 8.5 };
+          usav({ strategy: v, ret: r[v] || sav.ret });
+        },
+        opts: [{ v: "conservative", l: "Conservative (4.5%)" }, { v: "balanced", l: "Balanced (6.5%)" }, { v: "aggressive", l: "Aggressive (8.5%)" }, { v: "custom", l: "Custom" }]
+      }
+    )), /* @__PURE__ */ React.createElement("div", { style: { marginTop: 8, display: "flex", alignItems: "center", gap: 12 } }, /* @__PURE__ */ React.createElement(Chk, { label: "Tax on investment gains", v: sav.taxGains, onChange: (v) => usav({ taxGains: v }) }), sav.taxGains && /* @__PURE__ */ React.createElement("div", { style: { maxWidth: 90 } }, /* @__PURE__ */ React.createElement(Inp, { v: sav.gainsTax, onChange: (v) => usav({ gainsTax: v }), sfx: "%" })))), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, fontWeight: 600, marginBottom: 8 } }, "Tax Rates"), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 8 } }, /* @__PURE__ */ React.createElement(Inp, { label: "SS Tax Rate (%)", v: tr.ss, onChange: (v) => utr({ ss: v }), sfx: "%" }), /* @__PURE__ */ React.createElement(Inp, { label: "Business Income Tax (%)", v: tr.biz, onChange: (v) => utr({ biz: v }), sfx: "%" }), /* @__PURE__ */ React.createElement(Inp, { label: "Jessica's Income Tax (%)", v: tr.jess, onChange: (v) => utr({ jess: v }), sfx: "%" }))))));
+  }
+  function CTT({ active, payload, label }) {
+    if (!active || !(payload == null ? void 0 : payload.length)) return null;
+    return /* @__PURE__ */ React.createElement("div", { style: { background: "#fff", border: "1px solid #e2e8f0", borderRadius: 7, padding: "9px 13px", fontSize: 12, boxShadow: "0 4px 12px rgba(0,0,0,.08)" } }, /* @__PURE__ */ React.createElement("div", { style: { fontWeight: 600, color: "#475569", marginBottom: 5 } }, label), payload.map((p, i) => /* @__PURE__ */ React.createElement("div", { key: i, style: { display: "flex", justifyContent: "space-between", gap: 14, color: p.color } }, /* @__PURE__ */ React.createElement("span", null, p.name), /* @__PURE__ */ React.createElement("span", { style: { fontFamily: "monospace", fontWeight: 500 } }, fmtM(p.value)))));
+  }
+  function Charts({ ann }) {
+    const [ct, setCt] = useState("savings");
+    const btns = [{ id: "savings", l: "Savings & Net Worth" }, { id: "cashflow", l: "Cash Flow" }, { id: "income", l: "Income Breakdown" }];
+    const sd = ann.map((d) => ({ yr: d.yr, "Net Worth": Math.round(d.nw), "Savings": Math.round(d.sav), "Home Value": Math.round(d.hv) }));
+    const cd = ann.map((d) => ({ yr: d.yr, "After-Tax Income": Math.round(d.ati), "Expenses": Math.round(d.livExp + d.ins + d.mort), "Cash Flow": Math.round(d.ncf) }));
+    const id = ann.map((d) => ({ yr: d.yr, "Paul SS": Math.round(d.pSS), "Jessica SS": Math.round(d.jSS), "VA Disab.": Math.round(d.va), "Business": Math.round(d.biz), "Jess Work": Math.round(d.jw), "Ch.35": Math.round(d.c35) }));
+    return /* @__PURE__ */ React.createElement(Card, { style: { padding: 16, marginBottom: 16 } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14, flexWrap: "wrap", gap: 8 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13, fontWeight: 600, color: "#1e293b" } }, "Financial Analysis"), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 6 } }, btns.map((b) => /* @__PURE__ */ React.createElement(Btn, { key: b.id, onClick: () => setCt(b.id), active: ct === b.id, sm: true }, b.l)))), /* @__PURE__ */ React.createElement(ResponsiveContainer, { width: "100%", height: 280 }, ct === "savings" ? /* @__PURE__ */ React.createElement(ComposedChart, { data: sd }, /* @__PURE__ */ React.createElement(CartesianGrid, { strokeDasharray: "3 3", stroke: "#f1f5f9" }), /* @__PURE__ */ React.createElement(XAxis, { dataKey: "yr", tick: { fontSize: 10 } }), /* @__PURE__ */ React.createElement(YAxis, { tickFormatter: fmtM, tick: { fontSize: 10 }, width: 62 }), /* @__PURE__ */ React.createElement(Tooltip, { content: /* @__PURE__ */ React.createElement(CTT, null) }), /* @__PURE__ */ React.createElement(Legend, { iconSize: 10, wrapperStyle: { fontSize: 11 } }), /* @__PURE__ */ React.createElement(Area, { type: "monotone", dataKey: "Net Worth", stroke: $.green, fill: "rgba(5,150,105,.1)", strokeWidth: 2 }), /* @__PURE__ */ React.createElement(Area, { type: "monotone", dataKey: "Savings", stroke: $.blue, fill: "rgba(37,99,235,.1)", strokeWidth: 2 }), /* @__PURE__ */ React.createElement(Line, { type: "monotone", dataKey: "Home Value", stroke: $.amber, strokeWidth: 2, dot: false })) : ct === "cashflow" ? /* @__PURE__ */ React.createElement(ComposedChart, { data: cd }, /* @__PURE__ */ React.createElement(CartesianGrid, { strokeDasharray: "3 3", stroke: "#f1f5f9" }), /* @__PURE__ */ React.createElement(XAxis, { dataKey: "yr", tick: { fontSize: 10 } }), /* @__PURE__ */ React.createElement(YAxis, { tickFormatter: fmtM, tick: { fontSize: 10 }, width: 62 }), /* @__PURE__ */ React.createElement(Tooltip, { content: /* @__PURE__ */ React.createElement(CTT, null) }), /* @__PURE__ */ React.createElement(Legend, { iconSize: 10, wrapperStyle: { fontSize: 11 } }), /* @__PURE__ */ React.createElement(Bar, { dataKey: "After-Tax Income", fill: $.blue, opacity: 0.8 }), /* @__PURE__ */ React.createElement(Bar, { dataKey: "Expenses", fill: $.red, opacity: 0.8 }), /* @__PURE__ */ React.createElement(Line, { type: "monotone", dataKey: "Cash Flow", stroke: $.green, strokeWidth: 2, dot: false })) : /* @__PURE__ */ React.createElement(AreaChart, { data: id }, /* @__PURE__ */ React.createElement(CartesianGrid, { strokeDasharray: "3 3", stroke: "#f1f5f9" }), /* @__PURE__ */ React.createElement(XAxis, { dataKey: "yr", tick: { fontSize: 10 } }), /* @__PURE__ */ React.createElement(YAxis, { tickFormatter: fmtM, tick: { fontSize: 10 }, width: 62 }), /* @__PURE__ */ React.createElement(Tooltip, { content: /* @__PURE__ */ React.createElement(CTT, null) }), /* @__PURE__ */ React.createElement(Legend, { iconSize: 10, wrapperStyle: { fontSize: 11 } }), [["Paul SS", $.blue], ["Jessica SS", "#7c3aed"], ["VA Disab.", $.green], ["Business", $.amber], ["Jess Work", "#ec4899"], ["Ch.35", "#14b8a6"]].map(
+      ([k, c]) => /* @__PURE__ */ React.createElement(Area, { key: k, type: "monotone", dataKey: k, stackId: "1", stroke: c, fill: c, fillOpacity: 0.7 })
+    ))));
+  }
+  function AIDial({ s }) {
+    const [open, setOpen] = useState(false);
+    const [msgs, setMsgs] = useState([]);
+    const [inp, setInp] = useState("");
+    const [loading, setLoading] = useState(false);
+    const botRef = useRef(null);
+    useEffect(() => {
+      var _a;
+      (_a = botRef.current) == null ? void 0 : _a.scrollIntoView({ behavior: "smooth" });
+    }, [msgs]);
+    const sys = () => {
+      const ann = calcAnnual(s);
+      const m = calcMetrics(ann, s);
+      return `You are a retirement planning advisor for Paul and Jessica Miller.
+Key snapshot:
+- Paul age ${s.pi.paulAge}, Jessica age ${s.pi.jessAge}, ${s.pi.projYears}-yr projection from ${s.pi.startY}
+- Final Net Worth: ${fmt(m.nw)}, Avg Monthly CF: ${fmt(m.cf)}, Total Taxes: ${fmt(m.tax)}
+- VA Disability: $${s.oi.va}/mo (tax-free, 50% survivor \u22652035)
+- Business (CozyPhones): $${s.oi.biz}/mo for ${s.oi.bizDur} months
+- Paul SS at age ${s.ss.paulStart}: $${s.ss.paulAmt}/mo
+- Jessica SS at age ${s.ss.jessStart}: $${s.ss.jessAmt + s.ss.jessSpousal}/mo combined
+- Chapter 35: $${s.oi.ch35}/mo for ${s.oi.ch35Dur} months
+- Monthly living: $${getLiving(s.exp)} + ${s.exp.infl}% inflation
+- Savings: $${s.sav.init} init at ${s.sav.ret}% annual return
+Paul is a service-disabled Marine veteran and founder of CozyPhones/Halo Acoustic Wear LLC. Answer questions clearly and helpfully.`;
+    };
+    const send = async () => {
+      if (!inp.trim() || loading) return;
+      const msg = inp.trim();
+      setInp("");
+      setMsgs((p) => [...p, { role: "user", content: msg }]);
+      setLoading(true);
+      try {
+        const r = await fetch("https://api.anthropic.com/v1/messages", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ model: "claude-sonnet-4-20250514", max_tokens: 1e3, system: sys(), messages: [...msgs, { role: "user", content: msg }] }) });
+        const d = await r.json();
+        setMsgs((p) => {
+          var _a, _b;
+          return [...p, { role: "assistant", content: ((_b = (_a = d.content) == null ? void 0 : _a[0]) == null ? void 0 : _b.text) || "No response." }];
+        });
+      } catch (e) {
+        setMsgs((p) => [...p, { role: "assistant", content: "Error connecting. Please try again." }]);
+      }
+      setLoading(false);
+    };
+    return /* @__PURE__ */ React.createElement(Card, { style: { marginBottom: 16, overflow: "hidden" } }, /* @__PURE__ */ React.createElement("button", { onClick: () => setOpen(!open), style: { width: "100%", padding: "11px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", background: "none", border: "none", cursor: "pointer" } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 8, fontSize: 13, fontWeight: 600, color: "#1e293b" } }, /* @__PURE__ */ React.createElement("span", null, "\u{1F916}"), "AI Retirement Advisor", /* @__PURE__ */ React.createElement("span", { style: { fontSize: 10, background: "rgba(37,99,235,.1)", color: $.blue, padding: "2px 8px", borderRadius: 10 } }, "Claude-powered")), /* @__PURE__ */ React.createElement("span", { style: { color: "#94a3b8", fontSize: 11 } }, open ? "\u25B2" : "\u25BC")), open && /* @__PURE__ */ React.createElement("div", { style: { borderTop: "1px solid #f1f5f9", padding: "14px 16px" } }, /* @__PURE__ */ React.createElement("div", { style: { height: 240, overflowY: "auto", display: "flex", flexDirection: "column", gap: 8, marginBottom: 10 } }, !msgs.length && /* @__PURE__ */ React.createElement("div", { style: { textAlign: "center", color: "#94a3b8", fontSize: 12, paddingTop: 40 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 24, marginBottom: 6 } }, "\u{1F4AC}"), "Ask anything about your retirement plan..."), msgs.map((m, i) => /* @__PURE__ */ React.createElement("div", { key: i, style: { padding: "8px 12px", borderRadius: 8, fontSize: 12, lineHeight: 1.5, alignSelf: m.role === "user" ? "flex-end" : "flex-start", background: m.role === "user" ? $.navy : "#f1f5f9", color: m.role === "user" ? "#fff" : "#1e293b", maxWidth: "85%" } }, m.content)), loading && /* @__PURE__ */ React.createElement("div", { style: { padding: "8px 12px", borderRadius: 8, fontSize: 12, background: "#f1f5f9", color: "#94a3b8", alignSelf: "flex-start" } }, "Analyzing your plan..."), /* @__PURE__ */ React.createElement("div", { ref: botRef })), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 6, marginBottom: 8 } }, /* @__PURE__ */ React.createElement(
+      "input",
+      {
+        type: "text",
+        value: inp,
+        onChange: (e) => setInp(e.target.value),
+        onKeyDown: (e) => e.key === "Enter" && send(),
+        placeholder: "Ask about your plan, what-ifs, scenarios...",
+        disabled: loading,
+        style: { flex: 1, padding: "6px 10px", border: "1px solid #e2e8f0", borderRadius: 6, fontSize: 12 }
+      }
+    ), /* @__PURE__ */ React.createElement("button", { onClick: send, disabled: loading || !inp.trim(), style: { padding: "6px 16px", background: $.navy, color: "#fff", border: "none", borderRadius: 6, fontSize: 12, fontWeight: 500, cursor: "pointer", opacity: loading || !inp.trim() ? 0.5 : 1 } }, "Send")), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 6, flexWrap: "wrap" } }, ["What's my Year 5 income?", "When should Paul claim SS?", "How's my retirement trajectory?", "What if business income doubles?"].map(
+      (q) => /* @__PURE__ */ React.createElement("button", { key: q, onClick: () => setInp(q), style: { padding: "3px 10px", background: "#f1f5f9", border: "1px solid #e2e8f0", borderRadius: 12, fontSize: 11, color: "#475569", cursor: "pointer" } }, q)
+    ))));
+  }
+  function ScenarioMgr({ s, onLoad }) {
+    const [open, setOpen] = useState(false);
+    const [scenarios, setScenarios] = useState([]);
+    const [name, setName] = useState("");
+    const ref = useRef(null);
+    useEffect(() => {
+      loadAll();
+    }, []);
+    useEffect(() => {
+      const h = (e) => {
+        if (ref.current && !ref.current.contains(e.target)) setOpen(false);
+      };
+      document.addEventListener("mousedown", h);
+      return () => document.removeEventListener("mousedown", h);
+    }, []);
+    const loadAll = async () => {
+      try {
+        const keys = await window.storage.list("sc:");
+        const lst = [];
+        for (const k of keys.keys || []) {
+          const r = await window.storage.get(k);
+          if (r) lst.push({ k, n: k.replace("sc:", ""), d: JSON.parse(r.value) });
+        }
+        setScenarios(lst);
+      } catch (e) {
+        setScenarios([]);
+      }
+    };
+    const save = async () => {
+      if (!name.trim()) return;
+      try {
+        await window.storage.set("sc:" + name, JSON.stringify(s));
+        setName("");
+        loadAll();
+      } catch (e) {
+      }
+    };
+    const del = async (k) => {
+      try {
+        await window.storage.delete(k);
+        loadAll();
+      } catch (e) {
+      }
+    };
+    return /* @__PURE__ */ React.createElement("div", { ref, style: { position: "relative" } }, /* @__PURE__ */ React.createElement("button", { onClick: () => setOpen(!open), style: { padding: "5px 12px", border: "1px solid rgba(255,255,255,.25)", borderRadius: 6, fontSize: 12, background: "transparent", color: "rgba(255,255,255,.8)", cursor: "pointer", display: "flex", alignItems: "center", gap: 5 } }, "\u{1F4BE} Scenarios ", scenarios.length > 0 && /* @__PURE__ */ React.createElement("span", { style: { background: "rgba(255,255,255,.2)", padding: "0 6px", borderRadius: 8, fontSize: 10 } }, scenarios.length)), open && /* @__PURE__ */ React.createElement("div", { style: { position: "absolute", right: 0, top: "calc(100% + 4px)", background: "#fff", border: "1px solid #e2e8f0", borderRadius: 10, padding: 12, width: 260, boxShadow: "0 8px 24px rgba(0,0,0,.12)", zIndex: 100 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, fontWeight: 600, marginBottom: 6 } }, "Save Current"), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 6, marginBottom: 12 } }, /* @__PURE__ */ React.createElement(
+      "input",
+      {
+        type: "text",
+        value: name,
+        onChange: (e) => setName(e.target.value),
+        onKeyDown: (e) => e.key === "Enter" && save(),
+        placeholder: "Scenario name...",
+        style: { flex: 1, padding: "5px 8px", border: "1px solid #e2e8f0", borderRadius: 5, fontSize: 11 }
+      }
+    ), /* @__PURE__ */ React.createElement("button", { onClick: save, disabled: !name.trim(), style: { padding: "5px 10px", background: $.navy, color: "#fff", border: "none", borderRadius: 5, fontSize: 11, cursor: "pointer", opacity: !name.trim() ? 0.5 : 1 } }, "Save")), scenarios.length > 0 && /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, fontWeight: 600, marginBottom: 6 } }, "Saved Scenarios"), scenarios.map((sc) => /* @__PURE__ */ React.createElement("div", { key: sc.k, style: { display: "flex", alignItems: "center", gap: 6, padding: "5px 0", borderBottom: "1px solid #f1f5f9" } }, /* @__PURE__ */ React.createElement("span", { style: { flex: 1, fontSize: 12 } }, sc.n), /* @__PURE__ */ React.createElement("button", { onClick: () => {
+      onLoad(sc.d);
+      setOpen(false);
+    }, style: { padding: "3px 8px", background: "rgba(37,99,235,.1)", color: $.blue, border: "none", borderRadius: 4, fontSize: 10, cursor: "pointer" } }, "Load"), /* @__PURE__ */ React.createElement("button", { onClick: () => del(sc.k), style: { padding: "3px 6px", background: "rgba(220,38,38,.1)", color: $.red, border: "none", borderRadius: 4, fontSize: 10, cursor: "pointer" } }, "\u2715"))))));
+  }
+  function ResultsTable({ ann, monthly, viewMode, setViewMode, selYr, setSelYr, s }) {
+    const CV = (n) => /* @__PURE__ */ React.createElement("span", { style: { color: n > 0 ? $.green : n < 0 ? $.red : "#64748b", fontFamily: "monospace" } }, fmt(n));
+    const yopts = Array.from({ length: s.pi.projYears }, (_, i) => ({ v: String(i + 1), l: `Year ${i + 1} (${2025 + i})` }));
+    const thStyle = { background: $.navy, color: "#fff", padding: "7px 10px", textAlign: "right", fontWeight: 500, fontSize: 10, whiteSpace: "nowrap", position: "sticky", top: 0, zIndex: 2 };
+    const tdStyle = { padding: "5px 10px", textAlign: "right", borderBottom: "1px solid #f1f5f9", fontFamily: "monospace", fontSize: 11 };
+    return /* @__PURE__ */ React.createElement(Card, { style: { overflow: "hidden" } }, /* @__PURE__ */ React.createElement("div", { style: { padding: "12px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", borderBottom: "1px solid #f1f5f9", flexWrap: "wrap", gap: 8 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13, fontWeight: 600, color: "#1e293b" } }, "Projection Data"), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 6, alignItems: "center" } }, viewMode === "monthly" && /* @__PURE__ */ React.createElement(
+      "select",
+      {
+        value: selYr,
+        onChange: (e) => setSelYr(parseInt(e.target.value)),
+        style: { padding: "4px 22px 4px 8px", border: "1px solid #e2e8f0", borderRadius: 5, fontSize: 11, width: 160, appearance: "none" }
+      },
+      yopts.map((o) => /* @__PURE__ */ React.createElement("option", { key: o.v, value: o.v }, o.l))
+    ), ["annual", "monthly"].map((m) => /* @__PURE__ */ React.createElement(Btn, { key: m, onClick: () => setViewMode(m), active: viewMode === m, sm: true }, m.charAt(0).toUpperCase() + m.slice(1))))), /* @__PURE__ */ React.createElement("div", { style: { overflowX: "auto", maxHeight: 440, overflowY: "auto" } }, viewMode === "annual" ? /* @__PURE__ */ React.createElement("table", { style: { width: "100%", borderCollapse: "collapse", fontSize: 11 } }, /* @__PURE__ */ React.createElement("thead", null, /* @__PURE__ */ React.createElement("tr", null, ["Year", "Ages", "Paul SS", "Jess SS", "VA Disab", "Business", "Total Inc", "Taxes", "Living Exp", "Mortgage", "Cash Flow", "Inv Return", "Savings", "Home Value", "Net Worth"].map((h, i) => /* @__PURE__ */ React.createElement("th", { key: i, style: { ...thStyle, textAlign: i === 0 ? "left" : "right" } }, h)))), /* @__PURE__ */ React.createElement("tbody", null, ann.map((d) => /* @__PURE__ */ React.createElement("tr", { key: d.yr, style: { background: d.yr % 2 === 0 ? "#fafafa" : "#fff" } }, /* @__PURE__ */ React.createElement("td", { style: { ...tdStyle, textAlign: "left", fontFamily: "inherit", fontWeight: 600 } }, d.yr), /* @__PURE__ */ React.createElement("td", { style: tdStyle }, d.pAge, "/", d.jAge), /* @__PURE__ */ React.createElement("td", { style: tdStyle }, CV(d.pSS)), /* @__PURE__ */ React.createElement("td", { style: tdStyle }, CV(d.jSS)), /* @__PURE__ */ React.createElement("td", { style: tdStyle }, CV(d.va)), /* @__PURE__ */ React.createElement("td", { style: tdStyle }, CV(d.biz)), /* @__PURE__ */ React.createElement("td", { style: { ...tdStyle, fontWeight: 600 } }, CV(d.totInc)), /* @__PURE__ */ React.createElement("td", { style: tdStyle }, /* @__PURE__ */ React.createElement("span", { style: { color: $.red, fontFamily: "monospace" } }, fmt(d.totTax))), /* @__PURE__ */ React.createElement("td", { style: tdStyle }, /* @__PURE__ */ React.createElement("span", { style: { color: $.red, fontFamily: "monospace" } }, fmt(d.livExp))), /* @__PURE__ */ React.createElement("td", { style: tdStyle }, /* @__PURE__ */ React.createElement("span", { style: { color: $.red, fontFamily: "monospace" } }, fmt(d.mort))), /* @__PURE__ */ React.createElement("td", { style: { ...tdStyle, fontWeight: 600 } }, CV(d.ncf)), /* @__PURE__ */ React.createElement("td", { style: tdStyle }, CV(d.netInv)), /* @__PURE__ */ React.createElement("td", { style: { ...tdStyle, fontWeight: 600 } }, CV(d.sav)), /* @__PURE__ */ React.createElement("td", { style: tdStyle }, CV(d.hv)), /* @__PURE__ */ React.createElement("td", { style: { ...tdStyle, fontWeight: 700 } }, CV(d.nw)))))) : /* @__PURE__ */ React.createElement("table", { style: { width: "100%", borderCollapse: "collapse", fontSize: 11 } }, /* @__PURE__ */ React.createElement("thead", null, /* @__PURE__ */ React.createElement("tr", null, ["Month", "Paul SS", "Jess SS", "VA", "Business", "Gross Inc", "Taxes", "Living", "Mortgage", "Cash Flow", "Inv Ret", "Savings", "Home Value"].map((h, i) => /* @__PURE__ */ React.createElement("th", { key: i, style: { ...thStyle, textAlign: i === 0 ? "left" : "right" } }, h)))), /* @__PURE__ */ React.createElement("tbody", null, monthly.map((d, i) => /* @__PURE__ */ React.createElement("tr", { key: i, style: { background: i % 2 === 0 ? "#fafafa" : "#fff" } }, /* @__PURE__ */ React.createElement("td", { style: { ...tdStyle, textAlign: "left", fontFamily: "inherit", fontWeight: 600 } }, d.mn), /* @__PURE__ */ React.createElement("td", { style: tdStyle }, CV(d.pSS)), /* @__PURE__ */ React.createElement("td", { style: tdStyle }, CV(d.jSS)), /* @__PURE__ */ React.createElement("td", { style: tdStyle }, CV(d.va)), /* @__PURE__ */ React.createElement("td", { style: tdStyle }, CV(d.biz)), /* @__PURE__ */ React.createElement("td", { style: { ...tdStyle, fontWeight: 600 } }, CV(d.gross)), /* @__PURE__ */ React.createElement("td", { style: tdStyle }, /* @__PURE__ */ React.createElement("span", { style: { color: $.red, fontFamily: "monospace" } }, fmt(d.taxes))), /* @__PURE__ */ React.createElement("td", { style: tdStyle }, /* @__PURE__ */ React.createElement("span", { style: { color: $.red, fontFamily: "monospace" } }, fmt(d.livM))), /* @__PURE__ */ React.createElement("td", { style: tdStyle }, /* @__PURE__ */ React.createElement("span", { style: { color: $.red, fontFamily: "monospace" } }, fmt(d.mort))), /* @__PURE__ */ React.createElement("td", { style: { ...tdStyle, fontWeight: 600 } }, CV(d.ncf)), /* @__PURE__ */ React.createElement("td", { style: tdStyle }, CV(d.invRet)), /* @__PURE__ */ React.createElement("td", { style: { ...tdStyle, fontWeight: 600 } }, CV(d.sav)), /* @__PURE__ */ React.createElement("td", { style: tdStyle }, CV(d.hv))))))));
+  }
+  function App() {
+    const [s, setS] = useState(() => {
+      try {
+        const saved = localStorage.getItem("urp-v2");
+        return saved ? JSON.parse(saved) : getDefault();
+      } catch (e) {
+        return getDefault();
+      }
+    });
+    const [viewMode, setViewMode] = useState("annual");
+    const [selYr, setSelYr] = useState(1);
+    useEffect(() => {
+      try {
+        localStorage.setItem("urp-v2", JSON.stringify(s));
+      } catch (e) {
+      }
+    }, [s]);
+    const ann = useMemo(() => calcAnnual(s), [s]);
+    const monthly = useMemo(() => calcMonthly(s, selYr), [s, selYr]);
+    const metrics = useMemo(() => calcMetrics(ann, s), [ann, s]);
+    const up = (sec, updates) => setS((p) => ({ ...p, [sec]: { ...p[sec], ...updates } }));
+    const setDefault = async () => {
+      if (window.confirm("Save current values as defaults?")) {
+        try {
+          await window.storage.set("urp-default", JSON.stringify(s));
+        } catch (e) {
+          localStorage.setItem("urp-default", JSON.stringify(s));
+        }
+        alert("Saved as defaults!");
+      }
+    };
+    const reset = async () => {
+      if (window.confirm("Reset to saved defaults?")) {
+        try {
+          const r = await window.storage.get("urp-default");
+          if (r) setS(JSON.parse(r.value));
+          else setS(getDefault());
+        } catch (e) {
+          const r = localStorage.getItem("urp-default");
+          if (r) setS(JSON.parse(r));
+          else setS(getDefault());
+        }
+        setSelYr(1);
+      }
+    };
+    const cf = metrics.cf, nw = metrics.nw, gr = metrics.growth;
+    return /* @__PURE__ */ React.createElement("div", { style: { minHeight: "100vh", background: "#f0f4f8", fontFamily: "system-ui, sans-serif" } }, /* @__PURE__ */ React.createElement("div", { style: { background: $.navy, color: "#fff", padding: "13px 20px", marginBottom: 16 } }, /* @__PURE__ */ React.createElement("div", { style: { maxWidth: 1400, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 10 } }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 18, fontWeight: 700, letterSpacing: "-.01em" } }, "\u{1F4CA} Ultimate Retirement Planner"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, opacity: 0.6, marginTop: 2 } }, "Paul & Jessica \xB7 ", s.pi.projYears, "-yr projection \xB7 starting ", s.pi.startY)), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 6, alignItems: "center" } }, /* @__PURE__ */ React.createElement(ScenarioMgr, { s, onLoad: setS }), /* @__PURE__ */ React.createElement("button", { onClick: setDefault, style: { padding: "5px 12px", border: "1px solid rgba(255,255,255,.25)", borderRadius: 6, fontSize: 12, background: "transparent", color: "rgba(255,255,255,.75)", cursor: "pointer" } }, "\u{1F4BE} Set Default"), /* @__PURE__ */ React.createElement("button", { onClick: reset, style: { padding: "5px 12px", border: "1px solid rgba(255,255,255,.2)", borderRadius: 6, fontSize: 12, background: "transparent", color: "rgba(255,255,255,.5)", cursor: "pointer" } }, "\u21A9 Reset")))), /* @__PURE__ */ React.createElement("div", { style: { maxWidth: 1400, margin: "0 auto", padding: "0 16px 32px" } }, /* @__PURE__ */ React.createElement(InputPanel, { s, up }), /* @__PURE__ */ React.createElement(G4, { gap: 12, style: { marginBottom: 16 } }, /* @__PURE__ */ React.createElement(MetCard, { label: "Final Net Worth", value: fmtM(nw), sub: `After ${s.pi.projYears} years`, color: nw >= 0 ? $.green : $.red }), /* @__PURE__ */ React.createElement(MetCard, { label: "Total Taxes Paid", value: fmtM(metrics.tax), sub: "Cumulative", color: $.red }), /* @__PURE__ */ React.createElement(MetCard, { label: "Avg Monthly Cash Flow", value: fmtM(cf), sub: "After all expenses", color: cf >= 0 ? $.blue : $.red }), /* @__PURE__ */ React.createElement(MetCard, { label: "Net Worth Growth", value: `${gr >= 0 ? "+" : ""}${gr.toFixed(0)}%`, sub: "From starting net worth", color: gr >= 0 ? $.green : $.red })), /* @__PURE__ */ React.createElement(Charts, { ann }), /* @__PURE__ */ React.createElement(AIDial, { s }), /* @__PURE__ */ React.createElement(ResultsTable, { ann, monthly, viewMode, setViewMode, selYr, setSelYr, s })));
+  }
+  var root = ReactDOM.createRoot(document.getElementById("root"));
+  root.render(/* @__PURE__ */ React.createElement(App, null));
+})();
 
-  const send = async () => {
-    if (!inp.trim() || loading) return;
-    const msg = inp.trim(); setInp("");
-    setMsgs(p => [...p, { role: "user", content: msg }]); setLoading(true);
-    try {
-      const r = await fetch("https://api.anthropic.com/v1/messages", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ model: "claude-sonnet-4-20250514", max_tokens: 1000, system: sys(), messages: [...msgs, { role: "user", content: msg }] }) });
-      const d = await r.json();
-      setMsgs(p => [...p, { role: "assistant", content: d.content?.[0]?.text || "No response." }]);
-    } catch (e) { setMsgs(p => [...p, { role: "assistant", content: "Error connecting. Please try again." }]); }
-    setLoading(false);
-  };
-
-  return (
-    <Card style={{ marginBottom: 16, overflow: "hidden" }}>
-      <button onClick={() => setOpen(!open)} style={{ width: "100%", padding: "11px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", background: "none", border: "none", cursor: "pointer" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13, fontWeight: 600, color: "#1e293b" }}>
-          <span>🤖</span>AI Retirement Advisor
-          <span style={{ fontSize: 10, background: "rgba(37,99,235,.1)", color: $.blue, padding: "2px 8px", borderRadius: 10 }}>Claude-powered</span>
-        </div>
-        <span style={{ color: "#94a3b8", fontSize: 11 }}>{open ? "▲" : "▼"}</span>
-      </button>
-      {open && (
-        <div style={{ borderTop: "1px solid #f1f5f9", padding: "14px 16px" }}>
-          <div style={{ height: 240, overflowY: "auto", display: "flex", flexDirection: "column", gap: 8, marginBottom: 10 }}>
-            {!msgs.length && <div style={{ textAlign: "center", color: "#94a3b8", fontSize: 12, paddingTop: 40 }}><div style={{ fontSize: 24, marginBottom: 6 }}>💬</div>Ask anything about your retirement plan...</div>}
-            {msgs.map((m, i) => (
-              <div key={i} style={{ padding: "8px 12px", borderRadius: 8, fontSize: 12, lineHeight: 1.5, alignSelf: m.role === "user" ? "flex-end" : "flex-start", background: m.role === "user" ? $.navy : "#f1f5f9", color: m.role === "user" ? "#fff" : "#1e293b", maxWidth: "85%" }}>{m.content}</div>
-            ))}
-            {loading && <div style={{ padding: "8px 12px", borderRadius: 8, fontSize: 12, background: "#f1f5f9", color: "#94a3b8", alignSelf: "flex-start" }}>Analyzing your plan...</div>}
-            <div ref={botRef} />
-          </div>
-          <div style={{ display: "flex", gap: 6, marginBottom: 8 }}>
-            <input type="text" value={inp} onChange={e => setInp(e.target.value)} onKeyDown={e => e.key === "Enter" && send()} placeholder="Ask about your plan, what-ifs, scenarios..." disabled={loading}
-              style={{ flex: 1, padding: "6px 10px", border: "1px solid #e2e8f0", borderRadius: 6, fontSize: 12 }} />
-            <button onClick={send} disabled={loading || !inp.trim()} style={{ padding: "6px 16px", background: $.navy, color: "#fff", border: "none", borderRadius: 6, fontSize: 12, fontWeight: 500, cursor: "pointer", opacity: (loading || !inp.trim()) ? 0.5 : 1 }}>Send</button>
-          </div>
-          <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-            {["What's my Year 5 income?", "When should Paul claim SS?", "How's my retirement trajectory?", "What if business income doubles?"].map(q =>
-              <button key={q} onClick={() => setInp(q)} style={{ padding: "3px 10px", background: "#f1f5f9", border: "1px solid #e2e8f0", borderRadius: 12, fontSize: 11, color: "#475569", cursor: "pointer" }}>{q}</button>
-            )}
-          </div>
-        </div>
-      )}
-    </Card>
-  );
-}
-
-// ─── SCENARIO MANAGER ─────────────────────────────────────────────────
-function ScenarioMgr({ s, onLoad }) {
-  const [open, setOpen] = useState(false);
-  const [scenarios, setScenarios] = useState([]);
-  const [name, setName] = useState("");
-  const ref = useRef(null);
-  useEffect(() => { loadAll(); }, []);
-  useEffect(() => {
-    const h = e => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
-    document.addEventListener("mousedown", h); return () => document.removeEventListener("mousedown", h);
-  }, []);
-  const loadAll = async () => { try { const keys = await window.storage.list("sc:"); const lst = []; for (const k of (keys.keys || [])) { const r = await window.storage.get(k); if (r) lst.push({ k, n: k.replace("sc:", ""), d: JSON.parse(r.value) }); } setScenarios(lst); } catch (e) { setScenarios([]); } };
-  const save = async () => { if (!name.trim()) return; try { await window.storage.set("sc:" + name, JSON.stringify(s)); setName(""); loadAll(); } catch (e) { } };
-  const del = async (k) => { try { await window.storage.delete(k); loadAll(); } catch (e) { } };
-  return (
-    <div ref={ref} style={{ position: "relative" }}>
-      <button onClick={() => setOpen(!open)} style={{ padding: "5px 12px", border: "1px solid rgba(255,255,255,.25)", borderRadius: 6, fontSize: 12, background: "transparent", color: "rgba(255,255,255,.8)", cursor: "pointer", display: "flex", alignItems: "center", gap: 5 }}>
-        💾 Scenarios {scenarios.length > 0 && <span style={{ background: "rgba(255,255,255,.2)", padding: "0 6px", borderRadius: 8, fontSize: 10 }}>{scenarios.length}</span>}
-      </button>
-      {open && (
-        <div style={{ position: "absolute", right: 0, top: "calc(100% + 4px)", background: "#fff", border: "1px solid #e2e8f0", borderRadius: 10, padding: 12, width: 260, boxShadow: "0 8px 24px rgba(0,0,0,.12)", zIndex: 100 }}>
-          <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 6 }}>Save Current</div>
-          <div style={{ display: "flex", gap: 6, marginBottom: 12 }}>
-            <input type="text" value={name} onChange={e => setName(e.target.value)} onKeyDown={e => e.key === "Enter" && save()} placeholder="Scenario name..."
-              style={{ flex: 1, padding: "5px 8px", border: "1px solid #e2e8f0", borderRadius: 5, fontSize: 11 }} />
-            <button onClick={save} disabled={!name.trim()} style={{ padding: "5px 10px", background: $.navy, color: "#fff", border: "none", borderRadius: 5, fontSize: 11, cursor: "pointer", opacity: !name.trim() ? 0.5 : 1 }}>Save</button>
-          </div>
-          {scenarios.length > 0 && <div>
-            <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 6 }}>Saved Scenarios</div>
-            {scenarios.map(sc => (
-              <div key={sc.k} style={{ display: "flex", alignItems: "center", gap: 6, padding: "5px 0", borderBottom: "1px solid #f1f5f9" }}>
-                <span style={{ flex: 1, fontSize: 12 }}>{sc.n}</span>
-                <button onClick={() => { onLoad(sc.d); setOpen(false); }} style={{ padding: "3px 8px", background: "rgba(37,99,235,.1)", color: $.blue, border: "none", borderRadius: 4, fontSize: 10, cursor: "pointer" }}>Load</button>
-                <button onClick={() => del(sc.k)} style={{ padding: "3px 6px", background: "rgba(220,38,38,.1)", color: $.red, border: "none", borderRadius: 4, fontSize: 10, cursor: "pointer" }}>✕</button>
-              </div>
-            ))}
-          </div>}
-        </div>
-      )}
-    </div>
-  );
-}
-
-// ─── RESULTS TABLE ────────────────────────────────────────────────────
-function ResultsTable({ ann, monthly, viewMode, setViewMode, selYr, setSelYr, s }) {
-  const CV = (n) => <span style={{ color: n > 0 ? $.green : n < 0 ? $.red : "#64748b", fontFamily: "monospace" }}>{fmt(n)}</span>;
-  const yopts = Array.from({ length: s.pi.projYears }, (_, i) => ({ v: String(i + 1), l: `Year ${i + 1} (${2025 + i})` }));
-  const thStyle = { background: $.navy, color: "#fff", padding: "7px 10px", textAlign: "right", fontWeight: 500, fontSize: 10, whiteSpace: "nowrap", position: "sticky", top: 0, zIndex: 2 };
-  const tdStyle = { padding: "5px 10px", textAlign: "right", borderBottom: "1px solid #f1f5f9", fontFamily: "monospace", fontSize: 11 };
-  return (
-    <Card style={{ overflow: "hidden" }}>
-      <div style={{ padding: "12px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", borderBottom: "1px solid #f1f5f9", flexWrap: "wrap", gap: 8 }}>
-        <div style={{ fontSize: 13, fontWeight: 600, color: "#1e293b" }}>Projection Data</div>
-        <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
-          {viewMode === "monthly" && (
-            <select value={selYr} onChange={e => setSelYr(parseInt(e.target.value))}
-              style={{ padding: "4px 22px 4px 8px", border: "1px solid #e2e8f0", borderRadius: 5, fontSize: 11, width: 160, appearance: "none" }}>
-              {yopts.map(o => <option key={o.v} value={o.v}>{o.l}</option>)}
-            </select>
-          )}
-          {["annual", "monthly"].map(m => <Btn key={m} onClick={() => setViewMode(m)} active={viewMode === m} sm>{m.charAt(0).toUpperCase() + m.slice(1)}</Btn>)}
-        </div>
-      </div>
-      <div style={{ overflowX: "auto", maxHeight: 440, overflowY: "auto" }}>
-        {viewMode === "annual"
-          ? <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 11 }}>
-            <thead><tr>
-              {["Year", "Ages", "Paul SS", "Jess SS", "VA Disab", "Business", "Total Inc", "Taxes", "Living Exp", "Mortgage", "Cash Flow", "Inv Return", "Savings", "Home Value", "Net Worth"].map((h, i) =>
-                <th key={i} style={{ ...thStyle, textAlign: i === 0 ? "left" : "right" }}>{h}</th>)}
-            </tr></thead>
-            <tbody>
-              {ann.map(d => <tr key={d.yr} style={{ background: d.yr % 2 === 0 ? "#fafafa" : "#fff" }}>
-                <td style={{ ...tdStyle, textAlign: "left", fontFamily: "inherit", fontWeight: 600 }}>{d.yr}</td>
-                <td style={tdStyle}>{d.pAge}/{d.jAge}</td>
-                <td style={tdStyle}>{CV(d.pSS)}</td>
-                <td style={tdStyle}>{CV(d.jSS)}</td>
-                <td style={tdStyle}>{CV(d.va)}</td>
-                <td style={tdStyle}>{CV(d.biz)}</td>
-                <td style={{ ...tdStyle, fontWeight: 600 }}>{CV(d.totInc)}</td>
-                <td style={tdStyle}><span style={{ color: $.red, fontFamily: "monospace" }}>{fmt(d.totTax)}</span></td>
-                <td style={tdStyle}><span style={{ color: $.red, fontFamily: "monospace" }}>{fmt(d.livExp)}</span></td>
-                <td style={tdStyle}><span style={{ color: $.red, fontFamily: "monospace" }}>{fmt(d.mort)}</span></td>
-                <td style={{ ...tdStyle, fontWeight: 600 }}>{CV(d.ncf)}</td>
-                <td style={tdStyle}>{CV(d.netInv)}</td>
-                <td style={{ ...tdStyle, fontWeight: 600 }}>{CV(d.sav)}</td>
-                <td style={tdStyle}>{CV(d.hv)}</td>
-                <td style={{ ...tdStyle, fontWeight: 700 }}>{CV(d.nw)}</td>
-              </tr>)}
-            </tbody>
-          </table>
-          : <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 11 }}>
-            <thead><tr>
-              {["Month", "Paul SS", "Jess SS", "VA", "Business", "Gross Inc", "Taxes", "Living", "Mortgage", "Cash Flow", "Inv Ret", "Savings", "Home Value"].map((h, i) =>
-                <th key={i} style={{ ...thStyle, textAlign: i === 0 ? "left" : "right" }}>{h}</th>)}
-            </tr></thead>
-            <tbody>
-              {monthly.map((d, i) => <tr key={i} style={{ background: i % 2 === 0 ? "#fafafa" : "#fff" }}>
-                <td style={{ ...tdStyle, textAlign: "left", fontFamily: "inherit", fontWeight: 600 }}>{d.mn}</td>
-                <td style={tdStyle}>{CV(d.pSS)}</td>
-                <td style={tdStyle}>{CV(d.jSS)}</td>
-                <td style={tdStyle}>{CV(d.va)}</td>
-                <td style={tdStyle}>{CV(d.biz)}</td>
-                <td style={{ ...tdStyle, fontWeight: 600 }}>{CV(d.gross)}</td>
-                <td style={tdStyle}><span style={{ color: $.red, fontFamily: "monospace" }}>{fmt(d.taxes)}</span></td>
-                <td style={tdStyle}><span style={{ color: $.red, fontFamily: "monospace" }}>{fmt(d.livM)}</span></td>
-                <td style={tdStyle}><span style={{ color: $.red, fontFamily: "monospace" }}>{fmt(d.mort)}</span></td>
-                <td style={{ ...tdStyle, fontWeight: 600 }}>{CV(d.ncf)}</td>
-                <td style={tdStyle}>{CV(d.invRet)}</td>
-                <td style={{ ...tdStyle, fontWeight: 600 }}>{CV(d.sav)}</td>
-                <td style={tdStyle}>{CV(d.hv)}</td>
-              </tr>)}
-            </tbody>
-          </table>}
-      </div>
-    </Card>
-  );
-}
-
-// ─── MAIN APP ─────────────────────────────────────────────────────────
-function App() {
-  const [s, setS] = useState(() => {
-    try { const saved = localStorage.getItem("urp-v2"); return saved ? JSON.parse(saved) : getDefault(); } catch (e) { return getDefault(); }
-  });
-  const [viewMode, setViewMode] = useState("annual");
-  const [selYr, setSelYr] = useState(1);
-
-  useEffect(() => { try { localStorage.setItem("urp-v2", JSON.stringify(s)); } catch (e) { } }, [s]);
-
-  const ann = useMemo(() => calcAnnual(s), [s]);
-  const monthly = useMemo(() => calcMonthly(s, selYr), [s, selYr]);
-  const metrics = useMemo(() => calcMetrics(ann, s), [ann, s]);
-
-  const up = (sec, updates) => setS(p => ({ ...p, [sec]: { ...p[sec], ...updates } }));
-
-  const setDefault = async () => {
-    if (window.confirm("Save current values as defaults?")) {
-      try { await window.storage.set("urp-default", JSON.stringify(s)); } catch (e) { localStorage.setItem("urp-default", JSON.stringify(s)); }
-      alert("Saved as defaults!");
-    }
-  };
-  const reset = async () => {
-    if (window.confirm("Reset to saved defaults?")) {
-      try { const r = await window.storage.get("urp-default"); if (r) setS(JSON.parse(r.value)); else setS(getDefault()); }
-      catch (e) { const r = localStorage.getItem("urp-default"); if (r) setS(JSON.parse(r)); else setS(getDefault()); }
-      setSelYr(1);
-    }
-  };
-
-  const cf = metrics.cf, nw = metrics.nw, gr = metrics.growth;
-
-  return (
-    <div style={{ minHeight: "100vh", background: "#f0f4f8", fontFamily: "system-ui, sans-serif" }}>
-      {/* Header */}
-      <div style={{ background: $.navy, color: "#fff", padding: "13px 20px", marginBottom: 16 }}>
-        <div style={{ maxWidth: 1400, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 10 }}>
-          <div>
-            <div style={{ fontSize: 18, fontWeight: 700, letterSpacing: "-.01em" }}>📊 Ultimate Retirement Planner</div>
-            <div style={{ fontSize: 11, opacity: .6, marginTop: 2 }}>Paul & Jessica · {s.pi.projYears}-yr projection · starting {s.pi.startY}</div>
-          </div>
-          <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
-            <ScenarioMgr s={s} onLoad={setS} />
-            <button onClick={setDefault} style={{ padding: "5px 12px", border: "1px solid rgba(255,255,255,.25)", borderRadius: 6, fontSize: 12, background: "transparent", color: "rgba(255,255,255,.75)", cursor: "pointer" }}>💾 Set Default</button>
-            <button onClick={reset} style={{ padding: "5px 12px", border: "1px solid rgba(255,255,255,.2)", borderRadius: 6, fontSize: 12, background: "transparent", color: "rgba(255,255,255,.5)", cursor: "pointer" }}>↩ Reset</button>
-          </div>
-        </div>
-      </div>
-
-      <div style={{ maxWidth: 1400, margin: "0 auto", padding: "0 16px 32px" }}>
-        <InputPanel s={s} up={up} />
-
-        {/* Summary cards */}
-        <G4 gap={12} style={{ marginBottom: 16 }}>
-          <MetCard label="Final Net Worth" value={fmtM(nw)} sub={`After ${s.pi.projYears} years`} color={nw >= 0 ? $.green : $.red} />
-          <MetCard label="Total Taxes Paid" value={fmtM(metrics.tax)} sub="Cumulative" color={$.red} />
-          <MetCard label="Avg Monthly Cash Flow" value={fmtM(cf)} sub="After all expenses" color={cf >= 0 ? $.blue : $.red} />
-          <MetCard label="Net Worth Growth" value={`${gr >= 0 ? "+" : ""}${gr.toFixed(0)}%`} sub="From starting net worth" color={gr >= 0 ? $.green : $.red} />
-        </G4>
-
-        <Charts ann={ann} />
-        <AIDial s={s} />
-        <ResultsTable ann={ann} monthly={monthly} viewMode={viewMode} setViewMode={setViewMode} selYr={selYr} setSelYr={setSelYr} s={s} />
-      </div>
-    </div>
-  );
-}
-
-
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(React.createElement(App));
 </script>
 </body>
 </html>
